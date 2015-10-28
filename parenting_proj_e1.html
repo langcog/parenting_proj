@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Language Understanding Experiment</title>
+<title>Child Development Survey</title>
 <script src="jquery-1.11.2.min.js"></script>
 <script src="mmturkey-0.6.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -18,7 +18,7 @@
   <br>
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this experiment, you will read some BLAH BLAH.
+  <p class="block-text">In this experiment, you will read statements about children's development. We would like you to tell us how much you agree or disagree with each statement.
   </p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
   
@@ -56,17 +56,18 @@
   <br>
   
   <!-- Trying out table below. Maybe color for prompt? -->
+  <!-- Questionnaire slide 1- agree/disagree -->
 <div align="center">
-  <p>How much do you agree with the following statement?</p>
+  <h5><b>How much do you agree with the following statement about children's development?</b></h5><br>
 </div>
 <div align="center">
-  <br><h4 id ="question">{{}}</h4></br>
+  <p id ="sentence">{{}}</p> 
 </div>
 <br>
 <table align = "center"><tr>
 <td align="center">
 	<tr>
-	  <td>Completely Disagree</td>
+	  <td>Strongly Disagree</td>
 	  <td> </td>
 	  <td><input type="radio" name="judgment" value = "1">1</td>
 	  <td><input type="radio" name="judgment" value = "2">2</td>
@@ -76,7 +77,7 @@
 	  <td><input type="radio" name="judgment" value = "6">6</td>
 	  <td><input type="radio" name="judgment" value = "7">7</td>
 	  <td>&nbsp;&nbsp;&nbsp;</td>
-	  <td>Completely Agree</td>
+	  <td>Strongly Agree</td>
 	</tr>
 </table>
 
