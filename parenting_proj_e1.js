@@ -42,7 +42,7 @@ function shuffle (a)
 
 // ############################## Configuration settings ##############################
 var sents = ['Although a lot about babies and adults is different, they still learn in basically the same way.', 'Children learn best when adults always reward them for correct answers or behaviors.', 
-'Babies learn noticing patterns around them (e.g., mom always looks for her phone after the ringing noise).', 'Children of different ages learn in very different ways. For example, preschoolers learn differently from babies and toddlers.',
+'Babies learn by noticing patterns around them (e.g., mom always looks for her phone after the ringing noise).', 'Children of different ages learn in very different ways. For example, preschoolers learn differently from babies and toddlers.',
 'Newborn babies can see and hear and have some simple physical reflexes (e.g., blinking and sucking), but have almost no other knowledge.', 'Babies learn mostly from their own senses (e.g., touch, smell, taste) and physical exploration of the world.',
 'Children’s development happens in stages; at first they learn about simple things they can see, and then later on they learn about abstract things, such as numbers.', 'Babies are born with some knowledge about the world, including expectations about the people and objects around them.',
 'Children learn best from examples: if they are shown why an idea is right, or why a behavior is good, they can learn without rewards or punishments.','Children can learn about abstract concepts like good behavior from an early age.',
@@ -75,6 +75,7 @@ var experiment = {
 	sent: [],
 	rating: [],
 	language: [],
+	children:[],
 	expt_aim: [],
 	expt_gen: [],
     },
@@ -156,6 +157,7 @@ var experiment = {
     // submitcomments function
     submit_comments: function() {
 	experiment.data.language.push(document.getElementById("homelang").value);
+	experiment.data.children.push(document.getElementById("childrenyn").value);
 	experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
 	experiment.data.expt_gen.push(document.getElementById("expcomments").value);
 	experiment.end();

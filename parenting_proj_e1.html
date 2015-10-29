@@ -7,9 +7,9 @@
 <title>Child Development Survey</title>
 <script src="jquery-1.11.2.min.js"></script>
 <script src="mmturkey-0.6.js"></script>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="style.css" />
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -18,7 +18,7 @@
   <br>
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this experiment, you will read statements about children's development. We would like you to tell us how much you agree or disagree with each statement.
+  <p class="block-text">In this experiment, you will read statements about children's development. The statements will be related to how children learn about the world and how adults can help them learn. We would like you to tell us how much you agree or disagree with each statement.
   </p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
   
@@ -37,7 +37,7 @@
   about you. Note however that we have recently been made aware that your public 
   Amazon.com profile can be accessed via your worker ID if you do not choose 
   to opt out. If you would like to opt out of this feature, you may follow instructions available 
-  <a href="http://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
+  <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
 </div>
 
 <!-- The stage slide. -->
@@ -95,15 +95,24 @@
 
  <!-- The debriefing slide. -->
  <div class="slide" id="debriefing">
+
 	<p> What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)? </p>
    <form onsubmit="experiment.submitcomments()">
    <p>
 	<input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
    </p>
+
+  <p> Do you have children? (Yes/No) </p>
+   <form onsubmit="experiment.submitcomments()">
+   <p>
+  <input type="text" id="childrenyn" name="lg" style="width:40%" value=""></textarea>
+   </p>
+
    <p> What do you think this experiment was about? </p>
    <p>
 	<textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
    </p>
+
    <p> Any general comments about the experiment? </p>
    <p>
    <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
