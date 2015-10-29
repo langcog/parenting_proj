@@ -19,11 +19,11 @@ theme_set(theme_bw())
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("../sandbox-results/")
+files <- dir("../production-results/e1-pilot/")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste("../sandbox-results/",f,sep="")
+  jf <- paste("../production-results/e1-pilot/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    sent = jd$answers$data$sent,
@@ -57,12 +57,21 @@ Now look at mean ratings across sentences.
 ms <- d %>%
   group_by(short_sent, category) %>%
   summarise(rating = mean(rating)) 
+
+qplot(short_sent, rating, col = category, data = ms) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) 
 ```
 
-Plot. 
+And by whether they have kids. 
 
 ```{r}
-qplot(short_sent, rating, col = category, data = ms)+ 
-  theme(axis.text.x = element_text(angle = 90, hjust = .5))
+ms <- d %>%
+  mutate(kids = children == "yes") %>%
+  group_by(short_sent, category, kids) %>%
+  summarise(rating = mean(rating)) 
+
+qplot(short_sent, rating, col = category, data = ms) +
+  facet_grid(kids ~ .) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) 
 ```
 
