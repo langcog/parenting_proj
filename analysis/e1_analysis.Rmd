@@ -19,11 +19,11 @@ theme_set(theme_bw())
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("../production-results/e1-pilot/")
+files <- dir("../production-results/e1/")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste("../production-results/e1-pilot/",f,sep="")
+  jf <- paste("../production-results/e1/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    sent = jd$answers$data$sent,
@@ -55,7 +55,7 @@ Now look at mean ratings across sentences.
 
 ```{r}
 ms <- d %>%
-  group_by(short_sent, category) %>%
+  group_by(category, short_sent) %>%
   summarise(rating = mean(rating)) 
 
 qplot(short_sent, rating, col = category, data = ms) +
