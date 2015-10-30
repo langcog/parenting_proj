@@ -2,17 +2,41 @@
 title: "Parenting Project Attitudes Questionnaire Experiment 1"
 author: "Emily & Mike"
 date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
 ---
+
+<style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code {
+  font-size: 11px;
+}
+pre {
+  font-size: 11px;
+}
+</style>
+
+Data analysis of basic parenting values/attitudes survey, version 1.
+
+# Data preprocessing
 
 Preliminaries.
 
 ```{r}
 rm(list=ls())
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(langcog)
 library(dplyr)
 library(ggplot2)
 library(rjson)
 library(stringr)
+library(tidyr)
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 theme_set(theme_bw())
 ```
 
@@ -48,30 +72,76 @@ d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
 
-d <- left_join(d.raw, labels)
+d <- left_join(d.raw, labels) %>%
+  mutate(children = grepl("yes", children, ignore.case=TRUE))
 ```
+
+# Basic analyses
 
 Now look at mean ratings across sentences.
 
 ```{r}
 ms <- d %>%
   group_by(category, short_sent) %>%
-  summarise(rating = mean(rating)) 
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
 
-qplot(short_sent, rating, col = category, data = ms) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) 
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+
+qplot(short_sent_ord, mean, col = category, 
+      ymin = ci_lower, ymax = ci_upper, 
+      geom = "pointrange",
+      data = ms) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(1,7))
 ```
 
-And by whether they have kids. 
+And by whether they have kids. Some interesting stuff here: the math items seem to differentiate most (along with the "newborn ignorance" question). 
 
 ```{r}
-ms <- d %>%
-  mutate(kids = children == "yes") %>%
-  group_by(short_sent, category, kids) %>%
-  summarise(rating = mean(rating)) 
 
-qplot(short_sent, rating, col = category, data = ms) +
-  facet_grid(kids ~ .) + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) 
+ms.kids <- d %>%
+  group_by(category, short_sent, children) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+ms.kids$short_sent_ord <- factor(ms.kids$short_sent, 
+                                 levels = ms$short_sent)
+
+qplot(short_sent_ord, mean, pch = children, col = category, 
+      ymin = ci_lower, ymax = ci_upper, 
+      position = position_dodge(width = -.3),
+      geom = "pointrange",
+      data = ms.kids) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(1,7))
 ```
 
+# Scale reliability
+
+
+
+
+# Principal components
+
+Explore using PCA to group items. 
+
+```{r}
+pc.mat <- d %>% 
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+
+pcs <- princomp(x= select(pc.mat, -workerid))
+plot(pcs)
+```
+
+So there are many diffent reliable components here. Is this different if we normalize the likert to 0-1? No. (Not shown). 
+
+```{r}
+biplot(pcs)
+```
