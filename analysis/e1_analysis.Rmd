@@ -26,8 +26,10 @@ Data analysis of basic parenting values/attitudes survey, version 1.
 
 Preliminaries.
 
-```{r}
+```{r echo=FALSE}
 rm(list=ls())
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(langcog)
 library(dplyr)
@@ -35,8 +37,6 @@ library(ggplot2)
 library(rjson)
 library(stringr)
 library(tidyr)
-knitr::opts_chunk$set(fig.width=8, fig.height=5, 
-                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 theme_set(theme_bw())
 ```
 
@@ -89,7 +89,7 @@ ms <- d %>%
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
 
-qplot(short_sent_ord, mean, col = category, 
+qplot(short_sent_ord, mean, col = category,
       ymin = ci_lower, ymax = ci_upper, 
       geom = "pointrange",
       data = ms) +
@@ -97,7 +97,8 @@ qplot(short_sent_ord, mean, col = category,
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("") + 
   ylab("Mean Rating") + 
-  ylim(c(1,7))
+  ylim(c(1,7)) + 
+  scale_colour_solarized()
 ```
 
 And by whether they have kids. Some interesting stuff here: the math items seem to differentiate most (along with the "newborn ignorance" question). 
@@ -111,71 +112,197 @@ ms.kids <- d %>%
 ms.kids$short_sent_ord <- factor(ms.kids$short_sent, 
                                  levels = ms$short_sent)
 
-qplot(short_sent_ord, mean, pch = children, col = category, 
-      ymin = ci_lower, ymax = ci_upper, 
-      position = position_dodge(width = -.3),
-      geom = "pointrange",
-      data = ms.kids) +
+ggplot(ms.kids, aes(x = short_sent_ord, y = mean)) +
+  geom_line(aes(group = children, lty = children)) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper, 
+                      col = category, group = short_sent_ord), 
+                  position = position_dodge(width = .3)) + 
   facet_grid(.~instrument, scale="free_x") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("") + 
   ylab("Mean Rating") + 
-  ylim(c(1,7))
+  ylim(c(1,7)) + 
+  scale_colour_solarized()
 ```
 
 # Scale reliability
 
+[Useful chapter here](http://psych.wfu.edu/furr/716/Furr%20SC%26P%20Ch%202.pdf)
 
+## Full survey 
 
+Let's start by looking at the internal consistency of the full survey.
 
-# Principal components
+```{r}
+library(psych)
+wide.all <- d %>% 
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.mat <- as.matrix(select(wide.all, -workerid))
+alpha(x = alpha.mat)
+```
+
+So base $\alpha$ = .75, which is not bad all things considered. But some items are reverse-coded, so let's deal with that. 
+
+```{r}
+alpha(x = alpha.mat, 
+      keys = labels$short_sent[labels$reverse_code==1])
+```
+
+Actually, this is worse than if we do things automatically, which yields a higher $\alpha = .85$, though this could well be overfitting.
+
+```{r}
+alpha(x = alpha.mat, 
+      check.keys = TRUE)
+```
+
+So now let's do this for the sub-surveys, where these issues are maybe bit clearer.
+
+## Attitudes
+
+First the attitudes items. 
+
+```{r}
+library(psych)
+wide.attitudes <- d %>% 
+  filter(instrument == "attitudes") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
+alpha(x = alpha.mat)
+```
+
+OK, so these don't hang together very well, which is in some sense probably a good thing from the perspective of seeing multi-dimensionality in parenting.
+
+## Knowledge
+
+Now the knowledge items. These are in fact reverse-coded.
+
+```{r}
+library(psych)
+wide.knowledge <- d %>% 
+  filter(instrument == "knowledge") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.mat <- as.matrix(select(wide.knowledge, -workerid))
+alpha(x = alpha.mat, 
+      keys = labels$short_sent[labels$reverse_code == 1 & 
+                                 labels$instrument == "knowledge"])
+```
+
+So $\alpha = .71$ for these items, suggesting that they hang together relatively OK but that they still could be better. I think we could easily drop some items from the knowledge portion of the questions and do somewhat better here. In particular, `read all words`, `no vocab bad in school`, and `tv conversation` are actually negatively correlated with the scale as a whole. 
+
+# Principal components analysis
+
+Next, let's look at a principal components analysis for the data. This approach tries to understand underlying orthogonal dimensions of variability.
 
 ## All items
 
 Explore using PCA to group items. 
 
 ```{r}
-pc.mat <- d %>% 
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-
-pcs <- princomp(x= select(pc.mat, -workerid))
+pcs <- princomp(x= select(wide.all, -workerid))
 plot(pcs)
 ```
 
 So there are many diffent reliable components here. Is this different if we normalize the likert to 0-1? No. (Not shown). 
 
 ```{r}
-# pcs <- data.frame(short_sent = 
-qplot(pcs$loadings[,1],pcs$loadings[,2], 
-      label = row.names(pcs$loadings), 
-      geom = c("text","point")) + 
-  xlim(c(-.2, .4))
+biplot(pcs)
 ```
+
+This is pretty hard to interpret. Let's go to the individual parts of the test. 
 
 ## Attitude items
 
-```{r}
-pc.mat <- d %>% 
-  filter(instrument == "attitudes") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
+First the attitude items. 
 
-pcs <- princomp(x= select(pc.mat, -workerid))
+```{r}
+row.names(wide.attitudes) <- wide.attitudes$workerid
+pcs <- princomp(x = select(wide.attitudes, -workerid))
 plot(pcs)
 ```
 
-Interesting - more variance components...
+These items actually have three diffferent pretty significant components. So that's interesting - there's substantial heterogeneity on this measure. I wonder if we need more items? 
+
+Let's try to plot the items by hand for more detail. 
 
 ```{r}
-# pcs <- data.frame(short_sent = 
-pc <- pcs$loadings
-qplot(pcs$loadings[,1],pcs$loadings[,2], 
-      label = row.names(pcs$loadings), 
-      geom = "text") + 
-  xlim(c(-.2, .4))
+pc.items <- data.frame(pc1 = pcs$loadings[,1],
+                      pc2 = pcs$loadings[,2],
+                      pc3 = pcs$loadings[,3],
+                      short_sent = row.names(pcs$loadings)) %>%
+  left_join(labels)
+
+qplot(pc1, pc2, col = category,
+      label = short_sent, hjust = 1,
+      geom = c("text","point"),
+      data = pc.items) + 
+  scale_colour_solarized() + 
+  xlim(-.5,.5)
 ```
 
+I guess we can speculate about what's going on here - seems like we have some sense that PC1 is kind of more behaviorist, about reward, surprise, impulses, beahvioral control, and PC2 is maybe a little more cognitivist? Very hard to tell with this small a set of items. 
+
+Let's look at individuals as well as items. 
+
 ```{r}
-biplot(pcs)
+subinfo <- d %>% 
+  group_by(workerid) %>%
+  summarise(children = children[1])
+
+pc.inds <- data.frame(pc1 = as.numeric(pcs$scores[,1]),
+                      pc2 = as.numeric(pcs$scores[,2]),
+                      pc3 = as.numeric(pcs$scores[,3]),
+                      workerid = row.names(pcs$scores)) %>%
+  left_join(subinfo)
+                      
+qplot(pc1, pc2, col = children,
+      hjust = 1,
+      data = pc.inds) + 
+  scale_colour_solarized()
 ```
+
+The parents are perhaps a little further right, maybe a little less behaviorist? 
+
+## Knowledge items
+
+I'm expecting less in the way of structure for these items, but let's try it anyway. 
+
+```{r}
+wide.knowledge <- d %>% 
+  filter(instrument == "knowledge") %>%
+  mutate(rating = ifelse(reverse_code == 1, 7 - rating, rating)) %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+
+pcs <- princomp(x= select(wide.knowledge, -workerid))
+plot(pcs)
+```
+
+Here there's really one big principal component, consistent with the impression that the scale is fairly reliable and unidimensional. 
+
+```{r}
+pc.data <- data.frame(pc1 = pcs$loadings[,1],
+                      pc2 = pcs$loadings[,2],
+                      pc3 = pcs$loadings[,3],
+                      short_sent = row.names(pcs$loadings)) %>%
+  left_join(labels)
+
+qplot(pc1, pc2, col = category,
+      label = short_sent, hjust = 1,
+      geom = c("text","point"),
+      data = pc.data) + 
+  xlim(-.7,.3) +
+  scale_colour_solarized()
+```
+
+It's hard for me to interpret this, seems like the variation is on PC2 not PC1, but at least it's clear that `read all words` and `counting before math` are pretty different from others in the scale. 
+
+# Conclusions
+
+Looks like we should:
+
+* Prune some of the knowledge items that are inconsistent or confusing
+* Dichotomize responding on these items so we can assess accuracy and deal effectively with reverse-coded items
+* Add some attitudes items to get a better picture of beliefs, since this measure seems like it could be revealing some differences. 
