@@ -82,9 +82,9 @@ Now look at mean ratings across sentences.
 
 ```{r}
 ms <- d %>%
-  group_by(category, short_sent) %>%
+  group_by(category, instrument, short_sent) %>%
   multi_boot_standard(col = "rating") %>%
-  arrange(category, desc(mean)) 
+  arrange(instrument, category, desc(mean)) 
 
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
@@ -93,6 +93,7 @@ qplot(short_sent_ord, mean, col = category,
       ymin = ci_lower, ymax = ci_upper, 
       geom = "pointrange",
       data = ms) +
+  facet_grid(.~instrument, scale="free_x") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("") + 
   ylab("Mean Rating") + 
@@ -102,11 +103,10 @@ qplot(short_sent_ord, mean, col = category,
 And by whether they have kids. Some interesting stuff here: the math items seem to differentiate most (along with the "newborn ignorance" question). 
 
 ```{r}
-
 ms.kids <- d %>%
-  group_by(category, short_sent, children) %>%
+  group_by(instrument, category, short_sent, children) %>%
   multi_boot_standard(col = "rating") %>%
-  arrange(category, desc(mean)) 
+  arrange(instrument, category, desc(mean)) 
 
 ms.kids$short_sent_ord <- factor(ms.kids$short_sent, 
                                  levels = ms$short_sent)
@@ -116,6 +116,7 @@ qplot(short_sent_ord, mean, pch = children, col = category,
       position = position_dodge(width = -.3),
       geom = "pointrange",
       data = ms.kids) +
+  facet_grid(.~instrument, scale="free_x") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("") + 
   ylab("Mean Rating") + 
@@ -129,6 +130,8 @@ qplot(short_sent_ord, mean, pch = children, col = category,
 
 # Principal components
 
+## All items
+
 Explore using PCA to group items. 
 
 ```{r}
@@ -141,6 +144,37 @@ plot(pcs)
 ```
 
 So there are many diffent reliable components here. Is this different if we normalize the likert to 0-1? No. (Not shown). 
+
+```{r}
+# pcs <- data.frame(short_sent = 
+qplot(pcs$loadings[,1],pcs$loadings[,2], 
+      label = row.names(pcs$loadings), 
+      geom = c("text","point")) + 
+  xlim(c(-.2, .4))
+```
+
+## Attitude items
+
+```{r}
+pc.mat <- d %>% 
+  filter(instrument == "attitudes") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+
+pcs <- princomp(x= select(pc.mat, -workerid))
+plot(pcs)
+```
+
+Interesting - more variance components...
+
+```{r}
+# pcs <- data.frame(short_sent = 
+pc <- pcs$loadings
+qplot(pcs$loadings[,1],pcs$loadings[,2], 
+      label = row.names(pcs$loadings), 
+      geom = "text") + 
+  xlim(c(-.2, .4))
+```
 
 ```{r}
 biplot(pcs)
