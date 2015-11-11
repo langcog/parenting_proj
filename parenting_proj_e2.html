@@ -85,7 +85,7 @@
 
   <table align="center"><tr>
   <td align="center">
-  <button type="button" id="nextButton" onClick="experiment.log_response()"> next</button>
+  <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
          </td> 
       <tr><td align="center">
       <div id="testMessage"> </div>
@@ -94,22 +94,17 @@
  </table>
  </div>
 
-//##########
 
 <!-- The stage slide. -->
 <div class="slide" id="knowledge_slide">
-  
-<div class="progress">
-  
-<!-- The "style="width:X%"> is where you change the amount the bar is filled by replacing X with the % filled.  -->
 
+  <div class="progress">
+  <!-- The "style="width:X%"> is where you change the amount the bar is filled by replacing X with the % filled.  -->
     <div id="prog" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-
-
     </div>
-
   </div>
-  <br>
+
+   <br>
 
 <div align="center">
   <h5><b>Do you agree or disagree with the following statement?</b></h5><br>
@@ -118,32 +113,31 @@
   <p id ="knowledge">{{}}</p> 
 </div>
 <br>
+
 <table align = "center"><tr>
 <td align="center">
   <tr>
-    <td>Strongly Disagree</td>
     <td> </td>
     <td><input type="radio" name="judgment" value = "0">Agree</td>
+    <td> </td>
+    <td> </td>
     <td><input type="radio" name="judgment" value = "1">Disagree</td>
     <td>&nbsp;&nbsp;&nbsp;</td>
-    <td>Strongly Agree</td>
   </tr>
 </table>
 
-
-  <table align="center"><tr>
+ <table align="center"><tr>
   <td align="center">
-  <button type="button" id="nextButton" onClick="experiment.log_response()"> next</button>
+  <button type="button" id="nextButton_Kno" onClick="experiment.log_response()"> next</button>
          </td> 
       <tr><td align="center">
       <div id="testMessage"> </div>
       </td></tr>
 
  </table>
- </div>
 
-
- //###########
+</div>
+  
 
 
 
