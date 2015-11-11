@@ -175,8 +175,13 @@ var experiment = {
 	if (window.self == window.top | turk.workerId.length > 0) {
 	    
 	    $("#testMessage").html(''); 	// clear the test message
-	    $("#prog").attr("style","width:" +
+
+
+	    $("#prog_att").attr("style","width:" +
 			    String(100 * (1 - trials.length/numTrialsExperiment)) + "%")
+		$("#prog_kno").attr("style","width:" +
+			    String(100 * (1 - trials.length/numTrialsExperiment)) + "%")
+
  //style="width:progressTotal%"
 	    
 	    // Get the current trial - <code>shift()</code> removes the first element
