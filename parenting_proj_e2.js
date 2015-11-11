@@ -110,6 +110,8 @@ for (i = 0; i < totalTrialsKnow; i++) {
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
 
+
+
 // ############################## The main event ##############################
 var experiment = {
     
@@ -153,8 +155,6 @@ var experiment = {
 	if (response_logged) {
 	   nextButton_Att.blur();
 	   nextButton_Kno.blur();
-
-	
 	    
 	    // uncheck radio buttons
 	    for (i = 0; i < radio.length; i++) {
@@ -162,11 +162,15 @@ var experiment = {
 	    }
 	    experiment.next();
 	} else {
-	    $("#testMessage").html('<font color="red">' + 
+	    $("#testMessage_att").html('<font color="red">' + 
+				   'Please make a response!' + 
+				   '</font>');
+	    $("#testMessage_kno").html('<font color="red">' + 
 				   'Please make a response!' + 
 				   '</font>');
 	}
     },
+
     
     // The work horse of the sequence - what to do on every trial.
     next: function() {
@@ -174,9 +178,9 @@ var experiment = {
 	// Allow experiment to start if it's a turk worker OR if it's a test run
 	if (window.self == window.top | turk.workerId.length > 0) {
 	    
-	    $("#testMessage").html(''); 	// clear the test message
+	    $("#testMessage_att").html(''); 	// clear the test message
 
-
+		$("#testMessage_kno").html(''); 
 	    $("#prog_att").attr("style","width:" +
 			    String(100 * (1 - trials.length/numTrialsExperiment)) + "%")
 		$("#prog_kno").attr("style","width:" +
