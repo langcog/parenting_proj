@@ -172,10 +172,8 @@ var experiment = {
 	    $("#testMessage_att").html(''); 	// clear the test message
 
 		$("#testMessage_kno").html(''); 
-	    $("#prog_att").attr("style","width:" +
-			    String(100 * (1 - trials.length/numTrialsExperiment)) + "%")
-		$("#prog_kno").attr("style","width:" +
-			    String(100 * (1 - trials.length/numTrialsExperiment)) + "%")
+		$("#progress").attr("style","width:" +
+			    String(100 * (1 - (trials.length-1)/numTrialsExperiment)) + "%")
 
  //style="width:progressTotal%"
 	    
