@@ -46,8 +46,33 @@ function shuffle (a)
 //####     Attitudes scale ######
 
 
-var atts = ['Although a lot about babies and adults is different, they still learn in basically the same way.', 'Children learn best when adults always reward them for correct answers or behaviors.', 
-'Babies learn by noticing patterns around them (e.g., mom always looks for her phone after the ringing noise).', ]; 
+var atts = ['Although a lot about babies and adults is different, they still learn in basically the same way.',
+'Children learn best when adults always reward them for correct answers or behaviors.',
+'Babies learn by noticing patterns around them (e.g., mom always looks for her phone after the ringing noise).',
+'Babies are born as a blank slate and their personalities are formed through their experiences.',
+'Children of different ages learn in very different ways. For example, preschoolers learn differently from babies and toddlers.',
+'Newborn babies can see and hear and have some simple physical reflexes (e.g., blinking and sucking), but have almost no other knowledge.',
+'Babies learn mostly from their own senses (e.g., touch, smell, taste) and physical exploration of the world.',
+'Children’s development happens in stages; at first they learn about simple things they can see, and then later on they learn about abstract things, such as numbers.',
+'Babies learn by looking for things that feel and taste good (e.g., by putting things in their mouths).',
+'The most important thing for young children to learn is to control their impulses (e.g., waiting when told to wait).',
+'If young children do not learn to control their behavior, they will not be able to learn or socialize normally later on.',
+'Children learn best from examples: if they are shown why an idea is right, or why a behavior is good, they can learn without rewards or punishments.',
+'Children can learn about abstract concepts like good behavior from an early age.',
+'Children learn the most when adults talk to them about something they are already interested in.',
+'Children can learn a lot just by playing, especially when they are allowed to choose what to play with.',
+'Adults should have strict rules about what children can and cannot do.',
+'It is important for children to learn to respect adults, such as parents and teachers.',
+'The best way to encourage children to behave well is to punish them when they misbehave.',
+'Parents should always explain the reasons for their rules to children.',
+'When planning family activities, parents should think about what their child likes to do.',
+'Children learn the most when they are allowed to play unsupervised by adults.',
+'It is best not to have many rules for children, so that they can establish independence.',
+'The primary role of parents is to act as supportive friends to their children.',
+'A strong bond with mom is important if a baby is going to have good relationships in the future.',
+'It’s more important for parents to provide a safe and loving environment than to make strict rules.',
+'Children who have behavior problems often don’t get enough love at home.',
+'Holding, cradling, and sleeping together with babies is important for forming strong bonds with parents.']; 
 atts = shuffle(atts); 
 
 var totalTrialsAtt = atts.length;
@@ -59,9 +84,32 @@ var totalTrialsAtt = atts.length;
 
 
 var knows = ['Using baby-talk (i.e. talking in a sing-song voice) helps babies learn how to talk.',
-'Children learn fewer words when adults talk with a warm tone.', 'Babies should be able to see your face when you talk to them.','By the age of 3, children answer questions just as quickly as adults.',
-'Parents should not talk back when their toddlers use ‘baby-talk’ (like when they say “ba-ba” instead of “teddy bear”).','Pointing to things is one way that babies learn how to talk.',
-'Adults cannot have conversations with babies who can’t talk yet.']; 
+'Children learn fewer words when adults talk with a warm tone.',
+'Babies should be able to see your face when you talk to them.',
+'By the age of 3, children answer questions just as quickly as adults.',
+'Parents should not talk back when their toddlers use ‘baby-talk’ (like when they say “ba-ba” instead of “teddy bear”).',
+'Pointing to things is one way that babies learn how to talk.',
+'Adults cannot have conversations with babies who can’t talk yet.',
+'Children learn fewer words when they don’t pay attention to what you’re saying.',
+'Parents need to know a lot of big words to teach children how to talk.',
+'You cannot teach children anything new by reading them the same book over and over.',
+'Parents who have trouble reading can help their children learn how to read books.',
+'Some books should be kept where babies can reach them.',
+'2-year-olds should do their best to listen quietly when you read to them.',
+'Children can learn from looking at books by themselves before they know how to read.',
+'Saying numbers and counting are the only ways you can help toddlers get ready to learn math in school.',
+'Toddlers need to learn how to count before they can understand math.',
+'Talking about the difference between tall and short teaches toddlers about math.',
+'It’s best for children to wait until they are old enough for school to learn about math.',
+'Children are learning about math when they learn the names of different shapes (like triangles and squares).',
+'Talking to children cannot make them smarter.',
+'How many words 3-year-olds know can predict how well they might do in kindergarten.',
+'Children should be told what to do instead of given choices.',
+'How many words 3-year-olds know cannot predict how many new words they will learn during their lifetime.',
+'Talking to 3-year-olds can help them do better in school.',
+'It’s the school’s responsibility to make sure children learn how to read and do math.',
+'Watching educational TV is good for children of all ages.',
+'The more television children under 2 watch by themselves the more words they learn.']; 
 knows = shuffle(knows); 
 
 var totalTrialsKnow = knows.length;
