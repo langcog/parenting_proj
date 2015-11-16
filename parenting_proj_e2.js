@@ -111,7 +111,8 @@ var experiment = {
     trial_type: [],
 	sentence: [],
 	rating: [],
-	language: [],
+	homelang: [],
+	ladder: [],
 	children:[],
 	expt_aim: [],
 	expt_gen: [],
@@ -217,8 +218,9 @@ var experiment = {
 
     // submitcomments function
     submit_comments: function() {
-	experiment.data.language.push(document.getElementById("homelang").value);
-	experiment.data.children.push(document.getElementById("childrenyn").value);
+    experiment.data.ladder.push(document.getElementById("ladder").value);
+	experiment.data.homelang.push(document.getElementById("homelang").value);
+	experiment.data.children.push(document.getElementById("children").value);
 	experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
 	experiment.data.expt_gen.push(document.getElementById("expcomments").value);
 	experiment.end();
