@@ -81,6 +81,10 @@ for (i = 0; i < totalTrialsAtt; i++) {
 	trials.push(trial);
 }
 
+trials.push(trial = {sentence: "", 
+	trial_number_block: 0,
+	trial_type: "2afc_instructions"});
+
 // add knowledge question trials after
 for (i = 0; i < totalTrialsKnow; i++) {
 	trial = {
@@ -104,6 +108,7 @@ var experiment = {
     // The object to be submitted.
     data: {
     trial_number_block: [],
+    trial_type: [],
 	sentence: [],
 	rating: [],
 	language: [],
@@ -189,7 +194,9 @@ var experiment = {
 	    if (trial_info.trial_type == "attitudes") {
 	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
 	    	 showSlide("attitudes_slide");              //display slide
-	    }else{
+	    } else if (trial_info.trial_type == "2afc_instructions") {
+	    	showSlide("two_choice_slide");
+	    } else {
 			$("#knowledge").html(trial_info.sentence);
 	    	showSlide("knowledge_slide");
 	    }
@@ -198,6 +205,7 @@ var experiment = {
 
 	    // log the sentence for each trial
 		experiment.data.sentence.push(trial_info.sentence);
+		experiment.data.trial_type.push(trial_info.trial_type)
 		experiment.data.trial_number_block.push(trial_info.trial_number_block)
 	}
     },
