@@ -73,7 +73,7 @@ Note there is a repeat item here, "abstract concepts from good behavior."
 Map on question short forms so that we can use these instead. 
 
 ```{r}
-labels <- read.csv("sent_forms.csv")
+labels <- read.csv("sent_forms_e2.csv")
 labels$sent <- as.character(labels$sent)
 d.raw$sent <- as.character(d.raw$sent)
 d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
