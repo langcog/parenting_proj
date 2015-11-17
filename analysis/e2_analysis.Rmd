@@ -81,10 +81,13 @@ d.raw$sent <- str_replace_all(d.raw$sent, "’", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "â", "'")
 
 d <- left_join(d.raw, labels) %>%
   mutate(children = grepl("yes", children, ignore.case=TRUE))
 ```
+
+Note children question is broken.
 
 # Basic analyses
 
@@ -98,12 +101,15 @@ ms <- d %>%
 
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
+```
 
+First plot attitude. 
+
+```{r}
 qplot(short_sent_ord, mean, col = category,
       ymin = ci_lower, ymax = ci_upper, 
       geom = "pointrange",
-      data = ms) +
-  facet_grid(.~instrument, scale="free_x") + 
+      data = filter(ms, instrument == "attitudes")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("") + 
   ylab("Mean Rating") + 
@@ -111,27 +117,17 @@ qplot(short_sent_ord, mean, col = category,
   scale_colour_solarized()
 ```
 
-And by whether they have kids. Some interesting stuff here: the math items seem to differentiate most (along with the "newborn ignorance" question). 
+Knowledge
 
 ```{r}
-ms.kids <- d %>%
-  group_by(instrument, category, short_sent, children) %>%
-  multi_boot_standard(col = "rating") %>%
-  arrange(instrument, category, desc(mean)) 
-
-ms.kids$short_sent_ord <- factor(ms.kids$short_sent, 
-                                 levels = ms$short_sent)
-
-ggplot(ms.kids, aes(x = short_sent_ord, y = mean)) +
-  geom_line(aes(group = children, lty = children)) + 
-  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper, 
-                      col = category, group = short_sent_ord), 
-                  position = position_dodge(width = .3)) + 
-  facet_grid(.~instrument, scale="free_x") + 
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, 
+      geom = "pointrange",
+      data = filter(ms, instrument == "knowledge")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("") + 
   ylab("Mean Rating") + 
-  ylim(c(1,7)) + 
+  ylim(c(0,1)) + 
   scale_colour_solarized()
 ```
 
