@@ -20,7 +20,7 @@ pre {
 }
 </style>
 
-Data analysis of basic parenting values/attitudes survey, version 1.
+Data analysis of basic parenting values/attitudes survey, version 2.
 
 # Data preprocessing
 
@@ -49,14 +49,21 @@ d.raw <- data.frame()
 for (f in files) {
   jf <- paste("../production-results/e2/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  # clean up instruction trial
+  sent <- jd$answers$data$sentence
+  rating <- as.numeric(jd$answers$data$rating)
+  trial_type <- jd$answer$data$trial_type
+  sent <- sent[trial_type != "2afc_instructions"]
+  trial_type <- trial_type[trial_type != "2afc_instructions"]
+  
   id <- data.frame(workerid = jd$WorkerId, 
-                   sent = jd$answers$data$sentence,
-                   rating = as.numeric(jd$answers$data$rating),
+                   sent = sent,
+                   rating = rating,
                    children = jd$answers$data$children,
-                   language = jd$answer$data$language,
-                   trial_type = jd$answer$data$trial_type,
-                   ses = jd$answer$data$ladder
-                   )
+                   language = jd$answer$data$homelang,
+                   trial_type = trial_type,
+                   ses = jd$answer$data$ladder)
   d.raw <- bind_rows(d.raw, id)
 }
 ```
