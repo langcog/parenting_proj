@@ -245,7 +245,7 @@ qplot(pc1, pc2, col = category,
       geom = c("text","point"),
       data = pc.items) + 
   scale_colour_solarized() + 
-  xlim(-.5,.5)
+  xlim(-.15,.35)
 ```
 
 I guess we can speculate about what's going on here - seems like we have some sense that PC1 is kind of more behaviorist, about reward, surprise, impulses, beahvioral control, and PC2 is maybe a little more cognitivist? Very hard to tell with this small a set of items. 
@@ -304,6 +304,13 @@ qplot(pc1, pc2, col = category,
 ```
 
 It's hard for me to interpret this, seems like the variation is on PC2 not PC1, but at least it's clear that `read all words` and `counting before math` are pretty different from others in the scale. 
+
+# Factor analysis
+
+```{r}
+kf <- factanal(x= select(wide.knowledge, -workerid), factors = 3)
+af <- factanal(x= select(wide.attitudes, -workerid), factors = 4)
+```
 
 # Conclusions
 
