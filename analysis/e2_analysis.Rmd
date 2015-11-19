@@ -68,8 +68,6 @@ for (f in files) {
 }
 ```
 
-Note there is a repeat item here, "abstract concepts from good behavior."
-
 Map on question short forms so that we can use these instead. 
 
 ```{r}
@@ -148,14 +146,18 @@ alpha.mat <- as.matrix(select(wide.all, -workerid))
 alpha(x = alpha.mat)
 ```
 
-So base $\alpha$ = .75, which is not bad all things considered. But some items are reverse-coded, so let's deal with that. 
+Base $\alpha$ = .78, compared to .75 in e1. So removing/adding items helped a bit. 
+
+Now accounting for reverse coding:
 
 ```{r}
 alpha(x = alpha.mat, 
       keys = labels$short_sent[labels$reverse_code==1])
 ```
 
-Actually, this is worse than if we do things automatically, which yields a higher $\alpha = .85$, though this could well be overfitting.
+$\alpha = .53$,which is not so great.
+
+Automatic reverse coding yields $\alpha = .81$, which is better than our coding, and a little bit lower than it was in e1 (.85)
 
 ```{r}
 alpha(x = alpha.mat, 
@@ -178,7 +180,8 @@ alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
 alpha(x = alpha.mat)
 ```
 
-OK, so these don't hang together very well, which is in some sense probably a good thing from the perspective of seeing multi-dimensionality in parenting.
+This time $\alpha = .81$ for the attitudes scale, much higher than e1 (.55).
+
 
 ## Knowledge
 
@@ -196,7 +199,7 @@ alpha(x = alpha.mat,
                                  labels$instrument == "knowledge"])
 ```
 
-So $\alpha = .71$ for these items, suggesting that they hang together relatively OK but that they still could be better. I think we could easily drop some items from the knowledge portion of the questions and do somewhat better here. In particular, `read all words`, `no vocab bad in school`, and `tv conversation` are actually negatively correlated with the scale as a whole. 
+So $\alpha = .59$ for these items, compared to .71 for e1. The only difference is the removal of three items that were negatively correlated with the scale during e1 (`read all words`, `no vocab bad in school`, and `tv conversation` ). Not sure if it is normal to see such variability across samples.
 
 # Principal components analysis
 
@@ -206,18 +209,16 @@ Next, let's look at a principal components analysis for the data. This approach 
 
 Explore using PCA to group items. 
 
-```{r}
-pcs <- princomp(x= select(wide.all, -workerid))
-plot(pcs)
-```
-
-So there are many diffent reliable components here. Is this different if we normalize the likert to 0-1? No. (Not shown). 
+I removed the PCA analysis across scales because there were more variables than participants which was causing errors.
 
 ```{r}
-biplot(pcs)
+#pcs <- princomp(x= select(wide.all, -workerid))
+#plot(pcs)
 ```
 
-This is pretty hard to interpret. Let's go to the individual parts of the test. 
+```{r}
+#biplot(pcs)
+```
 
 ## Attitude items
 
@@ -229,7 +230,6 @@ pcs <- princomp(x = select(wide.attitudes, -workerid))
 plot(pcs)
 ```
 
-These items actually have three diffferent pretty significant components. So that's interesting - there's substantial heterogeneity on this measure. I wonder if we need more items? 
 
 Let's try to plot the items by hand for more detail. 
 
@@ -248,9 +248,7 @@ qplot(pc1, pc2, col = category,
   xlim(-.15,.35)
 ```
 
-I guess we can speculate about what's going on here - seems like we have some sense that PC1 is kind of more behaviorist, about reward, surprise, impulses, beahvioral control, and PC2 is maybe a little more cognitivist? Very hard to tell with this small a set of items. 
 
-Let's look at individuals as well as items. 
 
 ```{r}
 subinfo <- d %>% 
@@ -269,11 +267,10 @@ qplot(pc1, pc2, col = children,
   scale_colour_solarized()
 ```
 
-The parents are perhaps a little further right, maybe a little less behaviorist? 
 
 ## Knowledge items
 
-I'm expecting less in the way of structure for these items, but let's try it anyway. 
+ 
 
 ```{r}
 wide.knowledge <- d %>% 
@@ -286,7 +283,7 @@ pcs <- princomp(x= select(wide.knowledge, -workerid))
 plot(pcs)
 ```
 
-Here there's really one big principal component, consistent with the impression that the scale is fairly reliable and unidimensional. 
+The variance for the components are really small compared to the attitudes scale, and compared to the knowledge scale during e1. 
 
 ```{r}
 pc.data <- data.frame(pc1 = pcs$loadings[,1],
@@ -303,7 +300,7 @@ qplot(pc1, pc2, col = category,
   scale_colour_solarized()
 ```
 
-It's hard for me to interpret this, seems like the variation is on PC2 not PC1, but at least it's clear that `read all words` and `counting before math` are pretty different from others in the scale. 
+Kind of interesting- seems like principle component 1 might relate to whether or not parents believe they have a critical role in their child's development (e.g., school responsibility vs. words predict academic)..
 
 # Factor analysis
 
@@ -314,8 +311,4 @@ af <- factanal(x= select(wide.attitudes, -workerid), factors = 4)
 
 # Conclusions
 
-Looks like we should:
 
-* Prune some of the knowledge items that are inconsistent or confusing
-* Dichotomize responding on these items so we can assess accuracy and deal effectively with reverse-coded items
-* Add some attitudes items to get a better picture of beliefs, since this measure seems like it could be revealing some differences. 
