@@ -306,8 +306,22 @@ Kind of interesting- seems like principle component 1 might relate to whether or
 
 ```{r}
 kf <- factanal(x= select(wide.knowledge, -workerid), factors = 3)
+
+print(kf, digits=2, cutoff=.3, sort=TRUE)
+
+# plot factor 1 by factor 2 
+loadkf <- kf$loadings[,1:2] 
+plot(loadkf,type="n") # set up plot 
+text(loadkf,labels=names(wide.knowledge),cex=.7) # add variable names
+
 af <- factanal(x= select(wide.attitudes, -workerid), factors = 4)
-```
+
+print(af, digits=2, cutoff=.3, sort=TRUE)
+
+# plot factor 1 by factor 2 
+loadaf <- af$loadings[,1:2] 
+plot(loadkf,type="n") # set up plot 
+text(loadkf,labels=names(wide.attitudes),cex=.7) # add variable names```
 
 # Conclusions
 
