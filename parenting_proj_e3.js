@@ -106,6 +106,7 @@ var experiment = {
 	sentence: [],
 	rating: [],
 	homelang: [],
+	gender: [],
 	ladder: [],
 	children:[],
 	expt_aim: [],
@@ -205,8 +206,9 @@ var experiment = {
     submit_comments: function() {
     experiment.data.ladder.push(document.getElementById("ladder").value);
 	experiment.data.homelang.push(document.getElementById("homelang").value);
-	experiment.data.ladder.push(document.getElementById("education").value);
-	experiment.data.ladder.push(document.getElementById("age").value);
+	experiment.data.gender.push(document.getElementById("gender").value);
+	experiment.data.education.push(document.getElementById("education").value);
+	experiment.data.age.push(document.getElementById("age").value);
 	experiment.data.children.push($("input[name=children]:checked").val());
 	experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
 	experiment.data.expt_gen.push(document.getElementById("expcomments").value);
