@@ -37,6 +37,10 @@ library(ggplot2)
 library(rjson)
 library(stringr)
 library(tidyr)
+library(psych)
+library(nFactors)
+select <- dplyr::select # masked by MASS
+
 theme_set(theme_bw())
 ```
 
@@ -73,6 +77,11 @@ Map on question short forms so that we can use these instead.
 ```{r}
 labels <- read.csv("sent_forms_e2.csv")
 labels$sent <- as.character(labels$sent)
+```
+
+Clean up labels.
+
+```{r}
 d.raw$sent <- as.character(d.raw$sent)
 d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "’", "")
@@ -80,12 +89,28 @@ d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "â", "'")
+```
 
+Merge. Only flip the reverse code items for knowledge. 
+
+```{r}
 d <- left_join(d.raw, labels) %>%
   mutate(children = grepl("yes", children, ignore.case=TRUE))
+
+d$reverse_code[is.na(d$reverse_code)] <- 0
+d$rating[d$reverse_code == 1 & d$instrument == "knowledge"] <- 1 - d$rating[d$reverse_code == 1 & d$instrument == "knowledge"]
 ```
 
 Note children question is broken.
+
+```{r}
+subinfo <- d %>% 
+  group_by(workerid) %>%
+  summarise(children = children[1],
+            ses = ses[1])
+
+qplot(ses, data=subinfo)
+```
 
 # Basic analyses
 
@@ -129,49 +154,17 @@ qplot(short_sent_ord, mean, col = category,
   scale_colour_solarized()
 ```
 
+People are really bad at: counting before math, listen quetly, words predict academic, no prediction, and educational tv good.
+
 # Scale reliability
 
 [Useful chapter here](http://psych.wfu.edu/furr/716/Furr%20SC%26P%20Ch%202.pdf)
-
-## Full survey 
-
-Let's start by looking at the internal consistency of the full survey.
-
-```{r}
-library(psych)
-wide.all <- d %>% 
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.mat <- as.matrix(select(wide.all, -workerid))
-alpha(x = alpha.mat)
-```
-
-Base $\alpha$ = .78, compared to .75 in e1. So removing/adding items helped a bit. 
-
-Now accounting for reverse coding:
-
-```{r}
-alpha(x = alpha.mat, 
-      keys = labels$short_sent[labels$reverse_code==1])
-```
-
-$\alpha = .53$,which is not so great.
-
-Automatic reverse coding yields $\alpha = .81$, which is better than our coding, and a little bit lower than it was in e1 (.85)
-
-```{r}
-alpha(x = alpha.mat, 
-      check.keys = TRUE)
-```
-
-So now let's do this for the sub-surveys, where these issues are maybe bit clearer.
 
 ## Attitudes
 
 First the attitudes items. 
 
 ```{r}
-library(psych)
 wide.attitudes <- d %>% 
   filter(instrument == "attitudes") %>%
   select(workerid, short_sent, rating) %>% 
@@ -182,24 +175,172 @@ alpha(x = alpha.mat)
 
 This time $\alpha = .81$ for the attitudes scale, much higher than e1 (.55).
 
+"Best have few rules" and "unsupervised play" maybe candidates to exclude?
 
 ## Knowledge
 
 Now the knowledge items. These are in fact reverse-coded.
 
 ```{r}
-library(psych)
 wide.knowledge <- d %>% 
   filter(instrument == "knowledge") %>%
   select(workerid, short_sent, rating) %>% 
   spread(short_sent, rating)
+
 alpha.mat <- as.matrix(select(wide.knowledge, -workerid))
-alpha(x = alpha.mat, 
-      keys = labels$short_sent[labels$reverse_code == 1 & 
-                                 labels$instrument == "knowledge"])
+alpha(x = alpha.mat)
 ```
 
 So $\alpha = .59$ for these items, compared to .71 for e1. The only difference is the removal of three items that were negatively correlated with the scale during e1 (`read all words`, `no vocab bad in school`, and `tv conversation` ). Not sure if it is normal to see such variability across samples.
+
+# Factor analysis
+
+Get eigenvalues for determining number of factors. 
+
+## Knowledge
+
+```{r}
+knowl.mat <- select(wide.knowledge, -workerid) # get rid of worker id
+
+ev <- eigen(cor(x=knowl.mat)) # get eigenvalues
+ap <- parallel(subject=nrow(knowl.mat), var=ncol(knowl.mat),
+               rep=100,cent=.05)
+nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
+plotnScree(nS)
+```
+
+Now plot factor analysis
+
+```{r}
+n.factors <- 6
+kf <- factanal(x = knowl.mat, factors = n.factors, scores = "regression")
+loadings <- data.frame(kf$loadings[,1:n.factors]) %>%
+  mutate(item = rownames(kf$loadings)) %>%
+  gather(factor, loading, starts_with("Factor"))
+
+qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
+  scale_fill_continuous(low="#000000",high="#FFFFFF")
+
+qplot(factor, item, fill=loading > .5, geom="tile", data = loadings) + 
+  scale_fill_solarized()
+```
+
+Plot questions on factor loadings.
+
+```{r}
+w.loadings <- loadings %>%
+  spread(factor, loading)
+
+qplot(Factor1, Factor2, label = item, 
+      geom="text", data=w.loadings) + 
+  xlim(c(-.2, 1))
+```
+
+Merge back in subject id info. 
+
+```{r}
+k.scores <- kf$scores %>%
+  data.frame %>%
+  mutate(workerid = wide.knowledge$workerid) %>%
+  left_join(subinfo)
+```
+
+Plot 
+
+```{r}
+qplot(Factor1, Factor2, col = ses > 5, data=k.scores)
+```
+
+And summary:
+
+```{r}
+ms <- k.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(ses != "") %>%
+  mutate(high.ses = ses > 5) %>%
+  group_by(high.ses, factor) %>%
+  summarise(score = mean(score)) 
+
+qplot(factor, score, fill=high.ses, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms)
+```
+
+## Attitudes.
+
+```{r}
+att.mat <- select(wide.attitudes, -workerid)
+ev <- eigen(cor(x=att.mat)) # get eigenvalues
+ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
+               rep=100,cent=.05)
+nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
+plotnScree(nS)
+```
+
+Now plot factor analysis
+
+```{r}
+n.factors <- 5
+af <- factanal(x = att.mat, factors = n.factors, scores = "regression")
+loadings <- data.frame(af$loadings[,1:n.factors]) %>%
+  mutate(item = rownames(af$loadings)) %>%
+  gather(factor, loading, starts_with("Factor"))
+
+qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
+  scale_fill_continuous(low="#000000", high="#FFFFFF")
+
+qplot(factor, item, fill=loading > .5, geom="tile", data = loadings) + 
+  scale_fill_solarized()
+```
+
+Merge back in subject id info. 
+
+```{r}
+a.scores <- af$scores %>%
+  data.frame %>%
+  mutate(workerid = wide.knowledge$workerid) %>%
+  left_join(subinfo)
+```
+
+And summary:
+
+```{r}
+a.factor.names <- c("Early learning", "Affection",
+                    "Rules & Respect", "Responsiveness", "Unsupervised")
+
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(ses != "") %>%
+  mutate(high.ses = ses > 5, 
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(high.ses, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=high.ses, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+ 
+# Knowledge by SES
+
+```{r}
+knowl <- d %>% 
+  filter(instrument == "knowledge") %>%
+  group_by(workerid) %>%
+  summarise(mean = mean(rating)) %>%
+  left_join(subinfo) %>%
+  filter(ses != "") %>%
+  mutate(high_ses = ses > 5) %>%
+  group_by(high_ses) %>%
+  multi_boot_standard(col = "mean")
+
+qplot(high_ses, mean, ymin = ci_lower, ymax = ci_upper, 
+      group = 1,
+      geom = c("pointrange","smooth"), method = "lm", data = knowl)
+```
 
 # Principal components analysis
 
@@ -251,10 +392,6 @@ qplot(pc1, pc2, col = category,
 
 
 ```{r}
-subinfo <- d %>% 
-  group_by(workerid) %>%
-  summarise(children = children[1])
-
 pc.inds <- data.frame(pc1 = as.numeric(pcs$scores[,1]),
                       pc2 = as.numeric(pcs$scores[,2]),
                       pc3 = as.numeric(pcs$scores[,3]),
@@ -273,12 +410,6 @@ qplot(pc1, pc2, col = children,
  
 
 ```{r}
-wide.knowledge <- d %>% 
-  filter(instrument == "knowledge") %>%
-  mutate(rating = ifelse(reverse_code == 1, 7 - rating, rating)) %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-
 pcs <- princomp(x= select(wide.knowledge, -workerid))
 plot(pcs)
 ```
@@ -301,28 +432,17 @@ qplot(pc1, pc2, col = category,
 ```
 
 Kind of interesting- seems like principle component 1 might relate to whether or not parents believe they have a critical role in their child's development (e.g., school responsibility vs. words predict academic)..
-
-# Factor analysis
+ 
+# Other stuff
 
 ```{r}
-kf <- factanal(x= select(wide.knowledge, -workerid), factors = 3)
-
-print(kf, digits=2, cutoff=.3, sort=TRUE)
-
-# plot factor 1 by factor 2 
-loadkf <- kf$loadings[,1:2] 
-plot(loadkf,type="n") # set up plot 
-text(loadkf,labels=names(wide.knowledge),cex=.7) # add variable names
-
-af <- factanal(x= select(wide.attitudes, -workerid), factors = 4)
-
-print(af, digits=2, cutoff=.3, sort=TRUE)
-
-# plot factor 1 by factor 2 
-loadaf <- af$loadings[,1:2] 
-plot(loadkf,type="n") # set up plot 
-text(loadkf,labels=names(wide.attitudes),cex=.7) # add variable names```
+kf <- factanal(x = knowl.mat, factors = 6)
+```
 
 # Conclusions
 
+The attitudes scale seems to have 5 distinct factors, 4 of which make sense conceptually (Early learning, Affection, Rules and respect, Responsiveness) and one that makes less sense (Unsupervised play). 
 
+The next iteration will aim to replicate these factors, include more demographic info (income, education), and remove the unsupervised play question that has an unclear conceptual basis.
+
+We will also drop the knowledge scale for now, as we likely will not use it in a way that makes reliability and validity as critical.
