@@ -27,6 +27,7 @@ Data analysis of basic parenting values/attitudes survey, version 2.
 Preliminaries.
 
 ```{r echo=FALSE}
+
 rm(list=ls())
 knitr::opts_chunk$set(fig.width=8, fig.height=5, 
                       echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
@@ -164,8 +165,8 @@ qplot(short_sent_ord, mean, col = category,
 # Scale reliability
 
 [Useful chapter here](http://psych.wfu.edu/furr/716/Furr%20SC%26P%20Ch%202.pdf)
-
-Attitudes items. 
+ 
+Reliability is reduced compared to e2 (alpha = 76 compared to 81 for e2)
 
 ```{r}
 wide.attitudes <- d %>% 
@@ -180,7 +181,6 @@ alpha(x = alpha.mat)
 
 Get eigenvalues for determining number of factors. 
 
-## Attitudes.
 
 ```{r}
 att.mat <- select(wide.attitudes, -workerid)
@@ -194,7 +194,7 @@ plotnScree(nS)
 Now plot factor analysis
 
 ```{r}
-n.factors <- 6
+n.factors <- 4
 af <- factanal(x = att.mat, factors = n.factors, scores = "regression")
 loadings <- data.frame(af$loadings[,1:n.factors]) %>%
   mutate(item = rownames(af$loadings)) %>%
@@ -220,9 +220,11 @@ And summary:
 
 Note: I re-labeled the factors, because the order appears different this time.
 
-### Factors by SES
+## Factors by SES
 ```{r}
-a.factor.names <- c("Early learning","Rules and Respect" ,"Affection", "Early Abstraction", "Behavior Control")
+#a.factor.names <- c("Early learning","Rules and Respect" ,"Affection", "Early Abstraction", "Behavior Control")
+
+a.factor.names <- c("Early learning","Rules and Respect" ,"Affection", "Parents Supportive")
 
 ms <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -241,7 +243,7 @@ qplot(factor.name, mean, fill=high.ses,
 ```
 
 
-### Factors by Gender
+## Factors by Gender
 ```{r}
 ms <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -260,7 +262,7 @@ qplot(factor.name, mean, fill=male.gender,
 
 ```
  
-### Factors by Education
+## Factors by Education
 ```{r}
 ms <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -279,7 +281,7 @@ qplot(factor.name, mean, fill=high.education,
 
 ```
 
-### Factors by Age
+## Factors by Age
 ```{r}
 ms <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -298,31 +300,30 @@ qplot(factor.name, mean, fill=young.age,
 
 ```
 
-# Attitudes by SES
-
+## Factors by Children
 ```{r}
-attit <- d %>% 
-  filter(instrument == "attitudes") %>%
-  group_by(workerid) %>%
-  summarise(mean = mean(rating)) %>%
-  left_join(subinfo) %>%
-  filter(ses != "") %>%
-  mutate(high_ses = ses > 5) %>%
-  group_by(high_ses) %>%
-  multi_boot_standard(col = "mean")
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(children != "") %>%
+  mutate(yes.children = children,
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(yes.children, factor.name) %>%
+  multi_boot_standard(col = "score") 
 
-qplot(high_ses, mean, ymin = ci_lower, ymax = ci_upper, 
-      group = 1,
-      geom = c("pointrange","smooth"), method = "lm", data = attit)
+qplot(factor.name, mean, fill=yes.children, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
 ```
+
 
 # Principal components analysis
 
 Next, let's look at a principal components analysis for the data. This approach tries to understand underlying orthogonal dimensions of variability.
 
-## Attitude items
-
-First the attitude items. 
 
 ```{r}
 row.names(wide.attitudes) <- wide.attitudes$workerid
@@ -347,8 +348,6 @@ qplot(pc1, pc2, col = category,
   scale_colour_solarized() + 
   xlim(-.15,.35)
 ```
-
-
 
 ```{r}
 pc.inds <- data.frame(pc1 = as.numeric(pcs$scores[,1]),
@@ -380,4 +379,6 @@ qplot(pc1, pc2, col = category,
 ```
 
 # Conclusions
-
+We observe a decrease in reliability for this sample.
+Exploratory FA suggests 4 factors (compared to 6 in e2).
+Gender is the only demographic variable that shows clear differences for the factors ("Early Learning" and "Parents Supportive").
