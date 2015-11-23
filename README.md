@@ -22,3 +22,9 @@ Studying parenting attitudes and beliefs. Initial study of parent attitudes/beli
 * Added 2 items to rationalist scale
 * Added MacArthur SES ladder
 * Note, children question always returned yes due to bug in this run.
+
+# Experiment 3
+* 11-20-15
+* Removed Knowledge scale
+* Removed 1 item from Attitudes scale- unsupervised play
+* Included additional demographic info- education, gender, age group
