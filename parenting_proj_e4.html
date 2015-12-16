@@ -76,7 +76,7 @@
         <td>&nbsp;&nbsp;&nbsp;</td>
         <td>Strongly Agree</td>
         <td></td>
-        <td><input id ="DU" type="radio" name="judgment" value = "">
+        <td><input id ="DU" type="radio" name="judgment" value = "DU">
                       <label for="DU">I don't understand the question</label></td>
       </tr>
     </table>
@@ -190,21 +190,21 @@
 
              <select name="ethnicity" id="ethnicity" form="demographics">
                       <option value="">Choose an ethnicity</option>
-                      <option value="0">Hispanic or Latino</option>
-                      <option value="1">Non-Hispanic or Latino</option>
-                      <option value="2">Prefer not to state</option>
-                    </select>
+                      <option value="Hispanic">Hispanic or Latino</option>
+                      <option value="NonHispanic">Non-Hispanic or Latino</option>
+                      <option value="NA">Prefer not to state</option>
+            </select>
           </p>
 
           <p><b>What is your race? Please check all that apply.</b></p>
            <p>
             <form>
-            <input type="checkbox" name="race" value="americanIndian"> American Indian or
+            <input type="checkbox" name="race" value="amInd"> American Indian or
             Alaskan Native
           <br>
             <input type="checkbox" name="race" value="asian"> Asian
           <br>
-            <input type="checkbox" name="race" value="nativeHawaiian"> Native Hawaiian or US
+            <input type="checkbox" name="race" value="natHaw"> Native Hawaiian or US
             Pacific Islander
           <br>
             <input type="checkbox" name="race" value="black"> Black/African American
@@ -212,7 +212,7 @@
             <input type="checkbox" name="race" value="white"> White
           <br>
             <input type="checkbox" name="race" value="other"> Other
-
+          </form>
 
            <p><b>How many children do you have?</b></p>
            <p>

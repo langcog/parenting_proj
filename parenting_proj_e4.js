@@ -204,15 +204,24 @@ var experiment = {
 	showSlide("debriefing");
     },
 
+
     // submitcomments function
     submit_comments: function() {
+
+    	var races = document.getElementsByName("race");
+	
+	// Loop through race buttons
+	for (i = 0; i < races.length; i++) {
+	    if (races[i].checked) {
+		experiment.data.race.push(races[i].value);	    
+	    }
+	}
     experiment.data.ladder.push(document.getElementById("ladder").value);
     experiment.data.age.push(document.getElementById("age").value);
     experiment.data.gender.push(document.getElementById("gender").value);
     experiment.data.education.push(document.getElementById("education").value);
 	experiment.data.homelang.push(document.getElementById("homelang").value);
 	experiment.data.ethnicity.push(document.getElementById("ethnicity").value);
-	experiment.data.race.push(document.getElementsByName("race").value);
 	experiment.data.children.push(document.getElementById("children").value);
 	experiment.data.childAgeYoung.push(document.getElementById("youngestAge").value);
 	experiment.data.childAgeOld.push(document.getElementById("oldestAge").value);
