@@ -19,8 +19,6 @@
   <img src="images/stanford.png" alt="Stanford University">
   <p id='logo-text'>Stanford Language and Cognition Lab</p>
   <p class="block-text">In this experiment, you will read statements about children's development. The statements will be related to how children learn about the world and how adults can help them learn. We would like you to tell us how much you agree or disagree with each statement.</p>
-
-  <p class="block-text">DO ONLY ONE "CHILD DEVELOPMENT SURVEY" HIT. IF YOU DO MULTIPLE HITS OF THIS TYPE, YOU WILL NOT BE PAID!</p>
   <button type="button" onclick="this.blur(); experiment.next()">Start</button>
 
   <p class="block-text"><br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
@@ -41,7 +39,7 @@
   <br>
 
   <div align="center">
-    <h5><b>Do you agree or disagree with the following statement about children's development?</b></h5><br>
+    <h5><b>Do you agree or disagree with the following statement?</b></h5><br>
   </div>
 
   <!-- Show sentence from attitudes scale -->
@@ -56,6 +54,7 @@
 <table align = "center"><tr>
   <td align="center">
     <tr>
+      <td> </td>
       <td> </td>
       <td> </td>
       <td> </td>
@@ -85,24 +84,57 @@
 </div>
 
 
-<!-- The two-choice instructions slide. -->
-<!-- <div class="slide" id="two_choice_slide">
+</div>
 
-  <br>
+<!-- Questionnaire slide 2 - knowledge -->
 
-  <p class="block-text">For the remaining questions, please mark whether you <b>agree</b> or <b>disagree</b> with the statement.</p>
+<div class="slide" id="knowledge_slide">
 
-  <table align="center"><tr>
-    <td align="center">
-      <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
-    </td> 
-    <tr><td align="center">
+ <br>
 
-    </td></tr> 
+ <div align="center">
+  <h5><b>Do you agree or disagree with the following statement?</b></h5><br>
+</div>
+<div align="center">
+  <p id ="knowledge">{{}}</p> 
+</div>
+<br>
 
-  </table>
+<!-- Agree/disagree radio buttons -->
 
-</div> -->
+<table align = "center"><tr>
+  <td align="center">
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td><input id="2afcA" type="radio" name="judgment" value = "1">
+        <label for="2afcA">Agree</label></td>
+        <td> </td>
+        <td> </td>
+        <td><input id="2afcD" type="radio" name="judgment" value = "0">
+          <label for="2afcD">Disagree</label></td>
+            <td> </td>
+        <td> </td>
+        <td><input id ="DU" type="radio" name="judgment" value = "DU">
+            <label for="DU">I don't understand the question</label></td>
+          <td>&nbsp;&nbsp;&nbsp;</td>
+      </tr>
+    </table>
+      <!-- Next button and "please make a response" message -->
+
+      <table align="center"><tr>
+        <td align="center">
+          <button type="button" id="nextButton_Kno" onClick="experiment.log_response()"> next</button>
+        </td> 
+        <tr><td align="center">
+          <div id="testMessage_kno"> </div>
+        </td></tr>
+
+      </table>
+
+    </div>
 
     <!-- The debriefing slide. -->
     <div class="slide" id="debriefing">
@@ -279,7 +311,7 @@
  You're finished - thanks for participating! Submitting to Mechanical Turk...
 </div>
 
-<script src="parenting_proj_e4.js"></script>
+<script src="parenting_proj_e5.js"></script>
 
 </body>
 </html>

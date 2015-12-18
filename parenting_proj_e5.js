@@ -69,12 +69,49 @@ var atts = ['It is very important that children learn to respect adults, such as
 'Children learn the most when they can choose how to play instead of being told how to play.',
 'Babies start to learn about the world (e.g., their toy ball is heavier than their cup) even before they learn to talk.',
 'It is not helpful for adults to explain the reasons for rules to children.',
-'Children cannot learn if parents don’t reward them when they are right.']; 
+'Children cannot learn if parents don’t reward them when they are right.',
+]; 
 atts = shuffle(atts); 
 
 var totalTrialsAtt = atts.length;
 
-var numTrialsExperiment = totalTrialsAtt
+
+var know = ['Using baby-talk (i.e. talking in a sing-song voice) helps babies learn how to talk.',
+'Children learn fewer words when adults talk with a warm tone.',
+'Babies should be able to see your face when you talk to them.',
+'By the age of 3, children answer questions just as quickly as adults.',
+'Parents should not talk back when their toddlers use ‘baby-talk’ (like when they say “ba-ba” instead of “teddy bear”).',
+'Pointing to things is one way that babies learn how to talk.',
+'Adults cannot have conversations with babies who can’t talk yet.',
+'Children learn fewer words when they don’t pay attention to what you’re saying.',
+'Parents need to know a lot of big words to teach children how to talk.',
+'You cannot teach children anything new by reading them the same book over and over.',
+'Parents who have trouble reading can help their children learn how to read books.',
+'Some books should be kept where babies can reach them.',
+'When reading with toddlers, you should always read all of the words on one page before moving on to the next page.',
+'2-year-olds should do their best to listen quietly when you read to them.',
+'Children can learn from looking at books by themselves before they know how to read.',
+'Saying numbers and counting are the only ways you can help toddlers get ready to learn math in school.',
+'Toddlers need to learn how to count before they can understand math.',
+'Talking about the difference between tall and short teaches toddlers about math.',
+'It’s best for children to wait until they are old enough for school to learn about math.',
+'Children are learning about math when they learn the names of different shapes (like triangles and squares).',
+'Children who know fewer words when they start school will probably do worse in third grade than their classmates who know more words.',
+'Talking to children cannot make them smarter.',
+'How many words 3-year-olds know can predict how well they might do in kindergarten.',
+'Children should be told what to do instead of given choices.',
+'How many words 3-year-olds know cannot predict how many new words they will learn during their lifetime.',
+'Talking to 3-year-olds can help them do better in school.',
+'It’s the school’s responsibility to make sure children learn how to read and do math.',
+'Watching educational TV is good for children of all ages.',
+'Having conversations with adults while watching television can help 3-year-olds learn new words.',
+'The more television children under 2 watch by themselves the more words they learn.'
+]; 
+know = shuffle(know); 
+
+var totalTrialsKnow = know.length;
+
+var numTrialsExperiment = totalTrialsAtt + totalTrialsKnow;
 var trials = [];
 
 // first build attitudes question trials
@@ -88,6 +125,16 @@ for (i = 0; i < totalTrialsAtt; i++) {
 	trials.push(trial);
 }
 
+// add knowledge question trials after
+for (i = 0; i < totalTrialsKnow; i++) {
+	trial = {
+		sentence: know[i],
+		trial_number_block: i +1,
+		trial_type: "knowledge"
+	}
+
+	trials.push(trial);
+}
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -130,11 +177,10 @@ var experiment = {
 
 	var response_logged = false;
 
-	
 	//Array of radio buttons
 	var radio = document.getElementsByName("judgment");
-	
-	// Loop through radio buttons
+
+
 	for (i = 0; i < radio.length; i++) {
 	    if (radio[i].checked) {
 		experiment.data.rating.push(radio[i].value);
@@ -145,6 +191,7 @@ var experiment = {
 	
 	if (response_logged) {
 	   nextButton_Att.blur();
+	   nextButton_Kno.blur();
 	    
 	    // uncheck radio buttons
 	    for (i = 0; i < radio.length; i++) {
@@ -153,6 +200,9 @@ var experiment = {
 	    experiment.next();
 	} else {
 	    $("#testMessage_att").html('<font color="red">' + 
+				   'Please make a response!' + 
+				   '</font>');
+	    $("#testMessage_kno").html('<font color="red">' + 
 				   'Please make a response!' + 
 				   '</font>');
 	}
@@ -167,7 +217,7 @@ var experiment = {
 	    
 	    $("#testMessage_att").html(''); 	// clear the test message
 
-		// $("#testMessage_kno").html(''); 
+		$("#testMessage_kno").html(''); 
 		$("#progress").attr("style","width:" +
 			    String(100 * (1 - (trials.length)/numTrialsExperiment)) + "%")
 
@@ -188,7 +238,11 @@ var experiment = {
 	    if (trial_info.trial_type == "attitudes") {
 	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
 	    	 showSlide("attitudes_slide");              //display slide
-	    } 
+	    } else {
+			$("#knowledge").html(trial_info.sentence);
+	    	showSlide("knowledge_slide");
+	    }
+	    
 	    
 
 	    // log the sentence for each trial
