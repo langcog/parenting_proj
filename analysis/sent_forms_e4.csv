@@ -1,0 +1,25 @@
+sent,short_sent,category,reverse_code,instrument
+"It is very important that children learn to respect adults, such as parents and teachers.",respect parents teachers,rules_respect,0,attitudes
+The best way to encourage children to behave well is to punish them when they misbehave.,punish misbehavior,rules_respect,0,attitudes
+It is important for children to learn to not interrupt their parents.,dont interrupt,rules_respect,0,attitudes
+"It is important for young children to learn to control their impulses (e.g., waiting when told to wait).",wait when told,rules_respect,0,attitudes
+"If young children do not learn to control their behavior, they will have trouble learning and making friends later on.",control behavior,rules_respect,0,attitudes
+The most important role for parents is to provide structure for their children in the form of rules.,parents provide structure,rules_respect,0,attitudes
+Parents should not have strict rules about what children can and cannot do.,strict rules,rules_respect,1,attitudes
+Children should not be punished for breaking small rules.,punish for small rules,rules_respect,1,attitudes
+It's important for a baby to have a strong bond with mom.,strong bond mom,affection,0,attitudes
+It's important for parents to provide a safe and loving environment for their child.,safe loving environment,affection,0,attitudes
+Holding and cradling babies is important for forming strong bonds with parents.,holding and cradling,affection,0,attitudes
+"If a child does not enjoy an activity, the parent should not force the child to do it.",dont force activity,affection,0,attitudes
+Children who have behavior problems often don't get enough love at home.,behavior problems no love,affection,0,attitudes
+Parents should encourage young children to talk about their opinions.,talk about opinions,affection,0,attitudes
+Parents do not need to talk to their child about the child's feelings.,talk about feelings,affection,1,attitudes
+Children become spoiled if they receive too much affection from parents.,not spoiled with too much affection,affection,1,attitudes
+"Children learn best when adults give them examples (e.g., examples of good behavior).",examples are good,active_learning,0,attitudes
+Children can learn about things like good and bad behavior from an early age.,can learn good and bad ,active_learning,0,attitudes
+Children learn the most when adults talk to them about something they are already interested in.,follow-in good,active_learning,0,attitudes
+Children can learn a lot just by playing.,learn by playing,active_learning,0,attitudes
+Children learn the most when they can choose how to play instead of being told how to play.,spontaneous play,active_learning,0,attitudes
+"Babies start to learn about the world (e.g., their toy ball is heavier than their cup) even before they learn to talk.",learn before talking,active_learning,0,attitudes
+It is not helpful for adults to explain the reasons for rules to children.,reasons for rules,active_learning,1,attitudes
+Children cannot learn if parents don't reward them when they are right.,reward accuracy,active_learning,1,attitudes

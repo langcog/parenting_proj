@@ -1,0 +1,437 @@
+---
+title: "Parenting Project Attitudes Questionnaire Experiment 4"
+author: "Emily & Mike"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+<style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code {
+  font-size: 11px;
+}
+pre {
+  font-size: 11px;
+}
+</style>
+
+Data analysis of basic parenting values/attitudes survey, version 2.
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+
+rm(list=ls())
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(langcog)
+library(plyr); library(dplyr)
+library(ggplot2)
+library(rjson)
+library(stringr)
+library(tidyr)
+library(psych)
+library(nFactors)
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_bw())
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+files <- dir("../production-results/e5/")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/e5/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  # clean up instruction trial
+  sent <- jd$answers$data$sentence
+  rating <- as.numeric(jd$answers$data$rating)
+  trial_type <- jd$answer$data$trial_type
+  
+  id <- data.frame(workerid = jd$WorkerId, 
+                   sent = sent,
+                   rating = rating,
+                   children = jd$answers$data$children,
+                   age_youngest_child =    jd$answers$data$childAgeYoung,
+                   age_oldest_child = jd$answers$data$childAgeOld,
+                   ethnicity = jd$answers$data$ethnicity,
+                   race = jd$answers$data$race,
+                   language = jd$answer$data$homelang,
+                   ses = jd$answer$data$ladder,
+                   gender = jd$answer$data$gender,
+                   age = jd$answer$data$age,
+                   education = jd$answer$data$education)
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+Map on question short forms so that we can use these instead. 
+
+```{r}
+labels <- read.csv("sent_forms_e5.csv")
+labels$sent <- as.character(labels$sent)
+```
+
+Clean up labels.
+
+```{r}
+d.raw$sent <- as.character(d.raw$sent)
+d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "’", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "â", "'")
+
+```
+
+Merge.  
+
+```{r}
+d <- left_join(d.raw, labels)
+
+#set up reverse code variables so that items don't get reverse coded a second time. 
+
+d$reverse_code[d$reverse_code == 1 & d$rating == "1"] <- 1
+d$reverse_code[d$reverse_code == 1 & d$rating == "0"] <- 0
+
+#reverse code.
+d$rating[d$reverse_code == 1 & d$rating == "1"] <- 0
+d$rating[d$reverse_code == 0 & d$rating == "0"] <- 1
+```
+
+Plot demographic info.
+```{r}
+subinfo <- d %>% 
+  group_by(workerid) %>%
+  summarise(age = age[1],
+            gender = gender[1],
+            children = children[1],
+            age_oldest_child = age_oldest_child[1],
+            age_youngest_child = age_youngest_child[1],
+            ses = ses[1],
+            education = education[1],
+            language = language[1],
+            ethnicity = ethnicity[1],
+            race = race[1])
+
+subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+
+subinfo$gender <- str_replace_all(subinfo$gender, "female", "Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "FEMALE", "Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "F$", "Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "f$", "Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "Female ", "Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "^male", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "^Male ", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "^MALE", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "^M$", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "^m$", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "^Maleq", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "Make", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "29", "")
+
+subinfo$age_oldest_child <- factor(subinfo$age_oldest_child, levels = c("0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+subinfo$age_youngest_child <- factor(subinfo$age_youngest_child, levels = c("0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(language, data=subinfo)
+qplot(age_oldest_child, data=subinfo)
+qplot(age_youngest_child, data=subinfo)
+qplot(ethnicity, data=subinfo)
+qplot(race, data=subinfo)
+
+```
+
+# Basic analyses
+
+Now look at mean ratings across sentences.
+
+```{r}
+
+attach(d)
+rating_count <- table(d$rating) 
+rating_count
+prop.table(rating_count) 
+
+#d$rating[d$rating == "DU"] <- ""
+
+ms <- d %>%
+  group_by(category, instrument, short_sent) %>%
+  multi_boot_standard(col = "rating",na.rm=TRUE) %>%
+  arrange(instrument, category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+
+```
+
+Plot attitude. 
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, 
+      geom = "pointrange",
+      data = filter(ms, instrument == "attitudes")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,1)) + 
+  scale_colour_solarized()
+
+```
+
+
+# Scale reliability
+
+
+```{r}
+wide.attitudes <- d %>% 
+  filter(instrument == "attitudes") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
+alpha(x = alpha.mat)
+
+
+```
+
+# Factor analysis
+
+Get eigenvalues for determining number of factors. 
+
+
+```{r}
+att.mat <- select(wide.attitudes, -workerid)
+ev <- eigen(cor(x=att.mat)) # get eigenvalues
+ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
+               rep=100,cent=.05)
+nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
+plotnScree(nS)
+```
+
+Now plot factor analysis
+
+```{r}
+n.factors <- 3
+af <- factanal(x = att.mat, factors = n.factors, scores = "regression")
+loadings <- data.frame(af$loadings[,1:n.factors]) %>%
+  mutate(item = rownames(af$loadings)) %>%
+  gather(factor, loading, starts_with("Factor"))
+
+qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
+  scale_fill_continuous(low="#000000", high="#FFFFFF")
+
+qplot(factor, item, fill=loading > .35, geom="tile", data = loadings) + 
+  scale_fill_solarized()
+```
+
+Merge back in subject id info. 
+
+```{r}
+a.scores <- af$scores %>%
+  data.frame %>%
+  mutate(workerid = as.character(wide.attitudes$workerid)) %>%
+  left_join(subinfo)
+```
+
+And summary:
+
+Note: I re-labeled the factors, because the order appears different this time.
+
+## Factors by SES
+```{r}
+a.factor.names <- c("Affection and Early Learning", "Rules and Respect", "Spontaneous Play")
+
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(ses != "") %>%
+  mutate(high.ses = ses > 5, 
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(high.ses, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=high.ses, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+
+## Factors by Gender
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(gender != "") %>%
+  mutate(male.gender = gender == "Male",
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(male.gender, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=male.gender, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+ 
+## Factors by Education
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(education != "") %>%
+  mutate(high.education = (education == "4year" |education == "someGrad" | education == "Grad"),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(high.education, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=high.education, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+
+## Factors by Age
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(age != "") %>%
+  mutate(young.age = (age == "0-19" |age == "20-29"),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(young.age, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=young.age, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+
+## Factors by Number of Children
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(children != "") %>%
+  mutate(n.children = children,
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(n.children, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=n.children, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(children != "") %>%
+  mutate(yes.children = (children == "1" | children == "2" | children == "3"| children == "4"| children == "5"),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(yes.children, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=yes.children, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+
+
+# Principal components analysis
+
+Next, let's look at a principal components analysis for the data. This approach tries to understand underlying orthogonal dimensions of variability.
+
+
+```{r}
+row.names(wide.attitudes) <- wide.attitudes$workerid
+pcs <- princomp(x = select(wide.attitudes, -workerid))
+plot(pcs)
+```
+
+
+Let's try to plot the items by hand for more detail. 
+
+```{r}
+pc.items <- data.frame(pc1 = pcs$loadings[,1],
+                      pc2 = pcs$loadings[,2],
+                      pc3 = pcs$loadings[,3],
+                      short_sent = row.names(pcs$loadings)) %>%
+  left_join(labels)
+
+qplot(pc1, pc2, col = category,
+      label = short_sent, hjust = 1,
+      geom = c("text","point"),
+      data = pc.items) + 
+  scale_colour_solarized() + 
+  xlim(-.15,.35)
+```
+
+```{r}
+pc.inds <- data.frame(yes.children = (children == "1" | children == "2" | children == "3"| children == "4"| children == "5"),
+                      pc1 = as.numeric(pcs$scores[,1]),
+                      pc2 = as.numeric(pcs$scores[,2]),
+                      pc3 = as.numeric(pcs$scores[,3]),
+                      workerid = row.names(pcs$scores)) %>%
+  left_join(subinfo)
+                      
+qplot(pc1, pc2, col = yes.children,
+      hjust = 1,
+      data = pc.inds) + 
+  scale_colour_solarized()
+```
+
+
+```{r}
+pc.data <- data.frame(pc1 = pcs$loadings[,1],
+                      pc2 = pcs$loadings[,2],
+                      pc3 = pcs$loadings[,3],
+                      short_sent = row.names(pcs$loadings)) %>%
+  left_join(labels)
+
+qplot(pc1, pc2, col = category,
+      label = short_sent, hjust = 1,
+      geom = c("text","point"),
+      data = pc.data) + 
+  xlim(-.7,.3) +
+  scale_colour_solarized()
+```
+
+ 
+# Conclusions
+

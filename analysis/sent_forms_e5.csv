@@ -1,0 +1,55 @@
+sent,short_sent,category,reverse_code,instrument
+"It is very important that children learn to respect adults, such as parents and teachers.",respect parents teachers,rules_respect,0,attitudes
+The best way to encourage children to behave well is to punish them when they misbehave.,punish misbehavior,rules_respect,0,attitudes
+It is important for children to learn to not interrupt their parents.,dont interrupt,rules_respect,0,attitudes
+"It is important for young children to learn to control their impulses (e.g., waiting when told to wait).",wait when told,rules_respect,0,attitudes
+"If young children do not learn to control their behavior, they will have trouble learning and making friends later on.",control behavior,rules_respect,0,attitudes
+The most important role for parents is to provide structure for their children in the form of rules.,parents provide structure,rules_respect,0,attitudes
+Parents should not have strict rules about what children can and cannot do.,strict rules,rules_respect,1,attitudes
+Children should not be punished for breaking small rules.,punish for small rules,rules_respect,1,attitudes
+It's important for a baby to have a strong bond with mom.,strong bond mom,affection,0,attitudes
+It's important for parents to provide a safe and loving environment for their child.,safe loving environment,affection,0,attitudes
+Holding and cradling babies is important for forming strong bonds with parents.,holding and cradling,affection,0,attitudes
+"If a child does not enjoy an activity, the parent should not force the child to do it.",dont force activity,affection,0,attitudes
+Children who have behavior problems often don't get enough love at home.,behavior problems no love,affection,0,attitudes
+Parents should encourage young children to talk about their opinions.,talk about opinions,affection,0,attitudes
+Parents do not need to talk to their child about the child's feelings.,talk about feelings,affection,1,attitudes
+Children become spoiled if they receive too much affection from parents.,not spoiled with too much affection,affection,1,attitudes
+"Children learn best when adults give them examples (e.g., examples of good behavior).",examples are good,active_learning,0,attitudes
+Children can learn about things like good and bad behavior from an early age.,can learn good and bad ,active_learning,0,attitudes
+Children learn the most when adults talk to them about something they are already interested in.,follow-in good,active_learning,0,attitudes
+Children can learn a lot just by playing.,learn by playing,active_learning,0,attitudes
+Children learn the most when they can choose how to play instead of being told how to play.,spontaneous play,active_learning,0,attitudes
+"Babies start to learn about the world (e.g., their toy ball is heavier than their cup) even before they learn to talk.",learn before talking,active_learning,0,attitudes
+It is not helpful for adults to explain the reasons for rules to children.,reasons for rules,active_learning,1,attitudes
+Children cannot learn if parents don't reward them when they are right.,reward accuracy,active_learning,1,attitudes
+Using baby-talk (i.e. talking in a sing-song voice) helps babies learn how to talk.,babytalk,learn_talk,0,knowledge
+Parents should not talk back when their toddlers use baby-talk (like when they say ba-ba instead of teddy bear).,no babytalk,learn_talk,1,knowledge
+Adults cannot have conversations with babies who cant talk yet.,no baby conversation,learn_talk,1,knowledge
+Talking to children cannot make them smarter.,no talk IQ connection,learn_talk,1,knowledge
+Babies should be able to see your face when you talk to them.,joint attention,learn_talk,0,knowledge
+Children learn fewer words when adults talk with a warm tone.,no learning from warmth,learn_talk,1,knowledge
+Children learn fewer words when they dont pay attention to what youre saying.,attention important ,learn_talk,0,knowledge
+"By the age of 3, children answer questions just as quickly as adults.",kids quick on questions,learn_talk,1,knowledge
+Parents need to know a lot of big words to teach children how to talk.,parents need big words,learn_talk,1,knowledge
+Pointing to things is one way that babies learn how to talk.,pointing is good,learn_talk,0,knowledge
+Its best for children to wait until they are old enough for school to learn about math.,school math,math,1,knowledge
+Its the schools responsibility to make sure children learn how to read and do math.,school responsibility,math,1,knowledge
+Saying numbers and counting are the only ways you can help toddlers get ready to learn math in school.,counting toddlers,math,1,knowledge
+Talking about the difference between tall and short teaches toddlers about math.,short tall,math,0,knowledge
+Children are learning about math when they learn the names of different shapes (like triangles and squares).,shape talk,math,0,knowledge
+Toddlers need to learn how to count before they can understand math.,counting before math,math,1,knowledge
+2-year-olds should do their best to listen quietly when you read to them.,listen quietly,reading,1,knowledge
+Some books should be kept where babies can reach them.,books for babies,reading,0,knowledge
+Children can learn from looking at books by themselves before they know how to read.,books before reading,reading,0,knowledge
+Parents who have trouble reading can help their children learn how to read books.,parents reading trouble,reading,0,knowledge
+"When reading with toddlers, you should always read all of the words on one page before moving on to the next page.",read all words,reading,1,knowledge
+You cannot teach children anything new by reading them the same book over and over.,no repetition,reading,1,knowledge
+Talking to 3-year-olds can help them do better in school.,talk school,start_school,0,knowledge
+How many words 3-year-olds know cannot predict how many new words they will learn during their lifetime.,no prediction,start_school,1,knowledge
+Children who know fewer words when they start school will probably do worse in third grade than their classmates who know more words.,no vocab bad in school,start_school,0,knowledge
+Children should be told what to do instead of given choices.,tell kids what to do,start_school,1,knowledge
+How many words 3-year-olds know can predict how well they might do in kindergarten.,words predict academic ,start_school,0,knowledge
+Having conversations with adults while watching television can help 3-year-olds learn new words.,tv conversation,tv,0,knowledge
+The more television children under 2 watch by themselves the more words they learn.,tv good for words,tv,1,knowledge
+Watching educational TV is good for children of all ages.,educational tv good,tv,1,knowledge
