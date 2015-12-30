@@ -48,6 +48,8 @@ theme_set(theme_bw())
 
 Read in files and consolidate to the same directory. 
 
+
+Leaving out variables that are causing issues: race, ethnicity, age of oldest child, age of youngest child. 
 ```{r}
 files <- dir("../production-results/e4/")
 d.raw <- data.frame()
@@ -58,17 +60,15 @@ for (f in files) {
   
   # clean up instruction trial
   sent <- jd$answers$data$sentence
-  rating <- as.numeric(jd$answers$data$rating)
+  rating <- (jd$answers$data$rating) #removed as.numeric to include DU responses
   trial_type <- jd$answer$data$trial_type
+  sent <- sent[trial_type != "2afc_instructions"]
+  trial_type <- trial_type[trial_type != "2afc_instructions"]
   
   id <- data.frame(workerid = jd$WorkerId, 
                    sent = sent,
                    rating = rating,
                    children = jd$answers$data$children,
-                   age_youngest_child =    jd$answers$data$childAgeYoung,
-                   age_oldest_child = jd$answers$data$childAgeOld,
-                   ethnicity = jd$answers$data$ethnicity,
-                   race = jd$answers$data$race,
                    language = jd$answer$data$homelang,
                    ses = jd$answer$data$ladder,
                    gender = jd$answer$data$gender,
@@ -130,33 +130,17 @@ subinfo <- d %>%
   summarise(age = age[1],
             gender = gender[1],
             children = children[1],
-            age_oldest_child = age_oldest_child[1],
-            age_youngest_child = age_youngest_child[1],
             ses = ses[1],
             education = education[1],
-            language = language[1],
-            ethnicity = ethnicity[1],
-            race = race[1])
+            language = language[1])
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 
-subinfo$gender <- str_replace_all(subinfo$gender, "female", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "FEMALE", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "F$", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "f$", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "Female ", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "^male", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^Male ", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^MALE", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^M$", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^m$", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^Maleq", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "Make", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "female|FEMALE|F$|f$|Female ","Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
 subinfo$gender <- str_replace_all(subinfo$gender, "29", "")
 
-subinfo$age_oldest_child <- factor(subinfo$age_oldest_child, levels = c("0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
-
-subinfo$age_youngest_child <- factor(subinfo$age_youngest_child, levels = c("0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|English ", "English")
 
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
@@ -164,10 +148,6 @@ qplot(gender, data=subinfo)
 qplot(education, data=subinfo)
 qplot(age, data=subinfo)
 qplot(language, data=subinfo)
-qplot(age_oldest_child, data=subinfo)
-qplot(age_youngest_child, data=subinfo)
-qplot(ethnicity, data=subinfo)
-qplot(race, data=subinfo)
 
 ```
 
@@ -175,18 +155,21 @@ qplot(race, data=subinfo)
 
 Now look at mean ratings across sentences.
 
-```{r}
 
+
+```{r}
 attach(d)
 rating_count <- table(d$rating) 
 rating_count
 prop.table(rating_count) 
 
-d$rating[d$rating == "DU"] <- ""
+#get rid of DU
+d$rating <- as.numeric(d$rating)
 
+#added na.rm=TRUE to deal with missing values from DU.
 ms <- d %>%
   group_by(category, instrument, short_sent) %>%
-  multi_boot_standard(col = "rating") %>%
+  multi_boot_standard(col = "rating", na.rm=TRUE) %>%
   arrange(instrument, category, desc(mean)) 
 
 ms$short_sent_ord <- factor(ms$short_sent, 
@@ -194,7 +177,9 @@ ms$short_sent_ord <- factor(ms$short_sent,
 
 ```
 
-Plot attitude. 
+Plot attitude.
+
+Ratings are clearly lower for the reverse coded items.. this could be due to response sets (i.e., participants endorsing all items highly)
 
 ```{r}
 qplot(short_sent_ord, mean, col = category,
@@ -212,10 +197,8 @@ qplot(short_sent_ord, mean, col = category,
 
 # Scale reliability
 
-[Useful chapter here](http://psych.wfu.edu/furr/716/Furr%20SC%26P%20Ch%202.pdf)
- 
-Reliability is reduced compared to e2 (alpha = 76 compared to 81 for e2)
-
+## Whole Scale
+This analysis is not especially meaningful as it averages across the three subscales. However, it can be used as a comparison with the within subscale alphas. Raw alpha is .72 for the whole scale.
 ```{r}
 wide.attitudes <- d %>% 
   filter(instrument == "attitudes") %>%
@@ -223,18 +206,56 @@ wide.attitudes <- d %>%
   spread(short_sent, rating)
 alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
 alpha(x = alpha.mat)
+```
 
+## Rules and Respect Subscale
+
+Raw alpha is .72 here. 
+
+```{r}
+wide.rules_respect <- d %>% 
+  filter(category == "rules_respect") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
+alpha(x = alpha.rr)
+```
+
+## Affection and Attachment Subscale
+
+Raw alpha is .57 here, which is pretty low. It looks like removing the items "behavior problems no love" and "don't force activity" would improve things quite a bit.
+
+```{r}
+wide.affection <- d %>% 
+  filter(category == "affection") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.af <- as.matrix(select(wide.affection, -workerid))
+alpha(x = alpha.af)
 
 ```
+
+## Active Learning Subscale
+
+Raw alpha is .55, which is again low. Dropping "reward accuracy" will help. 
+```{r}
+wide.active_learning <- d %>% 
+  filter(category == "active_learning") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.al <- as.matrix(select(wide.active_learning, -workerid))
+alpha(x = alpha.al)
+```
+
 
 # Factor analysis
 
 Get eigenvalues for determining number of factors. 
 
-
 ```{r}
 att.mat <- select(wide.attitudes, -workerid)
-ev <- eigen(cor(x=att.mat)) # get eigenvalues
+
+ev <- eigen(cor(x=att.mat, use = "complete.obs")) # get eigenvalues, removes NAs
 ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
                rep=100,cent=.05)
 nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
@@ -243,9 +264,11 @@ plotnScree(nS)
 
 Now plot factor analysis
 
+FACTOR ANALYSIS BROKEN DUE TO NA
+
 ```{r}
 n.factors <- 3
-af <- factanal(x = att.mat, factors = n.factors, scores = "regression")
+af <- factanal(x = att.mat, factors = n.factors, na.rm=TRUE, scores = "regression")
 loadings <- data.frame(af$loadings[,1:n.factors]) %>%
   mutate(item = rownames(af$loadings)) %>%
   gather(factor, loading, starts_with("Factor"))
@@ -268,11 +291,9 @@ a.scores <- af$scores %>%
 
 And summary:
 
-Note: I re-labeled the factors, because the order appears different this time.
-
 ## Factors by SES
 ```{r}
-a.factor.names <- c("Affection and Early Learning", "Rules and Respect", "Spontaneous Play")
+a.factor.names <- c("Rules and Respect", "Affection and Attachment", "Active Learning")
 
 ms <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -383,66 +404,6 @@ qplot(factor.name, mean, fill=yes.children,
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 
-```
-
-
-# Principal components analysis
-
-Next, let's look at a principal components analysis for the data. This approach tries to understand underlying orthogonal dimensions of variability.
-
-
-```{r}
-row.names(wide.attitudes) <- wide.attitudes$workerid
-pcs <- princomp(x = select(wide.attitudes, -workerid))
-plot(pcs)
-```
-
-
-Let's try to plot the items by hand for more detail. 
-
-```{r}
-pc.items <- data.frame(pc1 = pcs$loadings[,1],
-                      pc2 = pcs$loadings[,2],
-                      pc3 = pcs$loadings[,3],
-                      short_sent = row.names(pcs$loadings)) %>%
-  left_join(labels)
-
-qplot(pc1, pc2, col = category,
-      label = short_sent, hjust = 1,
-      geom = c("text","point"),
-      data = pc.items) + 
-  scale_colour_solarized() + 
-  xlim(-.15,.35)
-```
-
-```{r}
-pc.inds <- data.frame(yes.children = (children == "1" | children == "2" | children == "3"| children == "4"| children == "5"),
-                      pc1 = as.numeric(pcs$scores[,1]),
-                      pc2 = as.numeric(pcs$scores[,2]),
-                      pc3 = as.numeric(pcs$scores[,3]),
-                      workerid = row.names(pcs$scores)) %>%
-  left_join(subinfo)
-                      
-qplot(pc1, pc2, col = yes.children,
-      hjust = 1,
-      data = pc.inds) + 
-  scale_colour_solarized()
-```
-
-
-```{r}
-pc.data <- data.frame(pc1 = pcs$loadings[,1],
-                      pc2 = pcs$loadings[,2],
-                      pc3 = pcs$loadings[,3],
-                      short_sent = row.names(pcs$loadings)) %>%
-  left_join(labels)
-
-qplot(pc1, pc2, col = category,
-      label = short_sent, hjust = 1,
-      geom = c("text","point"),
-      data = pc.data) + 
-  xlim(-.7,.3) +
-  scale_colour_solarized()
 ```
 
  
