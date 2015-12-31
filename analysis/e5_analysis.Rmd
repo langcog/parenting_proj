@@ -58,22 +58,23 @@ for (f in files) {
   
   # clean up instruction trial
   sent <- jd$answers$data$sentence
-  rating <- as.numeric(jd$answers$data$rating)
+  rating <- (jd$answers$data$rating) #removed as.numeric to include DU responses
   trial_type <- jd$answer$data$trial_type
+  sent <- sent[trial_type != "2afc_instructions"]
+  trial_type <- trial_type[trial_type != "2afc_instructions"]
   
   id <- data.frame(workerid = jd$WorkerId, 
                    sent = sent,
                    rating = rating,
                    children = jd$answers$data$children,
-                   age_youngest_child =    jd$answers$data$childAgeYoung,
-                   age_oldest_child = jd$answers$data$childAgeOld,
-                   ethnicity = jd$answers$data$ethnicity,
-                   race = jd$answers$data$race,
                    language = jd$answer$data$homelang,
                    ses = jd$answer$data$ladder,
                    gender = jd$answer$data$gender,
                    age = jd$answer$data$age,
-                   education = jd$answer$data$education)
+                   education = jd$answer$data$education,
+                   ethnicity = jd$answer$data$ethnicity,
+                   childAgeYoung = jd$answer$data$childAgeYoung,
+                   childAgeOld = jd$answer$data$childAgeOld)
   d.raw <- bind_rows(d.raw, id)
 }
 ```
@@ -114,39 +115,30 @@ d$rating[d$reverse_code == 0 & d$rating == "0"] <- 1
 ```
 
 Plot demographic info.
+
+Note: more respondants with children than Experiment 4, but still not a ton.
 ```{r}
 subinfo <- d %>% 
   group_by(workerid) %>%
   summarise(age = age[1],
             gender = gender[1],
             children = children[1],
-            age_oldest_child = age_oldest_child[1],
-            age_youngest_child = age_youngest_child[1],
             ses = ses[1],
             education = education[1],
             language = language[1],
             ethnicity = ethnicity[1],
-            race = race[1])
+            childAgeYoung = childAgeYoung[1],
+            childAgeOld = childAgeOld[1])
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 
-subinfo$gender <- str_replace_all(subinfo$gender, "female", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "FEMALE", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "F$", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "f$", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "Female ", "Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "^male", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^Male ", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^MALE", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^M$", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^m$", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "^Maleq", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "Make", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "29", "")
+subinfo$gender <- str_replace_all(subinfo$gender, "female|FEMALE|F$|f$|Female ","Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
 
-subinfo$age_oldest_child <- factor(subinfo$age_oldest_child, levels = c("0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
-
-subinfo$age_youngest_child <- factor(subinfo$age_youngest_child, levels = c("0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|English | English| ENglish|^eng$|ENglish| English", "English")
+subinfo$language <- str_replace_all(subinfo$language, "SPANISH", "Spanish")
+subinfo$language <- str_replace_all(subinfo$language, "vietnamese", "Vietnamese")
+subinfo$language <- str_replace_all(subinfo$language, "russian", "Russian")
 
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
@@ -154,29 +146,29 @@ qplot(gender, data=subinfo)
 qplot(education, data=subinfo)
 qplot(age, data=subinfo)
 qplot(language, data=subinfo)
-qplot(age_oldest_child, data=subinfo)
-qplot(age_youngest_child, data=subinfo)
 qplot(ethnicity, data=subinfo)
-qplot(race, data=subinfo)
-
+qplot(childAgeYoung, data=subinfo)
+qplot(childAgeOld, data=subinfo)
 ```
 
 # Basic analyses
 
 Now look at mean ratings across sentences.
 
-```{r}
+Need to look at which items were associated with DU.
 
-attach(d)
-rating_count <- table(d$rating) 
+```{r}
+rating_count <- table(d$rating[instrument=="attitudes"]) 
 rating_count
 prop.table(rating_count) 
 
-#d$rating[d$rating == "DU"] <- ""
+#get rid of DU
+d$rating <- as.numeric(d$rating)
 
+#added na.rm=TRUE to deal with missing values from DU.
 ms <- d %>%
   group_by(category, instrument, short_sent) %>%
-  multi_boot_standard(col = "rating",na.rm=TRUE) %>%
+  multi_boot_standard(col = "rating", na.rm=TRUE) %>%
   arrange(instrument, category, desc(mean)) 
 
 ms$short_sent_ord <- factor(ms$short_sent, 
@@ -185,6 +177,10 @@ ms$short_sent_ord <- factor(ms$short_sent,
 ```
 
 Plot attitude. 
+
+People are pretty much endorsing every statement, except for the reverse coded ones, which is likely due to a response set. This seems like a pretty good argument for sticking with Likert for this questionnaire, since we are probably looking for variability in the degree to which people endorse the statements, since all of the statements are more or less reasonable. 
+
+Another thought: maybe we should frame the scale differently, in terms of how much participants AGREE with the scale, from 0-6, since they don't seem to disagree with any of the statements?
 
 ```{r}
 qplot(short_sent_ord, mean, col = category,
@@ -202,6 +198,8 @@ qplot(short_sent_ord, mean, col = category,
 
 # Scale reliability
 
+Can't really look at these because there is no variability for a lot of the items...
+## Whole Scale
 
 ```{r}
 wide.attitudes <- d %>% 
@@ -210,18 +208,127 @@ wide.attitudes <- d %>%
   spread(short_sent, rating)
 alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
 alpha(x = alpha.mat)
+```
 
+Look for items given "Don't Understand" ratings- they will be missing values here. There are only 10 DU ratings and they are spread across questions- no indication that any items are especially problematic.
+```{r}
+rating_count <- table(wide.attitudes$`behavior problems no love`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`can learn good and bad`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`control behavior`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`dont force activity`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`dont interrupt`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`examples are good`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`follow-in good`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`holding and cradling`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`learn before talking`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`learn by playing`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`not spoiled with too much affection`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`parents provide structure`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`punish for small rules`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`punish misbehavior`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`reasons for rules`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`respect parents teachers`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`reward accuracy`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`safe loving environment`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`spontaneous play`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`strict rules`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`strong bond mom`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`talk about feelings`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`talk about opinions`) 
+rating_count
+
+rating_count <- table(wide.attitudes$`wait when told`) 
+rating_count
+```
+
+## Rules and Respect Subscale
+
+```{r}
+wide.rules_respect <- d %>% 
+  filter(category == "rules_respect") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
+alpha(x = alpha.rr)
+```
+
+## Affection and Attachment Subscale
+
+```{r}
+wide.affection <- d %>% 
+  filter(category == "affection") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.af <- as.matrix(select(wide.affection, -workerid))
+alpha(x = alpha.af)
 
 ```
+
+## Active Learning Subscale
+
+```{r}
+wide.active_learning <- d %>% 
+  filter(category == "active_learning") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.al <- as.matrix(select(wide.active_learning, -workerid))
+alpha(x = alpha.al)
+```
+
 
 # Factor analysis
 
 Get eigenvalues for determining number of factors. 
 
-
+Error message for eigenvalues: standard deviation is 0
 ```{r}
 att.mat <- select(wide.attitudes, -workerid)
-ev <- eigen(cor(x=att.mat)) # get eigenvalues
+att.mat <- na.omit(att.mat)
+ev <- eigen(cor(x=att.mat)) # get eigenvalues, removes NAs
 ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
                rep=100,cent=.05)
 nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
@@ -232,7 +339,9 @@ Now plot factor analysis
 
 ```{r}
 n.factors <- 3
-af <- factanal(x = att.mat, factors = n.factors, scores = "regression")
+x <- na.omit(att.mat) #get rid of NA caused by DU responses
+
+af <- factanal(x, factors = n.factors, scores = "regression")
 loadings <- data.frame(af$loadings[,1:n.factors]) %>%
   mutate(item = rownames(af$loadings)) %>%
   gather(factor, loading, starts_with("Factor"))
@@ -432,6 +541,5 @@ qplot(pc1, pc2, col = category,
   scale_colour_solarized()
 ```
 
- 
 # Conclusions
-
+Should use Likert Scale and anchor from Don't Agree to Agree.
