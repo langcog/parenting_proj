@@ -139,8 +139,8 @@ subinfo <- d %>%
             education = education[1],
             language = language[1], 
             ethnicity = ethnicity[1],
-            childAgeYoung = childAgeYoung[1],
-            childAgeOld = childAgeOld[1]
+            youngestChildAge = childAgeYoung[1],
+            oldestChildAge = childAgeOld[1]
             )
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
@@ -151,9 +151,9 @@ subinfo$gender <- str_replace_all(subinfo$gender, "29", "")
 
 subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|English ", "English")
 
-subinfo$childAgeYoung <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$youngestChildAge <- factor(subinfo$youngestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
 
-subinfo$childAgeOld <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$oldestChildAge <- factor(subinfo$oldestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
 
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
@@ -162,8 +162,8 @@ qplot(education, data=subinfo)
 qplot(age, data=subinfo)
 qplot(language, data=subinfo)
 qplot(ethnicity, data=subinfo)
-qplot(childAgeYoung, data=subinfo)
-qplot(childAgeOld, data=subinfo)
+qplot(youngestChildAge, data=subinfo)
+qplot(oldestChildAge, data=subinfo)
 
 ```
 
@@ -173,7 +173,7 @@ Now look at mean ratings across sentences. DU stands for "Don't Understand," whi
 
 
 ```{r}
-attach(d)
+
 rating_count <- table(d$rating) 
 rating_count
 prop.table(rating_count) 
@@ -386,7 +386,7 @@ qplot(factor.name, mean, fill=young.age,
 
 ```
 
-## Factors by Number of Children
+## Factors by Children
 ```{r}
 ms <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -422,6 +422,24 @@ qplot(factor.name, mean, fill=yes.children,
              position = position_dodge(width = .9))
 
 ```
+ 
+## Factors by Ethnicity
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(ethnicity != "") %>%
+  mutate(hispanic = ethnicity== "Hispanic",
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(hispanic, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=hispanic, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+``` 
  
 # Conclusions
 
