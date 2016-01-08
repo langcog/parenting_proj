@@ -1,0 +1,43 @@
+sent,short_sent,category,reverse_code,instrument
+"It is very important that children learn to respect adults, such as parents and teachers.",respect parents teachers,rules_respect,0,attitudes
+The best way to encourage children to behave well is to punish them when they misbehave.,punish misbehavior,rules_respect,0,attitudes
+It is important for children to learn to not interrupt their parents.,dont interrupt,rules_respect,0,attitudes
+"It is important for young children to learn to control their impulses (e.g., waiting when told to wait).",wait when told,rules_respect,0,attitudes
+"If young children do not learn to control their behavior, they will have trouble learning and making friends later on.",control behavior,rules_respect,0,attitudes
+Children should be taught to be grateful to their parents.,children should be grateful,rules_respect,0,attitudes
+Parents should not have strict rules about what children can and cannot do.,strict rules,rules_respect,1,attitudes
+Children should not be punished for breaking small rules.,punish for small rules,rules_respect,1,attitudes
+Parents should not worry if their toddler misbehaves a lot.,worry about misbehavior,rules_respect,1,attitudes
+Parents should follow their childrens lead rather than imposing structure in the form of rules.,dont impose structure,rules_respect,1,attitudes
+Rules and structure dont prevent children from having tantrums.,rules prevent tantrums,rules_respect,1,attitudes
+"Young children should be allowed to make their own decisions, such as what to eat for dinner.",kids should not decide,rules_respect,1,attitudes
+Its important for babies and mothers to have strong bonds.,strong bond mom,affection,0,attitudes
+Parents need to provide safe and loving environments for their children.,safe loving environment,affection,0,attitudes
+Holding and cradling babies is important for forming strong bonds between parent and child.,holding and cradling,affection,0,attitudes
+Parents should encourage young children to talk about their opinions.,talk about opinions,affection,0,attitudes
+Children should be given comfort and understanding when they are scared or unhappy.,give children comfort,affection,0,attitudes
+Parents do not need to talk to their child about his or her emotions.,talk about emotions,affection,1,attitudes
+Theres no reason to talk with children about their feelings before they are mature enough to understand.,talk about feelings before mature,affection,1,attitudes
+Children become spoiled if they receive too much attention from parents.,not spoiled with too much attention,affection,1,attitudes
+Too much affection can harm or weaken a child.,too much affection does not harm,affection,1,attitudes
+Children will not learn how to control their emotions if parents always comfort them when upset.,control emotions if comforted,affection,1,attitudes
+"Children learn best when adults give them examples (e.g., examples of good behavior).",examples are good,active_learning,0,attitudes
+Children can learn about things like good and bad behavior from a very early age.,can learn good and bad ,active_learning,0,attitudes
+Children learn the most when adults talk to them about something they are already interested in.,follow-in good,active_learning,0,attitudes
+Children learn the most when they can choose how to play instead of being told how to play.,spontaneous play,active_learning,0,attitudes
+"Babies start to learn about the world (e.g., their toy ball is heavier than their cup) even before they learn to talk.",learn before talking,active_learning,0,attitudes
+Young children can teach themselves things by exploring and playing.,learn by playing,active_learning,0,attitudes
+"Babies learn about things that tend to happen together (e.g., mom always looks for her phone when it rings).",learn contingencies,active_learning,0,attitudes
+Babies repetitive behaviors (e.g. banging a cup on the table) are a way for them to explore cause and effect.,learn from repetetive behaviors,active_learning,0,attitudes
+Its important to play pretend with children.,play pretend,active_learning,0,attitudes
+"The best toys for kids are the simplest ones, like blocks or crayons.",simple toys,active_learning,0,attitudes
+It is not helpful for adults to explain the reasons for rules to young children because they wont understand.,reasons for rules,active_learning,1,attitudes
+Children dont need to learn about numbers and math until they go to school.,learn math before school,active_learning,1,attitudes
+Children dont learn as much from other children as they do from watching adults.,learn from other children,active_learning,1,attitudes
+Playing with friends is good for childrens social skills but does not help children learn anything.,play with friends,active_learning,1,attitudes
+Its more important to take care of babies basic needs than it is to expose them to new experiences.,new experiences,active_learning,1,attitudes
+Children should not begin learning to read until they start school.,reading before school,active_learning,1,attitudes
+Playing nonsense games with children can teach them bad habits.,nonsense games,active_learning,1,attitudes
+Parents should limit the amount of time their child plays freely with toys.,play freely,active_learning,1,attitudes
+"Parents should choose the toys children play with, regardless of the childs preferences.",parents choose toys,active_learning,1,attitudes
+Reading books to children is not helpful if they have not yet learned to speak.,reading before speaking,active_learning,1,attitudes
