@@ -42,3 +42,8 @@ Studying parenting attitudes and beliefs. Initial study of parent attitudes/beli
 * Included knowledge questions for comparison
 * Knowledge questions came after attitudes questions so attitudes can be compared across Experiments 4 and 5 (Likert vs. 2afc)
 
+#Experiment 6
+* 1-8-16
+* Added additional items to all scales, removed items that had low correlations with subscales in e4. 
+* Re-anchored scale from Do not Agree- Agree Somewhat - Completely Agree
+
