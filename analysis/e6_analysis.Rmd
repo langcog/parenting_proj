@@ -297,6 +297,8 @@ loadings <- data.frame(af$loadings[,1:n.factors]) %>%
   mutate(item = rownames(af$loadings)) %>%
   gather(factor, loading, starts_with("Factor"))
 
+loadings$item <- factor(loadings$item, levels = c("respect parents teachers","punish misbehavior","dont interrupt","wait when told","control behavior", "children should be grateful", "strict rules", "punish for small rules", "worry about misbehavior", "dont impose structure","rules prevent tantrums", "kids should not decide", "strong bond mom", "safe loving environment", "holding and cradling", "talk about opinions", "give children comfort", "talk about emotions", "talk about feelings before mature", "not spoiled with too much attention", "too much affection does not harm", "control emotions if comforted", "examples are good", "can learn good and bad ", "follow-in good", "spontaneous play", "learn before talking", "learn by playing", "learn contingencies", "learn from repetetive behaviors", "play pretend", "simple toys", "reasons for rules", "learn math before school", "learn from other children", "play with friends", "new experiences", "reading before school", "nonsense games", "play freely", "parents choose toys", "reading before speaking"))
+
 labels$item <- labels$short_sent
 loadings <- join(loadings, labels, by = "item")
 
@@ -317,6 +319,8 @@ af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
 loadings <- data.frame(af$loadings[,1:n.factors]) %>%
   mutate(item = rownames(af$loadings)) %>%
   gather(factor, loading, starts_with("Factor"))
+
+loadings$item <- factor(loadings$item, levels = c("respect parents teachers","punish misbehavior","dont interrupt","wait when told","control behavior", "children should be grateful", "strict rules", "punish for small rules", "worry about misbehavior", "dont impose structure","rules prevent tantrums", "kids should not decide", "strong bond mom", "safe loving environment", "holding and cradling", "talk about opinions", "give children comfort", "talk about emotions", "talk about feelings before mature", "not spoiled with too much attention", "too much affection does not harm", "control emotions if comforted", "examples are good", "can learn good and bad ", "follow-in good", "spontaneous play", "learn before talking", "learn by playing", "learn contingencies", "learn from repetetive behaviors", "play pretend", "simple toys", "reasons for rules", "learn math before school", "learn from other children", "play with friends", "new experiences", "reading before school", "nonsense games", "play freely", "parents choose toys", "reading before speaking"))
 
 loadings <- join(loadings, labels, by = "item")
 
