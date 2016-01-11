@@ -179,7 +179,6 @@ qplot(oldestChildAge, data=subinfo)
 Now look at mean ratings across sentences.
 
 ```{r}
-
 rating_count <- table(d$rating) 
 rating_count
 prop.table(rating_count) 
@@ -192,11 +191,14 @@ ms <- d %>%
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
 
+mc <- d %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
 ```
 
 Plot attitude.
-
-Ratings are clearly lower for the reverse coded items (the final 2 items in each category); this could be due to response sets (i.e., participants endorsing all items highly). 
 
 ```{r}
 qplot(short_sent_ord, mean, col = category,
@@ -211,6 +213,15 @@ qplot(short_sent_ord, mean, col = category,
 
 ```
 
+Plot mean subscale scores.
+
+```{r}
+qplot(category, mean, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=mc) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
 
 # Scale reliability
 
@@ -303,11 +314,10 @@ labels$item <- labels$short_sent
 loadings <- join(loadings, labels, by = "item")
 
 qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
-  scale_fill_continuous(low="#000000", high="#FFFFFF") + facet_grid(. ~ category)
+  scale_fill_continuous(low="#000000", high="#FFFFFF") + facet_grid( category ~ ., scales = "free_y")
 
 qplot(factor, item, fill=loading > .35, geom="tile", data = loadings) + 
-  scale_fill_solarized()+ facet_grid(. ~ category)
-
+  scale_fill_solarized() + facet_grid( category ~ ., scales = "free_y")
 ```
 
 Now with the suggested 5 factors. 
@@ -325,10 +335,10 @@ loadings$item <- factor(loadings$item, levels = c("respect parents teachers","pu
 loadings <- join(loadings, labels, by = "item")
 
 qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
-  scale_fill_continuous(low="#000000", high="#FFFFFF")+ facet_grid(. ~ category)
+  scale_fill_continuous(low="#000000", high="#FFFFFF") + facet_grid( category ~ ., scales = "free_y")
 
 qplot(factor, item, fill=loading > .35, geom="tile", data = loadings) + 
-  scale_fill_solarized()+ facet_grid(. ~ category)+ facet_grid(. ~ category)
+  scale_fill_solarized() + facet_grid( category ~ ., scales = "free_y")
 ```
 
 Merge back in subject id info. 
@@ -344,28 +354,37 @@ And summary:
 
 ## Factors by SES
 ```{r}
-a.factor.names <- c("Active Learning and Affection", "Early Learning, Affection, Respect", "Strict Rules")
+a.factor.names <- c("Active Learning Affection 1", "Active Learning Affection 2", "Rules Respect 1", "Rules Respect 2", "Affection")
 
-ms <- a.scores %>% 
+mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(ses != "") %>%
-  mutate(high.ses = ses > 5, 
+  mutate(ses = str_replace_all(ses,"1|2|3","low"),
+         ses = str_replace_all(ses,"4|5|6","med"),
+         ses = str_replace_all(ses,"7|8|9","high"),
          factor.num = as.numeric(str_replace(factor,"Factor","")),
          factor.name = a.factor.names[factor.num]) %>%
-  group_by(high.ses, factor.name) %>%
+  group_by(ses, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-qplot(factor.name, mean, fill=high.ses, 
+mf$ses <- factor(mf$ses, levels = c("low","med","high"))
+
+qplot(factor.name, mean, fill=ses, 
       geom = "bar", stat = "identity", position = "dodge", 
-      data=ms) + 
+      data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
-```
 
+
+mc <- d %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+```
 
 ## Factors by Gender
 ```{r}
-ms <- a.scores %>% 
+mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(gender != "") %>%
   mutate(male.gender = gender == "Male",
@@ -376,7 +395,7 @@ ms <- a.scores %>%
 
 qplot(factor.name, mean, fill=male.gender, 
       geom = "bar", stat = "identity", position = "dodge", 
-      data=ms) + 
+      data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 
@@ -384,7 +403,7 @@ qplot(factor.name, mean, fill=male.gender,
  
 ## Factors by Education
 ```{r}
-ms <- a.scores %>% 
+mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(education != "") %>%
   mutate(high.education = (education == "4year" |education == "someGrad" | education == "Grad"),
@@ -395,7 +414,7 @@ ms <- a.scores %>%
 
 qplot(factor.name, mean, fill=high.education, 
       geom = "bar", stat = "identity", position = "dodge", 
-      data=ms) + 
+      data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 
@@ -403,7 +422,7 @@ qplot(factor.name, mean, fill=high.education,
 
 ## Factors by Age
 ```{r}
-ms <- a.scores %>% 
+mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(age != "") %>%
   mutate(young.age = (age == "0-19" |age == "20-29"),
@@ -414,7 +433,7 @@ ms <- a.scores %>%
 
 qplot(factor.name, mean, fill=young.age, 
       geom = "bar", stat = "identity", position = "dodge", 
-      data=ms) + 
+      data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 
@@ -422,7 +441,7 @@ qplot(factor.name, mean, fill=young.age,
 
 ## Factors by Children
 ```{r}
-ms <- a.scores %>% 
+mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(children != "") %>%
   mutate(n.children = children,
@@ -433,14 +452,14 @@ ms <- a.scores %>%
 
 qplot(factor.name, mean, fill=n.children, 
       geom = "bar", stat = "identity", position = "dodge", 
-      data=ms) + 
+      data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 
 ```
 
 ```{r}
-ms <- a.scores %>% 
+mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(children != "") %>%
   mutate(yes.children = (children == "1" | children == "2" | children == "3"| children == "4"| children == "5"),
@@ -451,7 +470,7 @@ ms <- a.scores %>%
 
 qplot(factor.name, mean, fill=yes.children, 
       geom = "bar", stat = "identity", position = "dodge", 
-      data=ms) + 
+      data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 
@@ -459,7 +478,7 @@ qplot(factor.name, mean, fill=yes.children,
  
 ## Factors by Ethnicity
 ```{r}
-ms <- a.scores %>% 
+mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(ethnicity != "") %>%
   mutate(hispanic = ethnicity== "Hispanic",
@@ -470,7 +489,7 @@ ms <- a.scores %>%
 
 qplot(factor.name, mean, fill=hispanic, 
       geom = "bar", stat = "identity", position = "dodge", 
-      data=ms) + 
+      data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 ``` 
