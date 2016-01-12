@@ -246,6 +246,117 @@ alpha.al <- as.matrix(select(wide.active_learning, -workerid))
 alpha(x = alpha.al)
 ```
 
+# Subscales by demographics
+
+Create a data frame that has subscale scores. 
+```{r}
+ss <- d %>%
+  group_by(workerid, category) %>%
+  summarize(rating = mean(rating))
+
+ss <- left_join(ss, subinfo)
+```
+
+## By SES
+
+```{r}
+ms <- ss %>% 
+  filter(ses != "") %>%
+  mutate(ses.level = cut(as.numeric(ses), c(0,3,6,10))) %>%
+  group_by(ses.level, category) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=ses.level)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Gender
+
+```{r}
+ms <- ss %>% 
+  filter(gender %in% c("Male","Female")) %>%
+  group_by(gender, category) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Education
+
+Drop the sparsest groups. 
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(education)) %>%
+  group_by(education, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=education)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Age
+
+Drop the sparsest groups again. 
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(age)) %>%
+  group_by(age, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=age)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Children
+
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(children)) %>%
+  group_by(children, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=children)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## Factors by Ethnicity
+
+```{r}
+ms <- ss %>% 
+  filter(ethnicity != "") %>%
+  group_by(ethnicity, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=ethnicity)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
 # Factor analysis
 
 Get eigenvalues for determining number of factors. 
