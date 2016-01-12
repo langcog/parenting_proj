@@ -191,11 +191,6 @@ ms <- d %>%
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
 
-mc <- d %>%
-  group_by(category) %>%
-  multi_boot_standard(col = "rating") %>%
-  arrange(category, desc(mean)) 
-
 ```
 
 Plot attitude.
@@ -216,11 +211,27 @@ qplot(short_sent_ord, mean, col = category,
 Plot mean subscale scores.
 
 ```{r}
+mc <- d %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
 qplot(category, mean, 
       geom = "bar", stat = "identity", position = "dodge", 
       data=mc) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
+```
+
+
+Attempting (and failing) to set up wide data for summarizing subscale means by demographics.
+```{r}
+mcl <- d %>%
+  group_by(category, workerid) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean))%>%
+  spread(category, mean) 
+  
 ```
 
 # Scale reliability
@@ -367,19 +378,12 @@ mf <- a.scores %>%
   group_by(ses, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-mf$ses <- factor(mf$ses, levels = c("low","med","high"))
-
 qplot(factor.name, mean, fill=ses, 
       geom = "bar", stat = "identity", position = "dodge", 
       data=mf) + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 
-
-mc <- d %>%
-  group_by(category) %>%
-  multi_boot_standard(col = "rating") %>%
-  arrange(category, desc(mean)) 
 ```
 
 ## Factors by Gender
