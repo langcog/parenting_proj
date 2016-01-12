@@ -20,7 +20,7 @@ pre {
 }
 </style>
 
-Data analysis of basic parenting values/attitudes survey, version 2.
+Data analysis of basic parenting values/attitudes survey.
 
 # Data preprocessing
 
@@ -98,32 +98,13 @@ d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
-
 ```
 
 Merge.  
 
 ```{r}
 d <- left_join(d.raw, labels)
-
-#set up reverse code variables so that items don't get reverse coded a second time. 
-
-d$reverse_code[d$reverse_code == 1 & d$rating == "0"] <- 0
-d$reverse_code[d$reverse_code == 1 & d$rating == "1"] <- 1
-d$reverse_code[d$reverse_code == 1 & d$rating == "2"] <- 2
-
-d$reverse_code[d$reverse_code == 1 & d$rating == "4"] <- 4
-d$reverse_code[d$reverse_code == 1 & d$rating == "5"] <- 5
-d$reverse_code[d$reverse_code == 1 & d$rating == "6"] <- 6
-
-#reverse code.
-d$rating[d$reverse_code == 0 & d$rating == "0"] <- 6
-d$rating[d$reverse_code == 1 & d$rating == "1"] <- 5
-d$rating[d$reverse_code == 2 & d$rating == "2"] <- 4
-
-d$rating[d$reverse_code == 4 & d$rating == "4"] <- 2
-d$rating[d$reverse_code == 5 & d$rating == "5"] <- 1
-d$rating[d$reverse_code == 6 & d$rating == "6"] <- 0
+d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
 ```
 
 Plot demographic info.
@@ -184,7 +165,7 @@ rating_count
 prop.table(rating_count) 
 
 ms <- d %>%
-  group_by(category, instrument, short_sent) %>%
+  group_by(category, instrument, short_sent, reverse_code) %>%
   multi_boot_standard(col = "rating") %>%
   arrange(instrument, category, desc(mean)) 
 
@@ -197,7 +178,7 @@ Plot attitude.
 
 ```{r}
 qplot(short_sent_ord, mean, col = category,
-      ymin = ci_lower, ymax = ci_upper, 
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
       geom = "pointrange",
       data = filter(ms, instrument == "attitudes")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
@@ -249,7 +230,7 @@ alpha(x = alpha.mat)
 
 ## Rules and Respect Subscale
 
-Raw alpha is .74 here. 
+Raw alpha is .78 here. 
 
 ```{r}
 wide.rules_respect <- d %>% 
@@ -262,7 +243,7 @@ alpha(x = alpha.rr)
 
 ## Affection and Attachment Subscale
 
-Raw alpha is .81, which is up from .57 previously!
+Raw alpha is .80, which is up from .57 previously!
 
 ```{r}
 wide.affection <- d %>% 
@@ -276,7 +257,7 @@ alpha(x = alpha.af)
 
 ## Active Learning Subscale
 
-Raw alpha is .86, which is much higher than previously!
+Raw alpha is .84, which is much higher than previously!
 
 ```{r}
 wide.active_learning <- d %>% 
@@ -287,6 +268,116 @@ alpha.al <- as.matrix(select(wide.active_learning, -workerid))
 alpha(x = alpha.al)
 ```
 
+# Subscales by demographics
+
+Create a data frame that has subscale scores. 
+```{r}
+ss <- d %>%
+  group_by(workerid, category) %>%
+  summarize(rating = mean(rating))
+
+ss <- left_join(ss, subinfo)
+```
+
+## By SES
+
+```{r}
+ms <- ss %>% 
+  filter(ses != "") %>%
+  mutate(ses.level = cut(as.numeric(ses), c(0,3,6,10))) %>%
+  group_by(ses.level, category) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=ses.level)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Gender
+
+```{r}
+ms <- ss %>% 
+  filter(gender %in% c("Male","Female")) %>%
+  group_by(gender, category) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Education
+
+Drop the sparsest groups. 
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(education)) %>%
+  group_by(education, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=education)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Age
+
+Drop the sparsest groups again. 
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(age)) %>%
+  group_by(age, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=age)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Children
+
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(children)) %>%
+  group_by(children, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=children)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## Factors by Ethnicity
+
+```{r}
+ms <- ss %>% 
+  filter(ethnicity != "") %>%
+  group_by(ethnicity, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=ethnicity)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
 
 # Factor analysis
 
@@ -312,44 +403,69 @@ In the graph items are organized by category, from Early/Active Learning -> Affe
 Things are looking a bit hazy in terms of individual items mapping onto factors. In particular, most of the Early/Active Learning AND Affection and Attachment items map onto Factor 1. Factor 2 has an almost even mix of all 3 categories. Also, it seems like items related to Rules (Factor 3) are separate from those ostensibly related to Respect (Factor 2). It seems that items related to strict rules are most consistently hanging together across experiments. 
 
 ```{r}
+item.levels <- c("respect parents teachers","punish misbehavior",
+                 "dont interrupt","wait when told","control behavior", 
+                 "children should be grateful", "strict rules", 
+                 "punish for small rules", "worry about misbehavior", 
+                 "dont impose structure","rules prevent tantrums", 
+                 "kids should not decide", "strong bond mom", 
+                 "safe loving environment", "holding and cradling", 
+                 "talk about opinions", "give children comfort", 
+                 "talk about emotions", "talk about feelings before mature", 
+                 "not spoiled with too much attention", 
+                 "too much affection does not harm", 
+                 "control emotions if comforted", 
+                 "examples are good", "can learn good and bad ", 
+                 "follow-in good", "spontaneous play", 
+                 "learn before talking", "learn by playing", 
+                 "learn contingencies", "learn from repetetive behaviors", 
+                 "play pretend", "simple toys", "reasons for rules", 
+                 "learn math before school", "learn from other children", 
+                 "play with friends", "new experiences", 
+                 "reading before school", "nonsense games", 
+                 "play freely", "parents choose toys", "reading before speaking")
+
 n.factors <- 3
 
 af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
 loadings <- data.frame(af$loadings[,1:n.factors]) %>%
   mutate(item = rownames(af$loadings)) %>%
   gather(factor, loading, starts_with("Factor"))
-
-loadings$item <- factor(loadings$item, levels = c("respect parents teachers","punish misbehavior","dont interrupt","wait when told","control behavior", "children should be grateful", "strict rules", "punish for small rules", "worry about misbehavior", "dont impose structure","rules prevent tantrums", "kids should not decide", "strong bond mom", "safe loving environment", "holding and cradling", "talk about opinions", "give children comfort", "talk about emotions", "talk about feelings before mature", "not spoiled with too much attention", "too much affection does not harm", "control emotions if comforted", "examples are good", "can learn good and bad ", "follow-in good", "spontaneous play", "learn before talking", "learn by playing", "learn contingencies", "learn from repetetive behaviors", "play pretend", "simple toys", "reasons for rules", "learn math before school", "learn from other children", "play with friends", "new experiences", "reading before school", "nonsense games", "play freely", "parents choose toys", "reading before speaking"))
+#
+loadings$item <- factor(loadings$item, item.levels)
 
 labels$item <- labels$short_sent
 loadings <- join(loadings, labels, by = "item")
 
 qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
-  scale_fill_continuous(low="#000000", high="#FFFFFF") + facet_grid( category ~ ., scales = "free_y")
+  scale_fill_continuous(low="#000000", high="#FFFFFF") + 
+  facet_grid(category ~ ., scales = "free_y")
 
-qplot(factor, item, fill=loading > .35, geom="tile", data = loadings) + 
-  scale_fill_solarized() + facet_grid( category ~ ., scales = "free_y")
+qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
+  scale_fill_solarized() + 
+  facet_grid(category ~ ., scales = "free_y")
 ```
 
-Now with the suggested 5 factors. 
+Now with four factors, based on the exploratory analyses. 
 
 ```{r}
-n.factors <- 5
+n.factors <- 4
 
 af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
 loadings <- data.frame(af$loadings[,1:n.factors]) %>%
   mutate(item = rownames(af$loadings)) %>%
   gather(factor, loading, starts_with("Factor"))
 
-loadings$item <- factor(loadings$item, levels = c("respect parents teachers","punish misbehavior","dont interrupt","wait when told","control behavior", "children should be grateful", "strict rules", "punish for small rules", "worry about misbehavior", "dont impose structure","rules prevent tantrums", "kids should not decide", "strong bond mom", "safe loving environment", "holding and cradling", "talk about opinions", "give children comfort", "talk about emotions", "talk about feelings before mature", "not spoiled with too much attention", "too much affection does not harm", "control emotions if comforted", "examples are good", "can learn good and bad ", "follow-in good", "spontaneous play", "learn before talking", "learn by playing", "learn contingencies", "learn from repetetive behaviors", "play pretend", "simple toys", "reasons for rules", "learn math before school", "learn from other children", "play with friends", "new experiences", "reading before school", "nonsense games", "play freely", "parents choose toys", "reading before speaking"))
-
+loadings$item <- factor(loadings$item, levels = item.levels)
 loadings <- join(loadings, labels, by = "item")
 
 qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
-  scale_fill_continuous(low="#000000", high="#FFFFFF") + facet_grid( category ~ ., scales = "free_y")
+  scale_fill_continuous(low="#000000", high="#FFFFFF") + 
+  facet_grid(category ~ ., scales = "free_y")
 
-qplot(factor, item, fill=loading > .35, geom="tile", data = loadings) + 
-  scale_fill_solarized() + facet_grid( category ~ ., scales = "free_y")
+qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
+  scale_fill_solarized() + 
+  facet_grid(category ~ ., scales = "free_y")
 ```
 
 Merge back in subject id info. 
@@ -361,89 +477,105 @@ a.scores <- af$scores %>%
   left_join(subinfo)
 ```
 
-And summary:
-
 ## Factors by SES
+
 ```{r}
-a.factor.names <- c("Active Learning Affection 1", "Active Learning Affection 2", "Rules Respect 1", "Rules Respect 2", "Affection")
+a.factor.names <- c("Early Learning", "Affection", "Rules", "Spoiling kids")
 
 mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(ses != "") %>%
-  mutate(ses = str_replace_all(ses,"1|2|3","low"),
-         ses = str_replace_all(ses,"4|5|6","med"),
-         ses = str_replace_all(ses,"7|8|9","high"),
+  mutate(ses.level = cut(as.numeric(ses), c(0,3,6,10)),
          factor.num = as.numeric(str_replace(factor,"Factor","")),
          factor.name = a.factor.names[factor.num]) %>%
-  group_by(ses, factor.name) %>%
+  group_by(ses.level, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-qplot(factor.name, mean, fill=ses, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mf) + 
+ggplot(ms, aes(factor.name, mean, fill=ses.level)) +
+  geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
-
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
 ```
 
 ## Factors by Gender
+
 ```{r}
 mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
-  filter(gender != "") %>%
-  mutate(male.gender = gender == "Male",
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
+  filter(gender %in% c("Male","Female")) %>%
+  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
          factor.name = a.factor.names[factor.num]) %>%
-  group_by(male.gender, factor.name) %>%
+  group_by(gender, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-qplot(factor.name, mean, fill=male.gender, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mf) + 
+ggplot(ms, aes(factor.name, mean, fill=gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
 
 ```
  
 ## Factors by Education
+
 ```{r}
 mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(education != "") %>%
-  mutate(high.education = (education == "4year" |education == "someGrad" | education == "Grad"),
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
+  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
          factor.name = a.factor.names[factor.num]) %>%
-  group_by(high.education, factor.name) %>%
+  group_by(education, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-qplot(factor.name, mean, fill=high.education, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mf) + 
+ggplot(ms, aes(factor.name, mean, fill=education)) +
+  geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
-
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
 ```
 
 ## Factors by Age
+
 ```{r}
 mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
   filter(age != "") %>%
-  mutate(young.age = (age == "0-19" |age == "20-29"),
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
+  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
          factor.name = a.factor.names[factor.num]) %>%
-  group_by(young.age, factor.name) %>%
+  group_by(age, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-qplot(factor.name, mean, fill=young.age, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mf) + 
+ggplot(ms, aes(factor.name, mean, fill=age)) +
+  geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
-
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
 ```
 
 ## Factors by Children
+
+Do you have children?
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(children != "") %>%
+  mutate(children = children %in% c("1","2","3","4","5","morethan5"),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(children, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(ms, aes(factor.name, mean, fill=children)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+How many?
+
 ```{r}
 mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -454,33 +586,15 @@ mf <- a.scores %>%
   group_by(n.children, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-qplot(factor.name, mean, fill=n.children, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mf) + 
+ggplot(ms, aes(factor.name, mean, fill=n.children)) +
+  geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
-
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
 ```
 
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(children != "") %>%
-  mutate(yes.children = (children == "1" | children == "2" | children == "3"| children == "4"| children == "5"),
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(yes.children, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-qplot(factor.name, mean, fill=yes.children, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mf) + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
-
-```
- 
 ## Factors by Ethnicity
+
 ```{r}
 mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -491,15 +605,13 @@ mf <- a.scores %>%
   group_by(hispanic, factor.name) %>%
   multi_boot_standard(col = "score") 
 
-qplot(factor.name, mean, fill=hispanic, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mf) + 
+ggplot(ms, aes(factor.name, mean, fill=hispanic)) +
+  geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
 ``` 
  
 # Conclusions
 
-Our predicted factor structure did not hold up well. The items that consistently hang together and form their own factor are those related to strict rules. 
-
-Might need to rethink the organization of attitudes. Something separating out parents who see their kids as "projects" versus believing they will naturally thrive might make sense. The grouping of early learning and affection items into one factor might reflect this latent theory.
+...

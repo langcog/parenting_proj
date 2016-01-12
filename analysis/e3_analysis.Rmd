@@ -33,13 +33,14 @@ knitr::opts_chunk$set(fig.width=8, fig.height=5,
                       echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(langcog)
-library(dplyr)
+library(plyr); library(dplyr)
 library(ggplot2)
 library(rjson)
 library(stringr)
 library(tidyr)
 library(psych)
 library(nFactors)
+
 select <- dplyr::select # masked by MASS
 
 theme_set(theme_bw())
@@ -99,7 +100,6 @@ d <- left_join(d.raw, labels) %>%
   mutate(children = grepl("yes", children, ignore.case=TRUE))
 ```
 
-
 Plot demographic info.
 ```{r}
 subinfo <- d %>% 
@@ -138,6 +138,12 @@ qplot(language, data=subinfo)
 Now look at mean ratings across sentences.
 
 ```{r}
+
+attach(d)
+rating_count <- table(d$rating) 
+rating_count
+prop.table(rating_count) 
+
 ms <- d %>%
   group_by(category, instrument, short_sent) %>%
   multi_boot_standard(col = "rating") %>%
@@ -145,6 +151,7 @@ ms <- d %>%
 
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
+
 ```
 
 Plot attitude. 
@@ -159,6 +166,7 @@ qplot(short_sent_ord, mean, col = category,
   ylab("Mean Rating") + 
   ylim(c(1,7)) + 
   scale_colour_solarized()
+
 ```
 
 
@@ -175,6 +183,8 @@ wide.attitudes <- d %>%
   spread(short_sent, rating)
 alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
 alpha(x = alpha.mat)
+
+
 ```
 
 # Factor analysis
@@ -203,7 +213,7 @@ loadings <- data.frame(af$loadings[,1:n.factors]) %>%
 qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
   scale_fill_continuous(low="#000000", high="#FFFFFF")
 
-qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
+qplot(factor, item, fill=loading > .35, geom="tile", data = loadings) + 
   scale_fill_solarized()
 ```
 
@@ -212,7 +222,7 @@ Merge back in subject id info.
 ```{r}
 a.scores <- af$scores %>%
   data.frame %>%
-  mutate(workerid = wide.attitudes$workerid) %>%
+  mutate(workerid = as.character(wide.attitudes$workerid)) %>%
   left_join(subinfo)
 ```
 
@@ -224,7 +234,7 @@ Note: I re-labeled the factors, because the order appears different this time.
 ```{r}
 #a.factor.names <- c("Early learning","Rules and Respect" ,"Affection", "Early Abstraction", "Behavior Control")
 
-a.factor.names <- c("Early learning","Rules and Respect" ,"Affection", "Parents Supportive")
+a.factor.names <- c("Early learning","Rules and Respect" ,"Maternal Affection", "Parents Supportive")
 
 ms <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -378,6 +388,156 @@ qplot(pc1, pc2, col = category,
   scale_colour_solarized()
 ```
 
+#Analyses restricted to Learning items
+
+```{r}
+wide.learning <- d %>% 
+  filter(type == "learning") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.mat <- as.matrix(select(wide.learning, -workerid))
+alpha(x = alpha.mat)
+```
+
+## Factor analysis
+
+Get eigenvalues for determining number of factors. 
+
+
+```{r}
+att.mat <- select(wide.learning, -workerid)
+ev <- eigen(cor(x=att.mat)) # get eigenvalues
+ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
+               rep=100,cent=.05)
+nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
+plotnScree(nS)
+```
+
+Now plot factor analysis
+
+```{r}
+n.factors <- 2
+af <- factanal(x = att.mat, factors = n.factors, scores = "regression")
+loadings <- data.frame(af$loadings[,1:n.factors]) %>%
+  mutate(item = rownames(af$loadings)) %>%
+  gather(factor, loading, starts_with("Factor"))
+
+qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
+  scale_fill_continuous(low="#000000", high="#FFFFFF")
+
+qplot(factor, item, fill=loading > .40, geom="tile", data = loadings) + 
+  scale_fill_solarized()
+```
+
+Merge back in subject id info. 
+
+```{r}
+a.scores <- af$scores %>%
+  data.frame %>%
+  mutate(workerid = as.character(wide.learning$workerid)) %>%
+  left_join(subinfo)
+```
+
+And summary:
+
+Note: I re-labeled the factors, because the order appears different this time.
+
+## Factors by SES
+```{r}
+a.factor.names <- c("Stage Theory Senses and Play","Blank Slate")
+
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(ses != "") %>%
+  mutate(high.ses = ses > 5, 
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(high.ses, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=high.ses, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+
+## Factors by Gender
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(gender != "") %>%
+  mutate(male.gender = gender == "Male",
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(male.gender, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=male.gender, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+ 
+## Factors by Education
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(education != "") %>%
+  mutate(high.education = (education == "4year" |education == "someGrad" | education == "Grad"),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(high.education, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=high.education, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+
+## Factors by Age
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(age != "") %>%
+  mutate(young.age = (age == "0-19" |age == "20-29"),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(young.age, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=young.age, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
+
+## Factors by Children
+```{r}
+ms <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(children != "") %>%
+  mutate(yes.children = children,
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(yes.children, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+qplot(factor.name, mean, fill=yes.children, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=ms) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+```
 # Conclusions
 We observe a decrease in reliability for this sample.
 Exploratory FA suggests 4 factors (compared to 6 in e2).

@@ -63,7 +63,7 @@ var atts = ['It is very important that children learn to respect adults, such as
 'Holding and cradling babies is important for forming strong bonds between parent and child.',
 'Parents should encourage young children to talk about their opinions.',
 'Children should be given comfort and understanding when they are scared or unhappy.',
-'Parents do not need to talk to their child about his or her feelings.',
+'Parents do not need to talk to their child about his or her emotions.',
 'There’s no reason to talk with children about their feelings before they are mature enough to understand.',
 'Children become spoiled if they receive too much attention from parents.',
 'Too much affection can harm or weaken a child.',
