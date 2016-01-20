@@ -1,6 +1,6 @@
-
 <!-- ## Code -->
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,563 +8,653 @@
   <script src="jquery-1.11.2.min.js"></script>
   <script src="mmturkey-0.6.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="uptake_style.css" />
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 
-<!-- The instructions slide. -->
-<div class="slide" id="instructions">
-  <br>
-  <!--<img src="images/stanford.png" alt="Stanford University"> -->
-  <p id='logo-text'>Stanford Language and Cognition Lab</p>
-  <p class="block-text">In this experiment, you will read two brief articles, and then answer some questions about the articles.</p>
+  <!-- The instructions slide. -->
+  <div class="slide" id="instructions">
+    <br>
+    <img src="images/stanford.png" alt="Stanford University">
+    <p id='logo-text'>Stanford Language and Cognition Lab</p>
+    <p class="block-text">In this experiment, you will read two brief articles, and then answer some questions about the articles. If you've already been in a hit of this type (called "Learning from Science Articles"), please don't accept this one.</p>
 
-  <p class="block-text">DO ONLY ONE "LEARNING FROM SCIENCE ARTICLES" HIT. IF YOU DO MULTIPLE HITS OF THIS TYPE, YOU WILL NOT BE PAID!</p>
-  <button type="button" onclick="this.blur(); experiment.next()">Start</button>
+    <button type="button" onclick="this.blur(); experiment.next()">Start</button>
 
-  <p class="block-text"><br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
+    <p class="block-text">
+      <br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
 
-  <p class="block-text" id="legal">By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact us at <a href="mailto://languagecoglab@gmail.com.">languagecoglab@gmail.com</a>. You must be  at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. Note however that we have recently been made aware that your public Amazon.com profile can be accessed via your worker ID if you do not choose to opt out. If you would like to opt out of this feature, you may follow instructions available <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
-</div>
-
-<!-- Slide 1 Parenting Article -->
-
-<div class="slide" id="reading1">
-  <br>
-
-  <div align="center">
-    <h5>Please read the following text at your own pace. Once you have finished reading, click "Next."</h5><br>
+    <p class="block-text" id="legal">By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact us at <a href="mailto://languagecoglab@gmail.com.">languagecoglab@gmail.com</a>.
+      You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences.
+      Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. Note however that we have recently been made aware that your public Amazon.com profile can be accessed via your
+      worker ID if you do not choose to opt out. If you would like to opt out of this feature, you may follow instructions available <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
   </div>
 
-  <!-- Show parenting article -->
-  <div align="center">
-    <p id ="article">{Ours is an age of pedagogy. Anxious parents instruct their children more and more, at younger and younger ages, until they're reading books to babies in the womb. They pressure teachers to make kindergartens and nurseries more like schools. So does the law—the 2001 No Child Left Behind Act explicitly urged more direct instruction in federally funded preschools.
-<br>
-There are skeptics, of course, including some parents, many preschool teachers, and even a few policy-makers. Shouldn't very young children be allowed to explore, inquire, play, and discover, they ask? Perhaps direct instruction can help children learn specific facts and skills, but what about curiosity and creativity—abilities that are even more important for learning in the long run? A forthcoming study in the journal Cognition suggests that the doubters are on to something. While learning from a teacher may help children get to a specific answer more quickly, it also makes them less likely to discover new information about a problem and to create a new and unexpected solution. 
-<br>
-What do we already know about how teaching affects learning? Not as much as we would like, unfortunately, because it is a very difficult thing to study. You might try to compare different kinds of schools. But the children and the teachers at a Marin County preschool that encourages exploration will be very different from the children and teachers in a direct instruction program in South Side Chicago. And almost any new program with enthusiastic teachers will have good effects, at least to begin with, regardless of content. So comparisons are difficult. Besides, how do you measure learning, anyway? Almost by definition, directed teaching will make children do better on standardized tests, which the government uses to evaluate school performance. Curiosity and creativity are harder to measure.
-<br>
-Developmental scientists like me explore the basic science of learning by designing controlled experiments. We might start by saying: Suppose we gave a group of 4-year-olds exactly the same problems and only varied on whether we taught them directly or encouraged them to figure it out for themselves? Would they learn different things and develop different solutions? The new study is the first to systematically show that they would.
-<br>
-The researchers looked at how 4-year-olds learned about a new toy with four tubes. Each tube could do something interesting: If you pulled on one tube it squeaked, if you looked inside another tube you found a hidden mirror, and so on. For one group of children, the experimenter said: "I just found this toy!" As she brought out the toy, she pulled the first tube, as if by accident, and it squeaked. She acted surprised ("Huh! Did you see that? Let me try to do that!") and pulled the tube again to make it squeak a second time. With the other children, the experimenter acted more like a teacher. She said, "I'm going to show you how my toy works. Watch this!" and deliberately made the tube squeak. Then she left both groups of children alone to play with the toy.
-<br>
-All of the children pulled the first tube to make it squeak. The question was whether they would also learn about the other things the toy could do. The children from the first group played with the toy longer and discovered more of its "hidden" features than those in the second group. In other words, direct instruction made the children less curious and less likely to discover new information.
-<br>
-Why might children behave this way? Adults often assume that most learning is the result of teaching and that exploratory, spontaneous learning is unusual. But actually, spontaneous learning is more fundamental. Knowing this, it's more important than ever to give children's remarkable, spontaneous learning abilities free rein. That means a rich, stable, and safe world, with affectionate and supportive grown-ups, and lots of opportunities for exploration and play. Not school for babies.}</p> 
-  </div>
+  <!-- Slide 1 Parenting Article -->
+  <div class="slide" id="reading1">
+    <br>
 
-  <br>
+    <div align="center">
+      <h5>This is the <b>first</b> of two articles you'll be asked to read. Please read the text at your own pace. Once you have finished reading, click "Continue."</h5>
+      <br>
+    </div>
+
+    <!-- Show parenting article -->
+    <div class="block-text">
+      <p id="article">
+        Ours is an age of pedagogy. Anxious parents instruct their children more and more, at younger and younger ages, until they're reading books to babies in the womb. They pressure teachers to make kindergartens and nurseries more like schools. So does the
+        law—the 2001 No Child Left Behind Act explicitly urged more direct instruction in federally funded preschools.
+        <br>
+        <br> There are skeptics, of course, including some parents, many preschool teachers, and even a few policy-makers. Shouldn't very young children be allowed to explore, inquire, play, and discover, they ask? Perhaps direct instruction can help children
+        learn specific facts and skills, but what about curiosity and creativity—abilities that are even more important for learning in the long run? A forthcoming study in the journal Cognition suggests that the doubters are on to something. While learning
+        from a teacher may help children get to a specific answer more quickly, it also makes them less likely to discover new information about a problem and to create a new and unexpected solution.
+        <br>
+        <br> What do we already know about how teaching affects learning? Not as much as we would like, unfortunately, because it is a very difficult thing to study. You might try to compare different kinds of schools. But the children and the teachers at
+        a Marin County preschool that encourages exploration will be very different from the children and teachers in a direct instruction program in South Side Chicago. And almost any new program with enthusiastic teachers will have good effects, at
+        least to begin with, regardless of content. So comparisons are difficult. Besides, how do you measure learning, anyway? Almost by definition, directed teaching will make children do better on standardized tests, which the government uses to evaluate
+        school performance. Curiosity and creativity are harder to measure.
+        <br>
+        <br> Developmental scientists like me explore the basic science of learning by designing controlled experiments. We might start by saying: Suppose we gave a group of 4-year-olds exactly the same problems and only varied on whether we taught them directly
+        or encouraged them to figure it out for themselves? Would they learn different things and develop different solutions? The new study is the first to systematically show that they would.
+        <br>
+        <br> The researchers looked at how 4-year-olds learned about a new toy with four tubes. Each tube could do something interesting: If you pulled on one tube it squeaked, if you looked inside another tube you found a hidden mirror, and so on. For one
+        group of children, the experimenter said: "I just found this toy!" As she brought out the toy, she pulled the first tube, as if by accident, and it squeaked. She acted surprised ("Huh! Did you see that? Let me try to do that!") and pulled the
+        tube again to make it squeak a second time. With the other children, the experimenter acted more like a teacher. She said, "I'm going to show you how my toy works. Watch this!" and deliberately made the tube squeak. Then she left both groups of
+        children alone to play with the toy.
+        <br>
+        <br> All of the children pulled the first tube to make it squeak. The question was whether they would also learn about the other things the toy could do. The children from the first group played with the toy longer and discovered more of its "hidden"
+        features than those in the second group. In other words, direct instruction made the children less curious and less likely to discover new information.
+        <br>
+        <br> Why might children behave this way? Adults often assume that most learning is the result of teaching and that exploratory, spontaneous learning is unusual. But actually, spontaneous learning is more fundamental. Knowing this, it's more important
+        than ever to give children's remarkable, spontaneous learning abilities free rein. That means a rich, stable, and safe world, with affectionate and supportive grown-ups, and lots of opportunities for exploration and play. Not school for babies.
+      </p>
+    </div>
+    <br>
 
     <!-- Next button -->
-  <table align="center"><tr>
-    <td align="center">
-      <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
-    </td> 
-    <tr><td align="center">
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
 
-    </td></tr> 
+          </td>
+        </tr>
 
-  </table>
+    </table>
   </div>
-<!-- end first article slide -->
+  <!-- end first article slide -->
 
-<!-- Slide 2 Vitamin Article -->
+  <!-- Slide 2 Vitamin Article -->
+  <div class="slide" id="reading2">
+    <br>
 
-<div class="slide" id="reading2">
-  <br>
+    <div align="center">
+      <h5>This is the <b>second</b> of the articles. Please read the following text at your own pace. Once you have finished reading, click "Continue."
+    </h5>
+      <br>
+    </div>
 
-  <div align="center">
-    <h5>Please read the following text at your own pace. Once you have finished reading, click "Next."</h5><br>
-  </div>
+    <!-- Show vitamin article -->
+    <div class="block-text">
+      <p id="article">
+        Vitamin fans, take note: An editorial in the journal Annals of Internal Medicine suggests that multivitamins provide no health benefit in the long-run, and in fact, “should be avoided.” The authors of the piece, “Enough is Enough: Stop Wasting Money on
+        Vitamin and Mineral Supplements,” summarize the work of three review studies in the same journal, which together find no effect for vitamins on cardiovascular health, cancer risk, cognitive health, or mortality. The bottom line, at least to the
+        authors, is clear: We should stop wasting our money on multivitamins, since there’s little evidence to their benefit, and some evidence to their detriment. But as always, others say they jury is still out on this one.
+        <br>
+        <br> The first of the three studies looked at 450,000 people randomly assigned to take multivitamins or placebo. Vitamins had no effect on cardiovascular health, cancer, or mortality over about a decade, and beta-carotene increased cancer risk in
+        people who smoked. The second study looked at the effect of vitamins on almost 6,000 men who were part of the Physicians’ Health Study II, and found no effect on whether the men (all doctors) experienced cognitive decline over the next 12 years,
+        compared to men taking placebo. Finally, the third study followed 1,700 men and women who had recently had a heart attack, and randomly assigned them to taking multivitamins or placebo. Again, there was no difference in the likelihood of the vitamin-takers
+        experiencing a second cardiac event over the next 4.6 years, compared to those taking placebo. (However, there was a high dropout rate in this last study, so it’s hard to draw conclusions.)
+        <br>
+        <br> The authors of the editorial conclude, “The message is simple: Most supplements do not prevent chronic disease or death, their use is not justified, and they should be avoided.” This message, they add, is especially relevant given today’s general
+        population who are unlikely to have the kinds of micronutrient deficiencies that were more common years ago. According to the CDC, most Americans have healthy levels of the essential vitamins, although there are still subgroups who are deficient
+        in certain ones, like D and iron.
+        <br>
+        <br> Others are not so convinced that it’s time to dump the multivitamins just yet. Earlier analysis of the Physicians’ Health Study II had found a modest effect on reducing the risk of any type of cancer over a period of 11 years. The authors of
+        that study conclude that their data indeed “provide support for the potential use of multivitamin supplements in the prevention of cancer in middle-aged and older men.” Additionally, there is some percentage of the population, say some critics,
+        who live on fast food and junk food, and who may well benefit from multivitamins to ward off deficiencies.
+        <br>
+        <br> Finally, it’s important to point out is that the current studies may actually not have been so representative of the general population – for example, the second study looked at cognitive decline among aging physicians. Since doctors are more
+        likely to eat nutrient-dense diets and otherwise take good care of themselves, it’s hard to tell whether results for this group would be applicable to the average American.
+        <br>
+        <br> Vitamin sales in the U.S. were over $28 billion in 2010, according to the authors, and have steadily risen in the last few decades, despite lacking evidence for their effectiveness in chronic disease prevention. About half of Americans take some
+        sort of vitamin or supplement, and it’s unlikely that multivitamins are going to go away overnight.
+        <br>
+        <br> “Although available evidence does not rule out small benefits or harms or large benefits or harms in a small subgroup of the population,” the writers conclude, “we believe that the case is closed — supplementing the diet of well-nourished adults
+        with (most) mineral or vitamin supplements has no clear benefit and might even be harmful. These vitamins should not be used for chronic disease prevention. Enough is enough.”
+        <br>
+        <br> Time will tell whether this impassioned editorial kicks off any change in the vitamin industry. More studies will likely be needed before a conclusion in either direction is drawn. But following the trajectory of vitamin sales in recent years,
+        it seems, at least at this point, that Americans still can’t get enough.
+      </p>
+    </div>
 
-  <!-- Show vitamin article -->
-  <div align="center">
-    <p id ="article">{Vitamin fans, take note: An editorial in the journal Annals of Internal Medicine suggests that multivitamins provide no health benefit in the long-run, and in fact, “should be avoided.” The authors of the piece, “Enough is Enough: Stop Wasting Money on Vitamin and Mineral Supplements,” summarize the work of three review studies in the same journal, which together find no effect for vitamins on cardiovascular health, cancer risk, cognitive health, or mortality. The bottom line, at least to the authors, is clear: We should stop wasting our money on multivitamins, since there’s little evidence to their benefit, and some evidence to their detriment. But as always, others say they jury is still out on this one.
-<br>
-The first of the three studies looked at 450,000 people randomly assigned to take multivitamins or placebo. Vitamins had no effect on cardiovascular health, cancer, or mortality over about a decade, and beta-carotene increased cancer risk in people who smoked. The second study looked at the effect of vitamins on almost 6,000 men who were part of the Physicians’ Health Study II, and found no effect on whether the men (all doctors) experienced cognitive decline over the next 12 years, compared to men taking placebo. Finally, the third study followed 1,700 men and women who had recently had a heart attack, and randomly assigned them to taking multivitamins or placebo. Again, there was no difference in the likelihood of the vitamin-takers experiencing a second cardiac event over the next 4.6 years, compared to those taking placebo. 
-(However, there was a high dropout rate in this last study, so it’s hard to draw conclusions.)
-<br>
-The authors of the editorial conclude, “The message is simple: Most supplements do not prevent chronic disease or death, their use is not justified, and they should be avoided.”
-<br>
-This message, they add, is especially relevant given today’s general population who are unlikely to have the kinds of micronutrient deficiencies that were more common years ago. According to the CDC, most Americans have healthy levels of the essential vitamins, although there are still subgroups who are deficient in certain ones, like D and iron.
-<br>
-Others are not so convinced that it’s time to dump the multivitamins just yet. Earlier analysis of the Physicians’ Health Study II had found a modest effect on reducing the risk of any type of cancer over a period of 11 years. The authors of that study conclude that their data indeed “provide support for the potential use of multivitamin supplements in the prevention of cancer in middle-aged and older men.”
-<br>
-Additionally, there is some percentage of the population, say some critics, who live on fast food and junk food, and who may well benefit from multivitamins to ward off deficiencies.
-Finally, it’s important to point out is that the current studies may actually not have been so representative of the general population – for example, the second study looked at cognitive decline among aging physicians. Since doctors are more likely to eat nutrient-dense diets and otherwise take good care of themselves, it’s hard to tell whether results for this group would be applicable to the average American.
-<br>
-Vitamin sales in the U.S. were over $28 billion in 2010, according to the authors, and have steadily risen in the last few decades, despite lacking evidence for their effectiveness in chronic disease prevention. About half of Americans take some sort of vitamin or supplement, and it’s unlikely that multivitamins are going to go away overnight.
-<br>
-“Although available evidence does not rule out small benefits or harms or large benefits or harms in a small subgroup of the population,” the writers conclude, “we believe that the case is closed — supplementing the diet of well-nourished adults with (most) mineral or vitamin supplements has no clear benefit and might even be harmful. These vitamins should not be used for chronic disease prevention. Enough is enough.”
-<br>
-Time will tell whether this impassioned editorial kicks off any change in the vitamin industry. More studies will likely be needed before a conclusion in either direction is drawn. But following the trajectory of vitamin sales in recent years, it seems, at least at this point, that Americans still can’t get enough.}</p> 
-  </div>
-
-  <br>
+    <br>
 
     <!-- Next button-->
-  <table align="center"><tr>
-    <td align="center">
-      <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
-    </td> 
-    <tr><td align="center">
-
-    </td></tr> 
-
-  </table>
-</div>
-<!-- end vitamin article slide -->
-
-
-<!-- Recall instructions slide -->
-<div class="slide" id="reading3">
-
-  <br>
-
-  <p class="block-text">You will now be asked to answer a few questions about the articles that you just read.</p>
-
-  <table align="center"><tr>
-    <td align="center">
-      <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
-    </td> 
-    <tr><td align="center">
-
-    </td></tr> 
-
-  </table>
-
-</div>
-
-<!-- End recall instructions slide -->
-
-
-<!-- Recall 1 slide -->
-
-<div class="slide" id="target1">
-  <br>
-
-  <!-- Show sentence from attitudes scale -->
-  <div align="center">
-    <img src="toy.png">
-    <p id ="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
-</p> 
-  </div>
-
-  <br>
-
-  <!-- Likert radio buttons -->
-  <table align = "center"><tr>
-    <td align="center">
-     
+    <table align="center">
       <tr>
-        <td><input id ="recall1" type="radio" name="recall" value = "a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label></td>
-        <td><input id ="recall2" type="radio" name="recall" value = "b">
-            <label for="recall2">b. Let the child play freely with the toy without instruction.</label></td>
-        <td><input id ="recall3" type="radio" name="recall" value = "c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label></td>
-        <td></td>
+        <td align="center">
+          <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- end vitamin article slide -->
+
+
+  <!-- Recall instructions slide -->
+  <div class="slide" id="reading3">
+
+    <br>
+
+    <p class="block-text">You will now be asked to answer a few questions about the articles that you just read.</p>
+
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- End recall instructions slide -->
+
+
+  <!-- Recall 1 slide -->
+  <div class="slide" id="target1">
+    <br>
+
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <img src="images/toy.png" width=200px>
+      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td>
+          <input id="recall1" type="radio" name="recall" value="a">
+          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+        </td>
+        <td>
+          <input id="recall2" type="radio" name="recall" value="b">
+          <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+        </td>
+        <td>
+          <input id="recall3" type="radio" name="recall" value="c">
+          <label for="recall3">c. Quiz the child about shapes and colors.</label>
+        </td>
       </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
-    <table align="center"><tr>
-      <td align="center">
-        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
-      </td> 
-      <tr><td align="center">
-        <div id="testMessage_att"> </div>
-      </td></tr>
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_att"> </div>
+          </td>
+        </tr>
     </table>
-</div>
-
-<!-- End recall slide -->
-<!-- Recall 1 slide -->
-
-<div class="slide" id="target2">
-  <br>
-
-  <!-- Show sentence from attitudes scale -->
-  <div align="center">
-    <img src="toy.png">
-    <p id ="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
-</p> 
   </div>
 
-  <br>
+  <!-- End recall slide -->
 
-  <!-- Likert radio buttons -->
-  <table align = "center"><tr>
-    <td align="center">
-     
+  <!-- Recall 1 slide -->
+
+  <div class="slide" id="target2">
+    <br>
+
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <img src="images/toy.png" width=200px>
+      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
       <tr>
-        <td><input id ="recall1" type="radio" name="recall" value = "a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label></td>
-        <td><input id ="recall2" type="radio" name="recall" value = "b">
-            <label for="recall2">b. Let the child play freely with the toy without instruction.</label></td>
-        <td><input id ="recall3" type="radio" name="recall" value = "c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label></td>
-        <td></td>
+        <td>
+          <input id="recall1" type="radio" name="recall" value="a">
+          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+        </td>
+        <td>
+          <input id="recall2" type="radio" name="recall" value="b">
+          <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+        </td>
+        <td>
+          <input id="recall3" type="radio" name="recall" value="c">
+          <label for="recall3">c. Quiz the child about shapes and colors.</label>
+        </td>
       </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
-    <table align="center"><tr>
-      <td align="center">
-        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
-      </td> 
-      <tr><td align="center">
-        <div id="testMessage_att"> </div>
-      </td></tr>
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_att"> </div>
+          </td>
+        </tr>
     </table>
-</div>
-
-<!-- End recall slide -->
-<!-- Recall 1 slide -->
-
-<div class="slide" id="target3">
-  <br>
-
-  <!-- Show sentence from attitudes scale -->
-  <div align="center">
-    <img src="toy.png">
-    <p id ="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
-</p> 
   </div>
 
-  <br>
+  <!-- End recall slide -->
+  <!-- Recall 1 slide -->
 
-  <!-- Likert radio buttons -->
-  <table align = "center"><tr>
-    <td align="center">
-     
+  <div class="slide" id="target3">
+    <br>
+
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <img src="images/toy.png">
+      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center">
       <tr>
-        <td><input id ="recall1" type="radio" name="recall" value = "a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label></td>
-        <td><input id ="recall2" type="radio" name="recall" value = "b">
-            <label for="recall2">b. Let the child play freely with the toy without instruction.</label></td>
-        <td><input id ="recall3" type="radio" name="recall" value = "c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label></td>
-        <td></td>
-      </tr>
+        <td align="center">
+
+          <tr>
+            <td>
+              <input id="recall1" type="radio" name="recall" value="a">
+              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+            </td>
+            <td>
+              <input id="recall2" type="radio" name="recall" value="b">
+              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+            </td>
+            <td>
+              <input id="recall3" type="radio" name="recall" value="c">
+              <label for="recall3">c. Quiz the child about shapes and colors.</label>
+            </td>
+            <td></td>
+          </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
-    <table align="center"><tr>
-      <td align="center">
-        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
-      </td> 
-      <tr><td align="center">
-        <div id="testMessage_att"> </div>
-      </td></tr>
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_att"> </div>
+          </td>
+        </tr>
     </table>
-</div>
-
-<!-- End recall slide -->
-
-<!-- Recall 1 slide -->
-
-<div class="slide" id="vitamins1">
-  <br>
-
-  <!-- Show sentence from attitudes scale -->
-  <div align="center">
-    <img src="toy.png">
-    <p id ="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
-</p> 
   </div>
 
-  <br>
+  <!-- End recall slide -->
 
-  <!-- Likert radio buttons -->
-  <table align = "center"><tr>
-    <td align="center">
-     
+  <!-- Recall 1 slide -->
+
+  <div class="slide" id="vitamins1">
+    <br>
+
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <img src="images/toy.png">
+      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center">
       <tr>
-        <td><input id ="recall1" type="radio" name="recall" value = "a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label></td>
-        <td><input id ="recall2" type="radio" name="recall" value = "b">
-            <label for="recall2">b. Let the child play freely with the toy without instruction.</label></td>
-        <td><input id ="recall3" type="radio" name="recall" value = "c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label></td>
-        <td></td>
-      </tr>
+        <td align="center">
+
+          <tr>
+            <td>
+              <input id="recall1" type="radio" name="recall" value="a">
+              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+            </td>
+            <td>
+              <input id="recall2" type="radio" name="recall" value="b">
+              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+            </td>
+            <td>
+              <input id="recall3" type="radio" name="recall" value="c">
+              <label for="recall3">c. Quiz the child about shapes and colors.</label>
+            </td>
+            <td></td>
+          </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
-    <table align="center"><tr>
-      <td align="center">
-        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
-      </td> 
-      <tr><td align="center">
-        <div id="testMessage_att"> </div>
-      </td></tr>
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_att"> </div>
+          </td>
+        </tr>
     </table>
-</div>
-
-<!-- End recall slide -->
-
-<!-- Recall 1 slide -->
-
-<div class="slide" id="vitamins2">
-  <br>
-
-  <!-- Show sentence from attitudes scale -->
-  <div align="center">
-    <img src="toy.png">
-    <p id ="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
-</p> 
   </div>
 
-  <br>
+  <!-- End recall slide -->
 
-  <!-- Likert radio buttons -->
-  <table align = "center"><tr>
-    <td align="center">
-     
+  <!-- Recall 1 slide -->
+
+  <div class="slide" id="vitamins2">
+    <br>
+
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <img src="images/toy.png">
+      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center">
       <tr>
-        <td><input id ="recall1" type="radio" name="recall" value = "a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label></td>
-        <td><input id ="recall2" type="radio" name="recall" value = "b">
-            <label for="recall2">b. Let the child play freely with the toy without instruction.</label></td>
-        <td><input id ="recall3" type="radio" name="recall" value = "c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label></td>
-        <td></td>
-      </tr>
+        <td align="center">
+
+          <tr>
+            <td>
+              <input id="recall1" type="radio" name="recall" value="a">
+              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+            </td>
+            <td>
+              <input id="recall2" type="radio" name="recall" value="b">
+              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+            </td>
+            <td>
+              <input id="recall3" type="radio" name="recall" value="c">
+              <label for="recall3">c. Quiz the child about shapes and colors.</label>
+            </td>
+            <td></td>
+          </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
-    <table align="center"><tr>
-      <td align="center">
-        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
-      </td> 
-      <tr><td align="center">
-        <div id="testMessage_att"> </div>
-      </td></tr>
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_att"> </div>
+          </td>
+        </tr>
     </table>
-</div>
-
-<!-- End recall slide -->
-
-<!-- Recall 1 slide -->
-
-<div class="slide" id="vitamins3">
-  <br>
-
-  <!-- Show sentence from attitudes scale -->
-  <div align="center">
-    <img src="toy.png">
-    <p id ="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
-</p> 
   </div>
 
-  <br>
+  <!-- End recall slide -->
 
-  <!-- Likert radio buttons -->
-  <table align = "center"><tr>
-    <td align="center">
-     
+  <!-- Recall 1 slide -->
+
+  <div class="slide" id="vitamins3">
+    <br>
+
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <img src="images/toy.png">
+      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center">
       <tr>
-        <td><input id ="recall1" type="radio" name="recall" value = "a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label></td>
-        <td><input id ="recall2" type="radio" name="recall" value = "b">
-            <label for="recall2">b. Let the child play freely with the toy without instruction.</label></td>
-        <td><input id ="recall3" type="radio" name="recall" value = "c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label></td>
-        <td></td>
-      </tr>
+        <td align="center">
+
+          <tr>
+            <td>
+              <input id="recall1" type="radio" name="recall" value="a">
+              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+            </td>
+            <td>
+              <input id="recall2" type="radio" name="recall" value="b">
+              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+            </td>
+            <td>
+              <input id="recall3" type="radio" name="recall" value="c">
+              <label for="recall3">c. Quiz the child about shapes and colors.</label>
+            </td>
+            <td></td>
+          </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
-    <table align="center"><tr>
-      <td align="center">
-        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
-      </td> 
-      <tr><td align="center">
-        <div id="testMessage_att"> </div>
-      </td></tr>
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_att"> </div>
+          </td>
+        </tr>
     </table>
-</div>
+  </div>
 
-<!-- End recall slide -->
+  <!-- End recall slide -->
 
-    <!-- The debriefing slide. -->
-    <div class="slide" id="debriefing">
-     <form id="demographics" onsubmit="experiment.submitcomments()">
+  <!-- The debriefing slide. -->
+  <div class="slide" id="debriefing">
+    <form id="demographics" onsubmit="experiment.submitcomments()">
 
       <table width="100%">
         <col style="width:30%">
-        <col style="width:70%">
-        <tr>
-          <td><img src="images/ladder.png"></td>
-          <td>
-            <p><b>Think of this ladder as representing where people stand in the United states.</b></p>
-            <p>At the top of the ladder are the people who are the best off - those who have the most money, the most education, and the most respected jobs. At the bottom are the people who are the worst off - who have the least money, least education, and the least respected jobs or no job. The higher up you are on this ladder, the closer you are to the people at the very top; the lower you are, the closer you are to the people at the very bottom. 
-            </p>
-            <p><b>Where would you place yourself on this ladder?</b></p>
-            <p>
-              <select name="ladder" id="ladder" form="demographics">
-                <option value="">Choose a rung</option>
-                <option value="10">10 - Top</option>
-                <option value="9">9</option>
-                <option value="8">8</option>
-                <option value="7">7</option>
-                <option value="6">6</option>
-                <option value="5">5</option>
-                <option value="4">4</option>
-                <option value="3">3</option>
-                <option value="2">2</option>
-                <option value="1">1 - Bottom</option>
-              </select>
-            </p>
-          </td>
-        </tr>
+          <col style="width:70%">
+            <tr>
+              <td><img src="images/ladder.png"></td>
+              <td>
+                <p><b>Think of this ladder as representing where people stand in the United states.</b></p>
+                <p>At the top of the ladder are the people who are the best off - those who have the most money, the most education, and the most respected jobs. At the bottom are the people who are the worst off - who have the least money, least education,
+                  and the least respected jobs or no job. The higher up you are on this ladder, the closer you are to the people at the very top; the lower you are, the closer you are to the people at the very bottom.
+                </p>
+                <p><b>Where would you place yourself on this ladder?</b></p>
+                <p>
+                  <select name="ladder" id="ladder" form="demographics">
+                    <option value="">Choose a rung</option>
+                    <option value="10">10 - Top</option>
+                    <option value="9">9</option>
+                    <option value="8">8</option>
+                    <option value="7">7</option>
+                    <option value="6">6</option>
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1 - Bottom</option>
+                  </select>
+                </p>
+              </td>
+            </tr>
       </table>
       <br>
 
-          <p><b>What is your age?</b></p>
-                  <p>
-                    <select name="age" id="age" form="demographics">
-                      <option value="">Choose an age</option>
-                      <option value="0-19">&nbsp;0-19</option>
-                      <option value="20-29">20-29</option>
-                      <option value="30-39">30-39</option>
-                      <option value="40-49">40-49</option>
-                      <option value="50-59">50-59</option>
-                      <option value="60-69">60-69</option>
-                      <option value="70-79">70-79</option>
-                      <option value="80-89">80-89</option>
-                      <option value="&gt;90">90+</option>
-                    </select>
-                  </p>
+      <p><b>What is your age?</b></p>
+      <p>
+        <select name="age" id="age" form="demographics">
+          <option value="">Choose an age</option>
+          <option value="0-19">&nbsp;0-19</option>
+          <option value="20-29">20-29</option>
+          <option value="30-39">30-39</option>
+          <option value="40-49">40-49</option>
+          <option value="50-59">50-59</option>
+          <option value="60-69">60-69</option>
+          <option value="70-79">70-79</option>
+          <option value="80-89">80-89</option>
+          <option value="&gt;90">90+</option>
+        </select>
+      </p>
 
-          <p><b>What is your gender?</b></p>
-            <p>
-             <input type="text" id="gender" name="gender" style="width:40%" value=""></textarea>
-           </p>
+      <p><b>What is your gender?</b></p>
+      <p>
+        <input type="text" id="gender" name="gender" style="width:40%" value="">
+        </textarea>
+      </p>
 
-          <p><b>What is your highest level of education completed?</b></p>
-                  <p>
-                    <select name="education" id="education" form="demographics">
-                      <option value="">Choose a level</option>
-                      <option value="gradeSchool">Grade school</option>
-                      <option value="highSchool">High school</option>
-                      <option value="someCollege">Some college</option>
-                      <option value="4year">4-year college</option>
-                      <option value="someGrad">Some graduate school</option>
-                      <option value="Grad">Graduate degree</option>
-                    </select>
-                  </p>
+      <p><b>What is your highest level of education completed?</b></p>
+      <p>
+        <select name="education" id="education" form="demographics">
+          <option value="">Choose a level</option>
+          <option value="gradeSchool">Grade school</option>
+          <option value="highSchool">High school</option>
+          <option value="someCollege">Some college</option>
+          <option value="4year">4-year college</option>
+          <option value="someGrad">Some graduate school</option>
+          <option value="Grad">Graduate degree</option>
+        </select>
+      </p>
 
-          <p><b>What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)?</b></p>
-            <p>
-             <input type="text" id="homelang" name="lg" style="width:40%" value=""></textarea>
-           </p>
+      <p><b>What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)?</b></p>
+      <p>
+        <input type="text" id="homelang" name="lg" style="width:40%" value="">
+        </textarea>
+      </p>
 
-          <p><b>What is your ethnicity?</b></p>
-           <p>
+      <p><b>What is your ethnicity?</b></p>
+      <p>
 
-             <select name="ethnicity" id="ethnicity" form="demographics">
-                      <option value="">Choose an ethnicity</option>
-                      <option value="Hispanic">Hispanic or Latino</option>
-                      <option value="NonHispanic">Non-Hispanic or Latino</option>
-                      <option value="NA">Prefer not to state</option>
-            </select>
-          </p>
+        <select name="ethnicity" id="ethnicity" form="demographics">
+          <option value="">Choose an ethnicity</option>
+          <option value="Hispanic">Hispanic or Latino</option>
+          <option value="NonHispanic">Non-Hispanic or Latino</option>
+          <option value="NA">Prefer not to state</option>
+        </select>
+      </p>
 
-          <p><b>What is your race? Please check all that apply.</b></p>
-           <p>
-            <form>
-            <input type="checkbox" name="race" value="amInd"> American Indian or
-            Alaskan Native
+      <p><b>What is your race? Please check all that apply.</b></p>
+      <p>
+        <form>
+          <input type="checkbox" name="race" value="amInd"> American Indian or Alaskan Native
           <br>
-            <input type="checkbox" name="race" value="asian"> Asian
+          <input type="checkbox" name="race" value="asian"> Asian
           <br>
-            <input type="checkbox" name="race" value="natHaw"> Native Hawaiian or US
-            Pacific Islander
+          <input type="checkbox" name="race" value="natHaw"> Native Hawaiian or US Pacific Islander
           <br>
-            <input type="checkbox" name="race" value="black"> Black/African American
+          <input type="checkbox" name="race" value="black"> Black/African American
           <br>
-            <input type="checkbox" name="race" value="white"> White
+          <input type="checkbox" name="race" value="white"> White
           <br>
-            <input type="checkbox" name="race" value="other"> Other
-          </form>
+          <input type="checkbox" name="race" value="other"> Other
+        </form>
 
-           <p><b>How many children do you have?</b></p>
-           <p>
-             <select name="children" id="children" form="demographics">
-                      <option value="">Choose a number</option>
-                      <option value="0">0</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="morethan5">More than 5</option>
-                    </select>
-          </p>
+        <p><b>How many children do you have?</b></p>
+        <p>
+          <select name="children" id="children" form="demographics">
+            <option value="">Choose a number</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="morethan5">More than 5</option>
+          </select>
+        </p>
 
-          <p><b>If you have children, how old is your <em>oldest</em> child?</b></p>
-           <p>
-            <select name="oldest" id="oldestAge" form="demographics">
-                      <option value="">Choose an age</option>
-                      <option value="0to6mo">0-6 months old</option>
-                      <option value="7to12mo">7-12 months old</option>
-                      <option value="1y">1 year old</option>
-                      <option value="2y">2 years old</option>
-                      <option value="3y">3 years old</option>
-                      <option value="4y">4 years old</option>
-                      <option value="5y">5 years old</option>
-                      <option value="6y">6 years old</option>
-                      <option value="7y">7 years old</option>
-                      <option value="8y">8 years old</option>
-                      <option value="9y">9 years old</option>
-                      <option value="10y">10 years old</option>
-                      <option value="olderthan10">More than 10 years old</option>
-                    </select>
+        <p><b>If you have children, how old is your <em>oldest</em> child?</b></p>
+        <p>
+          <select name="oldest" id="oldestAge" form="demographics">
+            <option value="">Choose an age</option>
+            <option value="0to6mo">0-6 months old</option>
+            <option value="7to12mo">7-12 months old</option>
+            <option value="1y">1 year old</option>
+            <option value="2y">2 years old</option>
+            <option value="3y">3 years old</option>
+            <option value="4y">4 years old</option>
+            <option value="5y">5 years old</option>
+            <option value="6y">6 years old</option>
+            <option value="7y">7 years old</option>
+            <option value="8y">8 years old</option>
+            <option value="9y">9 years old</option>
+            <option value="10y">10 years old</option>
+            <option value="olderthan10">More than 10 years old</option>
+          </select>
 
           <p><b>If you have children, how old is your <em>youngest</em> child?</b></p>
-           <p>
-             <select name="youngest" id="youngestAge" form="demographics">
-                      <option value="">Choose an age</option>
-                      <option value="0to6mo">0-6 months old</option>
-                      <option value="7to12mo">7-12 months old</option>
-                      <option value="1y">1 year old</option>
-                      <option value="2y">2 years old</option>
-                      <option value="3y">3 years old</option>
-                      <option value="4y">4 years old</option>
-                      <option value="5y">5 years old</option>
-                      <option value="6y">6 years old</option>
-                      <option value="7y">7 years old</option>
-                      <option value="8y">8 years old</option>
-                      <option value="9y">9 years old</option>
-                      <option value="10y">10 years old</option>
-                      <option value="olderthan10">More than 10 years old</option>
-                    </select>
-
-          <p><b>What do you think this experiment was about?</b></p>
           <p>
-           <textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
-          </p>
+            <select name="youngest" id="youngestAge" form="demographics">
+              <option value="">Choose an age</option>
+              <option value="0to6mo">0-6 months old</option>
+              <option value="7to12mo">7-12 months old</option>
+              <option value="1y">1 year old</option>
+              <option value="2y">2 years old</option>
+              <option value="3y">3 years old</option>
+              <option value="4y">4 years old</option>
+              <option value="5y">5 years old</option>
+              <option value="6y">6 years old</option>
+              <option value="7y">7 years old</option>
+              <option value="8y">8 years old</option>
+              <option value="9y">9 years old</option>
+              <option value="10y">10 years old</option>
+              <option value="olderthan10">More than 10 years old</option>
+            </select>
 
-         <p><b>Any general comments about the experiment?</b></p>
-         <p>
-           <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
-         </p>
-       </form>
+            <p><b>What do you think this experiment was about?</b></p>
+            <p>
+              <textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
+            </p>
 
-       <div align="center">
-         <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
-       </div>
-      </div>
+            <p><b>Any general comments about the experiment?</b></p>
+            <p>
+              <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
+            </p>
+    </form>
 
-<!-- The finish slide. -->
-<div class="slide" id="finished">
- You're finished - thanks for participating! Submitting to Mechanical Turk...
-</div>
+    <div align="center">
+      <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
+    </div>
+  </div>
 
-<script src="uptake_e1.js"></script>
+  <!-- The finish slide. -->
+  <div class="slide" id="finished">
+    You're finished - thanks for participating! Submitting to Mechanical Turk...
+  </div>
+
+  <script src="uptake_e1.js"></script>
 
 </body>
+
 </html>
