@@ -8,19 +8,99 @@ function showSlide(id) {
 	$("#"+id).show();
 }
 
+
+// Get random integers.
+// When called with no arguments, it returns either 0 or 1. When called with one argument, *a*, it returns a number in {*0, 1, ..., a-1*}. When called with two arguments, *a* and *b*, returns a random value in {*a*, *a + 1*, ... , *b*}.
+function random(a,b) {
+	if (typeof b == "undefined") {
+		a = a || 2;
+		return Math.floor(Math.random()*a);
+	} else {
+		return Math.floor(Math.random()*(b-a+1)) + a;
+	}
+}
+
+// Add a random selection function to all arrays (e.g., <code>[4,8,7].random()</code> could return 4, 8, or 7). This is useful for condition randomization.
+Array.prototype.random = function() {
+  return this[random(this.length)];
+}
+
+// shuffle function - from stackoverflow?
+// shuffle ordering of argument array -- are we missing a parenthesis?
+function shuffle (a) 
+{ 
+    var o = [];
+    
+    for (var i=0; i < a.length; i++) {
+	o[i] = a[i];
+    }
+    
+    for (var j, x, i = o.length;
+	 i;
+	 j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);	
+    return o;
+}
+
 // ######################## Configuration settings ############################
 
+//set up attitudes items.
 
-var slides = ['reading1','reading2','reading3','target1','target2','target3','target4',
+
+var atts = ['It is very important that children learn to respect adults, such as parents and teachers.',
+'It is important for young children to learn to control their impulses (e.g., waiting when told to wait).',
+'Children should be taught to be grateful to their parents.',
+'Children should not be punished for breaking small rules.',
+'Parents should follow their children’s lead rather than imposing structure in the form of rules.',
+'Young children should be allowed to make their own decisions, such as what to eat for dinner.',
+'Parents need to provide safe and loving environments for their children.',
+'Holding and cradling babies is important for forming strong bonds between parent and child.',
+'Children should be given comfort and understanding when they are scared or unhappy.',
+'Parents do not need to talk to their child about his or her emotions.',
+'Children become spoiled if they receive too much attention from parents.',
+'Too much affection can make a child weak.',
+'Children can learn about things like good and bad behavior from a very early age.',
+'Young children can teach themselves things by exploring and playing.',
+'Babies’ repetitive behaviors (e.g. banging a cup on the table) are a way for them to explore cause and effect.',
+'It is not helpful for adults to explain the reasons for rules to young children because they won’t understand.',
+'Children don’t need to learn about numbers and math until they go to school.',
+'Reading books to children is not helpful if they have not yet learned to speak.']; 
+
+atts = shuffle(atts); 
+
+var slides = ['reading0','reading1','reading2','reading3','target1','target2','target3','target4',
 'vitamins1','vitamins2'];
+
+var totalTrialsAtt = atts.length;
+var totalTrialsUptake = slides.length;
+
+var numTrialsExperiment = totalTrialsAtt + totalTrialsUptake;
+
+
+//set up uptake experiment slides.
 
 var trials = [];
 
+
+for (i = 0; i < totalTrialsAtt; i++) {
+	trial = {
+		sentence: atts[i],
+		trial_number_block: i +1,
+		trial_type: "attitudes",
+		slide: "",
+		trial_number: i+1,
+	}
+
+	trials.push(trial);
+}
+
 for (i = 0; i < slides.length; i++) {
 
-	var trial = {
+	 trial = {
+		sentence: "",
+		trial_number_block: "",
+		trial_type:"uptake",
 		slide: slides[i],
-		trial_number: i+1
+		trial_number: i+1,
 	}
 
 	trials.push(trial);
@@ -38,6 +118,10 @@ var experiment = {
 	// The object to be submitted.
 	data: {
 		rating: [],
+		trial_number_block: [],
+    	trial_type: [],
+		sentence: [],
+		answer: [],
 		ladder: [],
 		age: [],
 		gender: [],
@@ -77,13 +161,24 @@ var experiment = {
 		//  Loop through radio buttons
 		for (i = 0; i < radio.length; i++) {
 			if (radio[i].checked) {
-				experiment.data.rating.push(radio[i].value);
+				experiment.data.answer.push(radio[i].value);
 				response_logged = true;
 			}
 		}
 
 
+		var radio = document.getElementsByName("judgment");
+	
+		// Loop through radio buttons
+		for (i = 0; i < radio.length; i++) {
+	   	 if (radio[i].checked) {
+			experiment.data.rating.push(radio[i].value);
+			response_logged = true;		    
+	    }
+	}
+	
 		if (response_logged) {
+			nextButton_Att.blur();
 			nextButton_r1.blur();
 			nextButton_r2.blur();
 			nextButton_r3.blur();
@@ -97,6 +192,9 @@ var experiment = {
 			}
 			experiment.next();
 		} else {
+			$("#testMessage_att").html('<font color="red">' + 
+			'Please make a response!' + 
+			 '</font>');
 			$("#testMessage_r1").html('<font color="red">' +
 			'Please make a response!' +
 			'</font>');
@@ -135,13 +233,16 @@ var experiment = {
 
 		// Allow experiment to start if it's a turk worker OR if it's a test run
 		if (window.self == window.top | turk.workerId.length > 0) {
-
+		$("#testMessage_att").html(''); //clear test message
 		$("#testMessage_r1").html(''); 
 		$("#testMessage_r2").html(''); 
 		$("#testMessage_r3").html(''); 
 		$("#testMessage_r4").html(''); 
 		$("#testMessage_v1").html(''); 
 		$("#testMessage_v2").html(''); 
+
+		$("#progress").attr("style","width:" +
+			    String(100 * (1 - (trials.length)/numTrialsExperiment)) + "%")
 			// Get the current trial - <code>shift()</code> removes the first element
 			// select from our scales array and stop exp after we've exhausted all the domains
 			var trial_info = trials.shift();
@@ -153,6 +254,10 @@ var experiment = {
 			}
 
 			// check which trial type you're in and display correct slide
+			if (trial_info.trial_type == "attitudes") {
+	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
+	    	 showSlide("attitudes_slide"); 
+	    	 }
 			if (trial_info.slide == "reading1") {
 				showSlide("reading1");              //display slide
 			}
@@ -180,6 +285,10 @@ var experiment = {
 			if (trial_info.slide == "vitamins2") {
 				showSlide("vitamins2");              //display slide
 			}
+
+		experiment.data.sentence.push(trial_info.sentence);
+		experiment.data.trial_type.push(trial_info.trial_type)
+		experiment.data.trial_number_block.push(trial_info.trial_number_block)
 		}
 	},
 

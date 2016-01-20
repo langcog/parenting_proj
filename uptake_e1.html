@@ -19,7 +19,7 @@
     <br>
     <img src="images/stanford.png" alt="Stanford University">
     <p id='logo-text'>Stanford Language and Cognition Lab</p>
-    <p class="block-text">In this experiment, you will read two brief articles, and then answer some questions about the articles. If you've already been in a hit of this type (called "Learning from Science Articles"), please don't accept this one.</p>
+    <p class="block-text">In this experiment, you will first answer a few questions about your beliefs about parenting and child development, and then you will read two brief articles about science topics, and answer some questions about the articles. If you've already been in a hit of this type (called "Learning from Science Articles"), please don't accept this one.</p>
 
     <button type="button" onclick="this.blur(); experiment.next(); experiment.getrtinstruct()">Start</button>
 
@@ -31,6 +31,100 @@
       Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. Note however that we have recently been made aware that your public Amazon.com profile can be accessed via your
       worker ID if you do not choose to opt out. If you would like to opt out of this feature, you may follow instructions available <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
   </div>
+
+
+  <!-- Progress Bar -->
+
+<div class="progress">
+  <div id="progress" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+  </div>
+</div>
+
+<!-- Questionnaire slide 1 - attitudes -->
+
+<div class="slide" id="attitudes_slide">
+  <br>
+
+  <div align="center">
+    <h5>How much do you agree with the following statement with regard to <b>babies and toddlers</b>?</h5><br>
+  </div>
+
+  <!-- Show sentence from attitudes scale -->
+  <div align="center">
+    <p id ="attitudes">{{}}</p> 
+  </div>
+
+  <br>
+
+  <!-- Likert radio buttons -->
+  <table align = "center"><tr>
+    <td align="center">
+      <tr>
+        <td></td>
+        <td></td>
+        <td>Do Not Agree</td>
+        <td></td>
+        <td></td>
+        <td>Agree Somewhat</td>
+        <td></td>
+        <td></td>
+        <td>Strongly Agree</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td><input id ="likert1" type="radio" name="judgment" value = "0">
+          <label for="likert1">0</label></td>
+        <td><input id ="likert2" type="radio" name="judgment" value = "1">
+            <label for="likert2">1</label></td>
+        <td><input id ="likert3" type="radio" name="judgment" value = "2">
+              <label for="likert3">2</label></td>
+        <td><input id ="likert4" type="radio" name="judgment" value = "3">
+                <label for="likert4">3</label></td>
+        <td><input id ="likert5" type="radio" name="judgment" value = "4">
+                  <label for="likert5">4</label></td>
+        <td><input id ="likert6" type="radio" name="judgment" value = "5">
+                    <label for="likert6">5</label></td>
+        <td><input id ="likert7" type="radio" name="judgment" value = "6">
+                      <label for="likert7">6</label></td>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center"><tr>
+      <td align="center">
+        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+      </td> 
+      <tr><td align="center">
+        <div id="testMessage_att"> </div>
+      </td></tr>
+    </table>
+</div>
+
+
+  <!-- Reading instructions slide -->
+  <div class="slide" id="reading0">
+
+    <br>
+
+    <p class="block-text">You will now be asked to read two brief articles. Please read the text at your own pace. After you finish reading both articles, you will answer some questions about the articles.</p>
+
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" onClick="this.blur(); experiment.next()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- End reading instructions slide -->
 
   <!-- Slide 1 Target Article -->
   <div class="slide" id="reading1">
