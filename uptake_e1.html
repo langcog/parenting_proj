@@ -21,7 +21,7 @@
     <p id='logo-text'>Stanford Language and Cognition Lab</p>
     <p class="block-text">In this experiment, you will read two brief articles, and then answer some questions about the articles. If you've already been in a hit of this type (called "Learning from Science Articles"), please don't accept this one.</p>
 
-    <button type="button" onclick="this.blur(); experiment.next()">Start</button>
+    <button type="button" onclick="this.blur(); experiment.next(); experiment.getrtinstruct()">Start</button>
 
     <p class="block-text">
       <br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
@@ -32,7 +32,7 @@
       worker ID if you do not choose to opt out. If you would like to opt out of this feature, you may follow instructions available <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
   </div>
 
-  <!-- Slide 1 Parenting Article -->
+  <!-- Slide 1 Target Article -->
   <div class="slide" id="reading1">
     <br>
 
@@ -77,7 +77,7 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttar()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -139,7 +139,7 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrtvit()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -162,7 +162,7 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_choice" onClick="this.blur(); experiment.next()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -179,10 +179,10 @@
   <div class="slide" id="target1">
     <br>
 
-    <!-- Show sentence from attitudes scale -->
+    <!-- Show recall question -->
     <div align="center">
       <img src="images/toy.png" width=200px>
-      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      <p id="recall">Based on <strong>Article 1</strong>, when playing with the above toy with a child, is it better to:
       </p>
     </div>
 
@@ -190,18 +190,17 @@
 
     <!-- Likert radio buttons -->
     <table align="center" class="likert">
-      <tr>
         <td>
-          <input id="recall1" type="radio" name="recall" value="a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+          <input id="recall1a" type="radio" name="recall" value="a">
+          <label for="recall1a">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
         </td>
         <td>
-          <input id="recall2" type="radio" name="recall" value="b">
-          <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+          <input id="recall1b" type="radio" name="recall" value="b">
+          <label for="recall1b">b. Let the child play freely with the toy without instruction.</label>
         </td>
         <td>
-          <input id="recall3" type="radio" name="recall" value="c">
-          <label for="recall3">c. Quiz the child about shapes and colors.</label>
+          <input id="recall1c" type="radio" name="recall" value="c">
+          <label for="recall1c">c. Quiz the child about shapes and colors.</label>
         </td>
       </tr>
     </table>
@@ -210,27 +209,31 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+          <button type="button" id="nextButton_r1" onClick="experiment.log_response()"> next</button>
         </td>
         <tr>
           <td align="center">
-            <div id="testMessage_att"> </div>
+            <div id="testMessage_r1"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-  <!-- End recall slide -->
+  <!-- End recall 1 slide -->
 
-  <!-- Recall 1 slide -->
-
+   <!-- Recall 2 slide -->
   <div class="slide" id="target2">
     <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 
-    <!-- Show sentence from attitudes scale -->
+   <!-- Show recall question -->
     <div align="center">
-      <img src="images/toy.png" width=200px>
-      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      <p id="recall">Based on <strong>Article 1</strong>, preschool directors should plan to have:
       </p>
     </div>
 
@@ -240,16 +243,16 @@
     <table align="center" class="likert">
       <tr>
         <td>
-          <input id="recall1" type="radio" name="recall" value="a">
-          <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+          <input id="recall2a" type="radio" name="recall" value="a">
+          <label for="recall2a">a. More time for children to play outside and with toys. </label>
         </td>
         <td>
-          <input id="recall2" type="radio" name="recall" value="b">
-          <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
+          <input id="recall2b" type="radio" name="recall" value="b">
+          <label for="recall2b">b. More structured time in which children are taught lessons and skills.</label>
         </td>
         <td>
-          <input id="recall3" type="radio" name="recall" value="c">
-          <label for="recall3">c. Quiz the child about shapes and colors.</label>
+          <input id="recall2c" type="radio" name="recall" value="c">
+          <label for="recall2c">c. More time spent memorizing things that will be helpful later, such as the ABCs.</label>
         </td>
       </tr>
     </table>
@@ -258,224 +261,223 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+          <button type="button" id="nextButton_r2" onClick="experiment.log_response()"> next</button>
         </td>
         <tr>
           <td align="center">
-            <div id="testMessage_att"> </div>
+            <div id="testMessage_r2"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-  <!-- End recall slide -->
-  <!-- Recall 1 slide -->
+  <!-- End recall 2 slide -->
 
+   <!-- Recall 3 slide -->
   <div class="slide" id="target3">
     <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 
-    <!-- Show sentence from attitudes scale -->
+    <!-- Show recall question -->
     <div align="center">
-      <img src="images/toy.png">
-      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      <p id="recall">According to <strong>Article 1</strong>, when an experimenter acted more like a teacher and showed children how to make a toy squeak, children:
       </p>
     </div>
 
     <br>
 
     <!-- Likert radio buttons -->
-    <table align="center">
+    <table align="center" class="likert">
       <tr>
-        <td align="center">
-
-          <tr>
-            <td>
-              <input id="recall1" type="radio" name="recall" value="a">
-              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
-            </td>
-            <td>
-              <input id="recall2" type="radio" name="recall" value="b">
-              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
-            </td>
-            <td>
-              <input id="recall3" type="radio" name="recall" value="c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label>
-            </td>
-            <td></td>
-          </tr>
+        <td>
+          <input id="recall3a" type="radio" name="recall" value="a">
+          <label for="recall3a">a. Played with the toy more than if the experimenter acted surprised by the toy. </label>
+        </td>
+        <td>
+          <input id="recall3b" type="radio" name="recall" value="b">
+          <label for="recall3b">b. Played with the toy less than if the experimenter acted surprised by the toy.</label>
+        </td>
+        <td>
+          <input id="recall3c" type="radio" name="recall" value="c">
+          <label for="recall3c">c. Played with the toy the same amount whether or not the experimenter acted surprised by the toy.</label>
+        </td>
+      </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+          <button type="button" id="nextButton_r3" onClick="experiment.log_response()"> next</button>
         </td>
         <tr>
           <td align="center">
-            <div id="testMessage_att"> </div>
+            <div id="testMessage_r3"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-  <!-- End recall slide -->
+  <!-- End recall 3 slide -->
 
-  <!-- Recall 1 slide -->
+   <!-- Recall 4 slide -->
+  <div class="slide" id="target4">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p id="recall">According to <strong>Article 1</strong>, children explore and learn more when:
+      </p>
+    </div>
 
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td>
+          <input id="recall4a" type="radio" name="recall" value="a">
+          <label for="recall4a">a. Adults show them exactly how something works. </label>
+        </td>
+        <td>
+          <input id="recall4b" type="radio" name="recall" value="b">
+          <label for="recall4b">b. Adults let them play freely without instruction.</label>
+        </td>
+        <td>
+          <input id="recall4c" type="radio" name="recall" value="c">
+          <label for="recall4c">c. Adults choose which items children play with.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r4" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r4"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 4 slide -->
+
+  <!-- Vitamins recall 1 slide -->
   <div class="slide" id="vitamins1">
     <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 
-    <!-- Show sentence from attitudes scale -->
+    <!-- Show recall question -->
     <div align="center">
-      <img src="images/toy.png">
-      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      <p id="recall">According to <strong>Article 2</strong>, the editorial on vitamins in the journal Annals of Internal Medicine concluded:
       </p>
     </div>
 
     <br>
 
     <!-- Likert radio buttons -->
-    <table align="center">
+    <table align="center" class="likert">
       <tr>
-        <td align="center">
-
-          <tr>
-            <td>
-              <input id="recall1" type="radio" name="recall" value="a">
-              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
-            </td>
-            <td>
-              <input id="recall2" type="radio" name="recall" value="b">
-              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
-            </td>
-            <td>
-              <input id="recall3" type="radio" name="recall" value="c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label>
-            </td>
-            <td></td>
-          </tr>
+        <td>
+          <input id="vit1a" type="radio" name="recall" value="a">
+          <label for="vit1a">a. People who take vitamin supplements live longer than those who don’t. </label>
+        </td>
+        <td>
+          <input id="vit1b" type="radio" name="recall" value="b">
+          <label for="vit1b">b. Vitamin and mineral supplements provide no health benefits.</label>
+        </td>
+        <td>
+          <input id="vit1c" type="radio" name="recall" value="c">
+          <label for="vit1c">c. Vitamin and mineral supplements can be dangerous if they have expired.</label>
+        </td>
+      </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+          <button type="button" id="nextButton_v1" onClick="experiment.log_response()"> next</button>
         </td>
         <tr>
           <td align="center">
-            <div id="testMessage_att"> </div>
+            <div id="testMessage_v1"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-  <!-- End recall slide -->
+  <!-- End Vitamins recall 1 slide -->
 
-  <!-- Recall 1 slide -->
-
+  
+   <!-- Vitamins recall 2 slide -->
   <div class="slide" id="vitamins2">
     <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 
-    <!-- Show sentence from attitudes scale -->
+   <!-- Show recall question -->
     <div align="center">
-      <img src="images/toy.png">
-      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
+      <p id="recall">According to <strong>Article 2</strong>, vitamin deficiencies are:
       </p>
     </div>
 
     <br>
 
     <!-- Likert radio buttons -->
-    <table align="center">
+    <table align="center" class="likert">
       <tr>
-        <td align="center">
-
-          <tr>
-            <td>
-              <input id="recall1" type="radio" name="recall" value="a">
-              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
-            </td>
-            <td>
-              <input id="recall2" type="radio" name="recall" value="b">
-              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
-            </td>
-            <td>
-              <input id="recall3" type="radio" name="recall" value="c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label>
-            </td>
-            <td></td>
-          </tr>
+        <td>
+          <input id="vit2a" type="radio" name="recall" value="a">
+          <label for="vit2a">a. Equally common today as they were in the past. </label>
+        </td>
+        <td>
+          <input id="vit2b" type="radio" name="recall" value="b">
+          <label for="vit2b">b. More common today than they were in the past.</label>
+        </td>
+        <td>
+          <input id="vit2c" type="radio" name="recall" value="c">
+          <label for="vit2c">c. Less common today than they were in the past.</label>
+        </td>
+      </tr>
     </table>
 
     <!-- Next button and "please make a response" message -->
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+          <button type="button" id="nextButton_v2" onClick="experiment.log_response()"> next</button>
         </td>
         <tr>
           <td align="center">
-            <div id="testMessage_att"> </div>
+            <div id="testMessage_v2"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-  <!-- End recall slide -->
-
-  <!-- Recall 1 slide -->
-
-  <div class="slide" id="vitamins3">
-    <br>
-
-    <!-- Show sentence from attitudes scale -->
-    <div align="center">
-      <img src="images/toy.png">
-      <p id="recall">Based on Article 1, when playing with the above toy with a child, is it better to:
-      </p>
-    </div>
-
-    <br>
-
-    <!-- Likert radio buttons -->
-    <table align="center">
-      <tr>
-        <td align="center">
-
-          <tr>
-            <td>
-              <input id="recall1" type="radio" name="recall" value="a">
-              <label for="recall1">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
-            </td>
-            <td>
-              <input id="recall2" type="radio" name="recall" value="b">
-              <label for="recall2">b. Let the child play freely with the toy without instruction.</label>
-            </td>
-            <td>
-              <input id="recall3" type="radio" name="recall" value="c">
-              <label for="recall3">c. Quiz the child about shapes and colors.</label>
-            </td>
-            <td></td>
-          </tr>
-    </table>
-
-    <!-- Next button and "please make a response" message -->
-    <table align="center">
-      <tr>
-        <td align="center">
-          <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
-        </td>
-        <tr>
-          <td align="center">
-            <div id="testMessage_att"> </div>
-          </td>
-        </tr>
-    </table>
-  </div>
-
-  <!-- End recall slide -->
+  <!-- End Vitamins recall 2 slide -->
 
   <!-- The debriefing slide. -->
   <div class="slide" id="debriefing">
@@ -637,10 +639,56 @@
               <textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
             </p>
 
-            <p><b>Any general comments about the experiment?</b></p>
+            <p><b>Do you have any comments about the articles you read?</b></p>
             <p>
               <textarea type="textarea" id="expcomments" style="width:100%" name="expgen"></textarea>
             </p>
+
+            <p><b>Was it easy or difficult to read the <em>first article</em> (about children's learning)?</b></p>
+        <p>
+          <select name="reading_ease_target" id="reading_ease_target" form="demographics">
+            <option value="">Choose an answer</option>
+            <option value="Very Easy">Very Easy</option>
+            <option value="Somewhat Easy">Somewhat Easy</option>
+            <option value="Somewhat Difficult">Somewhat Difficult</option>
+            <option value="Very Difficult">Very Difficult</option>
+          </select>
+        </p>
+
+
+            <p><b>How much did you enjoy reading the <em>first article</em> (about children's learning)?</b></p>
+        <p>
+          <select name="enjoy_target" id="enjoy_target" form="demographics">
+            <option value="">Choose an answer</option>
+            <option value="Very Enjoyable">Very Enjoyable</option>
+            <option value="Somewhat Enjoyable">Somewhat Enjoyable</option>
+            <option value="Somewhat Unenjoyable">Somewhat Unenjoyable</option>
+            <option value="Very Unenjoyable">Very Unenjoyable</option>
+          </select>
+        </p>
+
+            <p><b>Was it easy or difficult to read the <em>second article</em> (about vitamins)?</b></p>
+        <p>
+          <select name="reading_ease_vitamins" id="reading_ease_vitamins" form="demographics">
+            <option value="">Choose an answer</option>
+            <option value="Very Easy">Very Easy</option>
+            <option value="Somewhat Easy">Somewhat Easy</option>
+            <option value="Somewhat Difficult">Somewhat Difficult</option>
+            <option value="Very Difficult">Very Difficult</option>
+          </select>
+        </p>
+
+            <p><b>How much did you enjoy reading the <em>second article</em> (about vitamins)?</b></p>
+        <p>
+          <select name="enjoy_vitamins" id="enjoy_vitamins" form="demographics">
+            <option value="">Choose an answer</option>
+            <option value="Very Enjoyable">Very Enjoyable</option>
+            <option value="Somewhat Enjoyable">Somewhat Enjoyable</option>
+            <option value="Somewhat Unenjoyable">Somewhat Unenjoyable</option>
+            <option value="Very Unenjoyable">Very Unenjoyable</option>
+          </select>
+        </p>
+
     </form>
 
     <div align="center">
