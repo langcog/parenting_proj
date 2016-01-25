@@ -19,9 +19,9 @@
     <br>
     <img src="images/stanford.png" alt="Stanford University">
     <p id='logo-text'>Stanford Language and Cognition Lab</p>
-    <p class="block-text">In this experiment, you will first answer a few questions about your beliefs about parenting and child development, and then you will read two brief articles about science topics, and answer some questions about the articles. If you've already been in a hit of this type (called "Learning from Science Articles"), please don't accept this one.</p>
+    <p class="block-text">In this experiment, you will first answer a few questions about your beliefs about parenting and child development, and then you will read two brief articles about science topics, and answer some questions about the articles. If you've already been in a hit of this type ("Child Development Survey" or "Learning from Science Articles"), please don't accept this one.</p>
 
-    <button type="button" onclick="this.blur(); experiment.next(); experiment.getrtinstruct()">Start</button>
+    <button type="button" onclick="this.blur(); experiment.next(), experiment.starttime()">Start</button>
 
     <p class="block-text">
       <br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
@@ -95,7 +95,7 @@
     <!-- Next button and "please make a response" message -->
     <table align="center"><tr>
       <td align="center">
-        <button type="button" id="nextButton_Att" onClick="experiment.log_response()"> next</button>
+        <button type="button" id="nextButton_Att" onClick="experiment.log_response_q()"> next</button>
       </td> 
       <tr><td align="center">
         <div id="testMessage_att"> </div>
@@ -105,16 +105,16 @@
 
 
   <!-- Reading instructions slide -->
-  <div class="slide" id="reading0">
+  <div class="slide" id="reading_instructions">
 
     <br>
 
-    <p class="block-text">You will now be asked to read two brief articles. Please read the text at your own pace. After you finish reading both articles, you will answer some questions about the articles.</p>
+    <p class="block-text">You will now be asked to read two articles. Please read the text <em>carefully</em> at your own pace. After you finish reading both articles, <em>you will be tested on their content</em>.</p>
 
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" onClick="this.blur(); experiment.next()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.starttarget()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -138,31 +138,40 @@
     <!-- Show parenting article -->
     <div class="block-text">
       <p id="article">
-        Ours is an age of pedagogy. Anxious parents instruct their children more and more, at younger and younger ages, until they're reading books to babies in the womb. They pressure teachers to make kindergartens and nurseries more like schools. So does the
-        law—the 2001 No Child Left Behind Act explicitly urged more direct instruction in federally funded preschools.
+        Ours is an age of pedagogy. Anxious parents instruct their children more and more, at younger and younger ages, until they're reading books to babies in the womb. They pressure teachers to make kindergartens and nurseries more like schools. So does the law—the 2001 No Child Left Behind Act explicitly urged more direct instruction in federally funded preschools.
         <br>
-        <br> There are skeptics, of course, including some parents, many preschool teachers, and even a few policy-makers. Shouldn't very young children be allowed to explore, inquire, play, and discover, they ask? Perhaps direct instruction can help children
-        learn specific facts and skills, but what about curiosity and creativity—abilities that are even more important for learning in the long run? A forthcoming study in the journal Cognition suggests that the doubters are on to something. While learning
-        from a teacher may help children get to a specific answer more quickly, it also makes them less likely to discover new information about a problem and to create a new and unexpected solution.
         <br>
-        <br> What do we already know about how teaching affects learning? Not as much as we would like, unfortunately, because it is a very difficult thing to study. You might try to compare different kinds of schools. But the children and the teachers at
-        a Marin County preschool that encourages exploration will be very different from the children and teachers in a direct instruction program in South Side Chicago. And almost any new program with enthusiastic teachers will have good effects, at
-        least to begin with, regardless of content. So comparisons are difficult. Besides, how do you measure learning, anyway? Almost by definition, directed teaching will make children do better on standardized tests, which the government uses to evaluate
-        school performance. Curiosity and creativity are harder to measure.
+        There are skeptics, of course, including some parents, many preschool teachers, and even a few policy-makers. Shouldn't very young children be allowed to explore, inquire, play, and discover, they ask? Perhaps direct instruction can help children learn specific facts and skills, but what about curiosity and creativity—abilities that are even more important for learning in the long run? Two forthcoming studies in the journal Cognition—one from a lab at MIT and one from my lab at UC-Berkeley—suggest that the doubters are on to something. While learning from a teacher may help children get to a specific answer more quickly, it also makes them less likely to discover new information about a problem and to create a new and unexpected solution.
         <br>
-        <br> Developmental scientists like me explore the basic science of learning by designing controlled experiments. We might start by saying: Suppose we gave a group of 4-year-olds exactly the same problems and only varied on whether we taught them directly
-        or encouraged them to figure it out for themselves? Would they learn different things and develop different solutions? The new study is the first to systematically show that they would.
         <br>
-        <br> The researchers looked at how 4-year-olds learned about a new toy with four tubes. Each tube could do something interesting: If you pulled on one tube it squeaked, if you looked inside another tube you found a hidden mirror, and so on. For one
-        group of children, the experimenter said: "I just found this toy!" As she brought out the toy, she pulled the first tube, as if by accident, and it squeaked. She acted surprised ("Huh! Did you see that? Let me try to do that!") and pulled the
-        tube again to make it squeak a second time. With the other children, the experimenter acted more like a teacher. She said, "I'm going to show you how my toy works. Watch this!" and deliberately made the tube squeak. Then she left both groups of
-        children alone to play with the toy.
+        What do we already know about how teaching affects learning? Not as much as we would like, unfortunately, because it is a very difficult thing to study. You might try to compare different kinds of schools. But the children and the teachers at a Marin County preschool that encourages exploration will be very different from the children and teachers in a direct instruction program in South Side Chicago. And almost any new program with enthusiastic teachers will have good effects, at least to begin with, regardless of content. So comparisons are difficult. Besides, how do you measure learning, anyway? Almost by definition, directed teaching will make children do better on standardized tests, which the government uses to evaluate school performance. Curiosity and creativity are harder to measure.
         <br>
-        <br> All of the children pulled the first tube to make it squeak. The question was whether they would also learn about the other things the toy could do. The children from the first group played with the toy longer and discovered more of its "hidden"
-        features than those in the second group. In other words, direct instruction made the children less curious and less likely to discover new information.
         <br>
-        <br> Why might children behave this way? Adults often assume that most learning is the result of teaching and that exploratory, spontaneous learning is unusual. But actually, spontaneous learning is more fundamental. Knowing this, it's more important
-        than ever to give children's remarkable, spontaneous learning abilities free rein. That means a rich, stable, and safe world, with affectionate and supportive grown-ups, and lots of opportunities for exploration and play. Not school for babies.
+        Developmental scientists like me explore the basic science of learning by designing controlled experiments. We might start by saying: Suppose we gave a group of 4-year-olds exactly the same problems and only varied on whether we taught them directly or encouraged them to figure it out for themselves? Would they learn different things and develop different solutions? The two new studies in Cognition are the first to systematically show that they would.
+        <br>
+        <br>
+        In the first study, MIT professor Laura Schulz, her graduate student Elizabeth Bonawitz, and their colleagues looked at how 4-year-olds learned about a new toy with four tubes. Each tube could do something interesting: If you pulled on one tube it squeaked, if you looked inside another tube you found a hidden mirror, and so on. For one group of children, the experimenter said: "I just found this toy!" As she brought out the toy, she pulled the first tube, as if by accident, and it squeaked. She acted surprised ("Huh! Did you see that? Let me try to do that!") and pulled the tube again to make it squeak a second time. With the other children, the experimenter acted more like a teacher. She said, "I'm going to show you how my toy works. Watch this!" and deliberately made the tube squeak. Then she left both groups of children alone to play with the toy.
+        <br>
+        <br>
+        All of the children pulled the first tube to make it squeak. The question was whether they would also learn about the other things the toy could do. The children from the first group played with the toy longer and discovered more of its "hidden" features than those in the second group. In other words, direct instruction made the children less curious and less likely to discover new information.
+        <br>
+        <br>
+        Does direct teaching also make children less likely to draw new conclusions—or, put another way, does it make them less creative? To answer this question, Daphna Buchsbaum, Tom Griffiths, Patrick Shafto, and I gave another group of 4-year-old children a new toy. This time, though, we demonstrated sequences of three actions on the toy, some of which caused the toy to play music, some of which did not. For example, Daphna might start by squishing the toy, then pressing a pad on its top, then pulling a ring on its side, at which point the toy would play music. Then she might try a different series of three actions, and it would play music again. Not every sequence she demonstrated worked, however: Only the ones that ended with the same two actions made the music play. After showing the children five successful sequences interspersed with four unsuccessful ones, she gave them the toy and told them to "make it go."
+        <br>
+        <br>
+        Daphna ran through the same nine sequences with all the children, but with one group, she acted as if she were clueless about the toy. ("Wow, look at this toy. I wonder how it works? Let's try this," she said.) With the other group, she acted like a teacher. ("Here's how my toy works.") When she acted clueless, many of the children figured out the most intelligent way of getting the toy to play music (performing just the two key actions, something Daphna had not demonstrated). But when Daphna acted like a teacher, the children imitated her exactly, rather than discovering the more intelligent and more novel two-action solution.
+        <br>
+        <br>
+        As so often happens in science, two studies from different labs, using different techniques, have simultaneously produced strikingly similar results. They provide scientific support for the intuitions many teachers have had all along: Direct instruction really can limit young children's learning. Teaching is a very effective way to get children to learn something specific—this tube squeaks, say, or a squish then a press then a pull causes the music to play. But it also makes children less likely to discover unexpected information and to draw unexpected conclusions.
+        <br>
+        <br>
+        Why might children behave this way? Adults often assume that most learning is the result of teaching and that exploratory, spontaneous learning is unusual. But actually, spontaneous learning is more fundamental. It's this kind of learning, in fact, that allows kids to learn from teachers in the first place. Patrick Shafto, a machine-learning specialist at the University of Louisville and a co-author of both these studies; Noah Goodman at Stanford; and their colleagues have explored how we could design computers that learn about the world as effectively as young children do. It's this work that inspired these experiments.
+        <br>
+        <br>
+        These experts in machine learning argue that learning from teachers first requires you to learn about teachers. For example, if you know how teachers work, you tend to assume that they are trying to be informative. When the teacher in the tube-toy experiment doesn't go looking for hidden features inside the tubes, the learner unconsciously thinks: "She's a teacher. If there were something interesting in there, she would have showed it to me." These assumptions lead children to narrow in, and to consider just the specific information a teacher provides. Without a teacher present, children look for a much wider range of information and consider a greater range of options.
+        <br>
+        <br>
+        Knowing what to expect from a teacher is a really good thing, of course: It lets you get the right answers more quickly than you would otherwise. Indeed, these studies show that 4-year-olds understand how teaching works and can learn from teachers. But there is an intrinsic trade-off between that kind of learning and the more wide-ranging learning that is so natural for young children. Knowing this, it's more important than ever to give children's remarkable, spontaneous learning abilities free rein. That means a rich, stable, and safe world, with affectionate and supportive grown-ups, and lots of opportunities for exploration and play. Not school for babies.
       </p>
     </div>
     <br>
@@ -183,7 +192,7 @@
   </div>
   <!-- end first article slide -->
 
-  <!-- Slide 2 Vitamin Article -->
+  <!-- Slide 2 Control Article -->
   <div class="slide" id="reading2">
     <br>
 
@@ -193,37 +202,64 @@
       <br>
     </div>
 
-    <!-- Show vitamin article -->
+    <!-- Show control article -->
     <div class="block-text">
       <p id="article">
-        Vitamin fans, take note: An editorial in the journal Annals of Internal Medicine suggests that multivitamins provide no health benefit in the long-run, and in fact, “should be avoided.” The authors of the piece, “Enough is Enough: Stop Wasting Money on
-        Vitamin and Mineral Supplements,” summarize the work of three review studies in the same journal, which together find no effect for vitamins on cardiovascular health, cancer risk, cognitive health, or mortality. The bottom line, at least to the
-        authors, is clear: We should stop wasting our money on multivitamins, since there’s little evidence to their benefit, and some evidence to their detriment. But as always, others say they jury is still out on this one.
+        Describe a banana. It's yellow, perhaps with some green edges. When peeled, it has a smooth, soft, mushy texture. It tastes sweet, maybe a little creamy.
         <br>
-        <br> The first of the three studies looked at 450,000 people randomly assigned to take multivitamins or placebo. Vitamins had no effect on cardiovascular health, cancer, or mortality over about a decade, and beta-carotene increased cancer risk in
-        people who smoked. The second study looked at the effect of vitamins on almost 6,000 men who were part of the Physicians’ Health Study II, and found no effect on whether the men (all doctors) experienced cognitive decline over the next 12 years,
-        compared to men taking placebo. Finally, the third study followed 1,700 men and women who had recently had a heart attack, and randomly assigned them to taking multivitamins or placebo. Again, there was no difference in the likelihood of the vitamin-takers
-        experiencing a second cardiac event over the next 4.6 years, compared to those taking placebo. (However, there was a high dropout rate in this last study, so it’s hard to draw conclusions.)
         <br>
-        <br> The authors of the editorial conclude, “The message is simple: Most supplements do not prevent chronic disease or death, their use is not justified, and they should be avoided.” This message, they add, is especially relevant given today’s general
-        population who are unlikely to have the kinds of micronutrient deficiencies that were more common years ago. According to the CDC, most Americans have healthy levels of the essential vitamins, although there are still subgroups who are deficient
-        in certain ones, like D and iron.
+        And it smells like... well, it smells like a banana.  
         <br>
-        <br> Others are not so convinced that it’s time to dump the multivitamins just yet. Earlier analysis of the Physicians’ Health Study II had found a modest effect on reducing the risk of any type of cancer over a period of 11 years. The authors of
-        that study conclude that their data indeed “provide support for the potential use of multivitamin supplements in the prevention of cancer in middle-aged and older men.” Additionally, there is some percentage of the population, say some critics,
-        who live on fast food and junk food, and who may well benefit from multivitamins to ward off deficiencies.
         <br>
-        <br> Finally, it’s important to point out is that the current studies may actually not have been so representative of the general population – for example, the second study looked at cognitive decline among aging physicians. Since doctors are more
-        likely to eat nutrient-dense diets and otherwise take good care of themselves, it’s hard to tell whether results for this group would be applicable to the average American.
+        Every sense has its own “lexical field,” a vast palette of dedicated descriptive words for colors, sounds, tastes, and textures. But smell? In English, there are only three dedicated smell words—stinky, fragrant, and musty—and the first two are more about the smeller's subjective experience than about the smelly thing itself.
         <br>
-        <br> Vitamin sales in the U.S. were over $28 billion in 2010, according to the authors, and have steadily risen in the last few decades, despite lacking evidence for their effectiveness in chronic disease prevention. About half of Americans take some
-        sort of vitamin or supplement, and it’s unlikely that multivitamins are going to go away overnight.
         <br>
-        <br> “Although available evidence does not rule out small benefits or harms or large benefits or harms in a small subgroup of the population,” the writers conclude, “we believe that the case is closed — supplementing the diet of well-nourished adults
-        with (most) mineral or vitamin supplements has no clear benefit and might even be harmful. These vitamins should not be used for chronic disease prevention. Enough is enough.”
+        All of our other scent descriptors are really descriptions of sources: We say that things smell like cinnamon, or roses, or teen spirit, or napalm in the morning. The other senses don't need these linguistic workarounds. We don't need to say that a banana “looks like lemon;” we can just say that it's yellow. Experts who work in perfume or wine-tasting industries may use more metaphorical terms like decadent or unctuous, but good luck explaining them to a non-expert who's not familiar with the jargon.
         <br>
-        <br> Time will tell whether this impassioned editorial kicks off any change in the vitamin industry. More studies will likely be needed before a conclusion in either direction is drawn. But following the trajectory of vitamin sales in recent years,
-        it seems, at least at this point, that Americans still can’t get enough.
+        <br>
+        Some scientists have taken this as evidence that humans have relegated smell to the sensory sidelines, while vision has taken center-field. It's a B-list sense, deemed by Darwin to be “of extremely slight service.” Others have suggested that smells are inherently indescribable, and that “olfactory abstraction is impossible.” Kant wrote that “Smell does not allow itself to be described, but only compared through similarity with another sense.” Indeed, when Jean-Baptiste Grenouille, the protagonist of Perfume: The Story of a Murderer can unerringly identify smells, remember them, and mix and match them in his head, he seems disconcerting and supernatural to us, precisely because we suck so badly at those tasks.
+        <br>
+        <br>
+        But not all of us. In Southeast Asia, there are at least two groups of hunter-gatherers who would turn their noses up at this textbook view. Asifa Majid from Radboud University in the Netherlands has found that the Jahai people of Malaysia and the Maniq of Thailand use between 12 and 15 dedicated smell words.
+        <br>
+        <br>
+        “These terms are really very salient to them,” she says. “They turn up all the time. Young children know them. They're basic vocabulary. They're not used for taste, or general ideas of edibility. They're really dedicated to smell.”
+        <br>
+        <br>
+        For example, ltpit describes the smell of a binturong or bearcat—a two-meter-long animal that looks like a shaggy, black-furred otter, and that famously smells of popcorn. But ltpit doesn't mean popcorn—it's not a source-based term. The same word is also used for soap, flowers, and the intense-smelling durian fruit, referring to some fragrant quality that Western noses can’t parse.
+        <br>
+        <br>
+        Another word is used for the smell of petrol, smoke, bat droppings, some species of millipede, the root of wild ginger, the wood of wild mango, and more. One seems specific to roasted foods. And one refers to things like squirrel blood, rodents, crushed head lice, and other “bloody smells that attract tigers.”
+        <br>
+        <br>
+        These terms don't refer to general qualities that are the dominion of other senses, like edibility. “Their meaning is not general over tastes, textures, pain, or any other state; their business is smell,” says Majid. “Just as you would describe a tomato as red, a Jahai speaker would describe the smell of bearcat as ltpit.”
+        <br>
+        <br>
+        Majid first heard about the Jahai through her colleague Niclas Burenhult, who had been working with them for years and had written the only formal grammar of their language. He noticed that they had specific smell words and, in disbelief,she flew out to Malaysia to investigate.
+        <br>
+        <br>
+        She talked to them, got to know their language, and learned about their culture. She tried them on the Brief Smell Identification Test—essentially a standardized scratch-and-sniff test with some fixed smells. She went on jungle walks with them, and asked them to describe the smells of their environment. And through several tests, she showed that they can name smells as consistently, easily, and clearly as English speakers can name colors, with none of the verbal struggles or linguistic somersaults that Westerners go through. The same applies to the Maniq.
+        These two groups clearly show that odors, contrary to popular belief, are not universally ineffable. “This work has changed my views!” says Tim Jacob from Cardiff University. “Smell information translates straight into behavior or mood and evokes whole memories,” he says. “Smell doesn't need language. That is what I thought. But, clearly there are cultures who have developed a smell vocabulary and it is both useful and necessary.”
+        <br>
+        <br>
+        Or, as Majid wrote, “Odors are expressible in language, as long as you speak the right language.”
+        <br>
+        <br>
+        And if you have the right language, it changes the way you perceive the world. Smell is an intrinsic part of Jahai culture in a way that it simply isn't in the west. “When we're there, Niclas and I say that we're brother and sister. Once, we got told off for sitting too close to each other because our smells would mingle, and that's a form of incest,” she says. “There are social taboos that are explained in terms of smells. Some foods can't be cooked in the same fire because their smells would mix.”
+        <br>
+        <br>
+        They're also extraordinarily good at distinguishing smells, and certainly better than Majid was. “We did a jungle walk during wild ginger flowering season,” she recalls. “You'd think it's one object and one smell but it's not. the flower smells different to the stem, and the stem smells different when you press it than when it's broken. I was trying to name the smells and some kids were following me around and laughing. Like: How can you be such a moron?”
+        She is now planning to return to the tribe next year to work out whether they're better at remembering smells. She's also thinking about collecting odor samples of things that they describe with the same words, to see if she can isolate chemicals that are common to them all. And she wants to compare these languages, and those from other Southeast Asian tribes, to understand how these smell words evolved from earlier parent languages.
+        <br>
+        <br>
+        “This work is very important for going beyond the WEIRD subjects,” say Charles Spence from the University of Oxford. By that, he means people from western, educated, industrial, rich, and democratic countries—the ones who make up almost all of psychological research. “Anthropologists have been saying that we should do this for years but psychologists mostly ignore this advice. To have these beautiful examples where smell really is elevated from the bottom of the hierarchy is great.”
+        <br>
+        <br>
+        Jacob also thinks that the Jahai and Maniq could provide clues about the evolution of our olfactory sense. For example, it's obvious why we might be repelled by disgusting smells—they're associated with decaying food, feces, and other things that might carry disease. But why do we like pleasant smells? The Maniq provide a clue: Their bearcat word is also used for medicinal plants with pleasant smells, plants that they wear as perfumes and necklaces.
+        “This is, to me at least, revolutionary,” says Jacob. “Early cultures collected pleasant-smelling plants because they were medicinal, curative, or represented cleanliness and hygiene. Here, at last, is a positive function of pleasant smell that confers adaptive advantage. What's more, it points to the origins of our fascination with perfume.”
+        <br>
+        <br>
+        Indeed, as Majid says, “We spend millions on flavor and scent industries. To think that smell isn't relevant at all for humans is too simplistic.”
       </p>
     </div>
 
@@ -233,7 +269,7 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrtvit()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrtcontrol()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -243,11 +279,11 @@
 
     </table>
   </div>
-  <!-- end vitamin article slide -->
+  <!-- end control article slide -->
 
 
   <!-- Recall instructions slide -->
-  <div class="slide" id="reading3">
+  <div class="slide" id="recall_instructions">
 
     <br>
 
@@ -268,15 +304,19 @@
   </div>
   <!-- End recall instructions slide -->
 
-
-  <!-- Recall 1 slide -->
+    <!-- Recall 1 slide -->
   <div class="slide" id="target1">
     <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 
-    <!-- Show recall question -->
+   <!-- Show recall question -->
     <div align="center">
-      <img src="images/toy.png" width=200px>
-      <p id="recall">Based on <strong>Article 1</strong>, when playing with the above toy with a child, is it better to:
+      <p>Based on <strong>Article 1</strong>, when children see a teacher demonstrate the function of a toy, they:
       </p>
     </div>
 
@@ -284,18 +324,18 @@
 
     <!-- Likert radio buttons -->
     <table align="center" class="likert">
-       <tr>
+      <tr>
         <td valign="top">
           <input id="recall1a" type="radio" name="recall" value="a">
-          <label for="recall1a">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+          <label for="recall1a">a. Explore the toy less because they have become bored by the toy. </label>
         </td>
         <td valign="top">
           <input id="recall1b" type="radio" name="recall" value="b">
-          <label for="recall1b">b. Let the child play freely with the toy without instruction.</label>
+          <label for="recall1b">b. Explore the toy less because they assume the teacher has showed them everything there is to know about the toy.</label>
         </td>
         <td valign="top">
           <input id="recall1c" type="radio" name="recall" value="c">
-          <label for="recall1c">c. Quiz the child about shapes and colors.</label>
+          <label for="recall1c">c. Explore the toy more because they have become more interested in the toy.</label>
         </td>
       </tr>
     </table>
@@ -316,19 +356,14 @@
 
   <!-- End recall 1 slide -->
 
-   <!-- Recall 2 slide -->
+      <!-- Recall 2 slide -->
   <div class="slide" id="target2">
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
     <br>
 
    <!-- Show recall question -->
     <div align="center">
-      <p id="recall">Based on <strong>Article 1</strong>, preschool directors should plan to have:
+     <img src="images/register.png" width=200px>
+      <p>A teacher and child are playing with the toy cash register above. The teacher says she is an expert at this toy, and presses several different keys followed by the open key. The register opens! Based on <strong>Article 1</strong>, the child is more likely to:
       </p>
     </div>
 
@@ -339,15 +374,15 @@
       <tr>
         <td valign="top">
           <input id="recall2a" type="radio" name="recall" value="a">
-          <label for="recall2a">a. More time for children to play outside and with toys. </label>
+          <label for="recall2a">a. Imitate the teacher by pressing the same set of keys to make the box open. </label>
         </td>
         <td valign="top">
           <input id="recall2b" type="radio" name="recall" value="b">
-          <label for="recall2b">b. More structured time in which children are taught lessons and skills.</label>
+          <label for="recall2b">b. Understand that only the final key made the box open, and press that key.</label>
         </td>
         <td valign="top">
           <input id="recall2c" type="radio" name="recall" value="c">
-          <label for="recall2c">c. More time spent memorizing things that will be helpful later, such as the ABCs.</label>
+          <label for="recall2c">c. Try pressing a different set of keys to figure out how to make the box open.</label>
         </td>
       </tr>
     </table>
@@ -368,19 +403,14 @@
 
   <!-- End recall 2 slide -->
 
-   <!-- Recall 3 slide -->
+  <!-- Recall 3 slide -->
   <div class="slide" id="target3">
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p id="recall">According to <strong>Article 1</strong>, when an experimenter acted more like a teacher and showed children how to make a toy squeak, children:
+      <img src="images/toy.png" width=200px>
+      <p>Based on <strong>Article 1</strong>, when playing with the above toy with a child, is it better to:
       </p>
     </div>
 
@@ -388,18 +418,18 @@
 
     <!-- Likert radio buttons -->
     <table align="center" class="likert">
-      <tr>
+       <tr>
         <td valign="top">
           <input id="recall3a" type="radio" name="recall" value="a">
-          <label for="recall3a">a. Played with the toy more than if the experimenter acted surprised by the toy. </label>
+          <label for="recall3a">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
         </td>
         <td valign="top">
           <input id="recall3b" type="radio" name="recall" value="b">
-          <label for="recall3b">b. Played with the toy less than if the experimenter acted surprised by the toy.</label>
+          <label for="recall3b">b. Let the child play freely with the toy without instruction.</label>
         </td>
         <td valign="top">
           <input id="recall3c" type="radio" name="recall" value="c">
-          <label for="recall3c">c. Played with the toy the same amount whether or not the experimenter acted surprised by the toy.</label>
+          <label for="recall3c">c. Quiz the child about shapes and colors.</label>
         </td>
       </tr>
     </table>
@@ -427,9 +457,12 @@
     <br>
     <br>
     <br>
-    <!-- Show sentence from attitudes scale -->
+    <br>
+    <br>
+
+   <!-- Show recall question -->
     <div align="center">
-      <p id="recall">According to <strong>Article 1</strong>, children explore and learn more when:
+      <p>Based on <strong>Article 1</strong>, preschool directors should plan to have:
       </p>
     </div>
 
@@ -440,15 +473,15 @@
       <tr>
         <td valign="top">
           <input id="recall4a" type="radio" name="recall" value="a">
-          <label for="recall4a">a. Adults show them exactly how something works. </label>
+          <label for="recall4a">a. More time spent memorizing things that will be helpful later, such as the ABCs.</label>
         </td>
         <td valign="top">
           <input id="recall4b" type="radio" name="recall" value="b">
-          <label for="recall4b">b. Adults let them play freely without instruction.</label>
+          <label for="recall4b">b. More structured time in which children are taught lessons and skills.</label>
         </td>
         <td valign="top">
           <input id="recall4c" type="radio" name="recall" value="c">
-          <label for="recall4c">c. Adults choose which items children play with.</label>
+          <label for="recall4c">c. More time for children to play outside and with toys.</label>
         </td>
       </tr>
     </table>
@@ -469,8 +502,8 @@
 
   <!-- End recall 4 slide -->
 
-  <!-- Vitamins recall 1 slide -->
-  <div class="slide" id="vitamins1">
+  <!-- Recall 5 slide -->
+  <div class="slide" id="target5">
     <br>
     <br>
     <br>
@@ -481,7 +514,7 @@
 
     <!-- Show recall question -->
     <div align="center">
-      <p id="recall">According to <strong>Article 2</strong>, the editorial on vitamins in the journal Annals of Internal Medicine concluded:
+      <p>Based on <strong>Article 1</strong>, when playing with blocks with a toddler, you should:
       </p>
     </div>
 
@@ -491,16 +524,16 @@
     <table align="center" class="likert">
       <tr>
         <td valign="top">
-          <input id="vit1a" type="radio" name="recall" value="a">
-          <label for="vit1a">a. People who take vitamin supplements live longer than those who don’t. </label>
+          <input id="recall5a" type="radio" name="recall" value="a">
+          <label for="recall5a">a. Avoid saying anything about the blocks, to avoid interfering with the child’s learning. </label>
         </td>
         <td valign="top">
-          <input id="vit1b" type="radio" name="recall" value="b">
-          <label for="vit1b">b. Vitamin and mineral supplements provide no health benefits.</label>
+          <input id="recall5b" type="radio" name="recall" value="b">
+          <label for="recall5b">b. Demonstrate for the child how to build a tower and then have her imitate you.</label>
         </td>
         <td valign="top">
-          <input id="vit1c" type="radio" name="recall" value="c">
-          <label for="vit1c">c. Vitamin and mineral supplements can be dangerous if they have expired.</label>
+          <input id="recall5c" type="radio" name="recall" value="c">
+          <label for="recall5c">c. Encourage the child to play with the blocks however she wants.</label>
         </td>
       </tr>
     </table>
@@ -509,21 +542,319 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_v1" onClick="experiment.log_response()"> next</button>
+          <button type="button" id="nextButton_r5" onClick="experiment.log_response()"> next</button>
         </td>
         <tr>
           <td align="center">
-            <div id="testMessage_v1"> </div>
+            <div id="testMessage_r5"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-  <!-- End Vitamins recall 1 slide -->
+  <!-- End recall 5 slide -->
+
+   <!-- Recall 6 slide -->
+  <div class="slide" id="target6">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, when an experimenter acted more like a teacher and showed children how to make a toy squeak, children:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall6a" type="radio" name="recall" value="a">
+          <label for="recall6a">a. Played with the toy more than if the experimenter acted surprised by the toy. </label>
+        </td>
+        <td valign="top">
+          <input id="recall6b" type="radio" name="recall" value="b">
+          <label for="recall6b">b. Played with the toy less than if the experimenter acted surprised by the toy.</label>
+        </td>
+        <td valign="top">
+          <input id="recall6c" type="radio" name="recall" value="c">
+          <label for="recall6c">c. Played with the toy the same amount whether or not the experimenter acted surprised by the toy.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r6" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r6"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 6 slide -->
+
+   <!-- Recall 7 slide -->
+  <div class="slide" id="target7">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, children explore and discover more when:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall7a" type="radio" name="recall" value="a">
+          <label for="recall7a">a. Adults let them play freely without instruction. </label>
+        </td>
+        <td valign="top">
+          <input id="recall7b" type="radio" name="recall" value="b">
+          <label for="recall7b">b. Adults choose which items children play with.</label>
+        </td>
+        <td valign="top">
+          <input id="recall7c" type="radio" name="recall" value="c">
+          <label for="recall7c">c. Adults show them exactly how something works.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r7" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r7"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 7 slide -->
+
+  <!-- Recall 8 slide -->
+  <div class="slide" id="target8">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, children were more likely to find new and better ways to make a toy work when the experimenter:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall8a" type="radio" name="recall" value="a">
+          <label for="recall8a">a. Pretended to be clueless about how the toy worked when playing with it. </label>
+        </td>
+        <td valign="top">
+          <input id="recall8b" type="radio" name="recall" value="b">
+          <label for="recall8b">b. Pretended to be an expert about the toy when playing with it.</label>
+        </td>
+        <td valign="top">
+          <input id="recall8c" type="radio" name="recall" value="c">
+          <label for="recall8c">c. Pretended not to care about the toy.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r8" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r8"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 8 slide -->
+
+     <!-- Recall 9 slide -->
+  <div class="slide" id="target9">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, children believe:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall9a" type="radio" name="recall" value="a">
+          <label for="recall9a">a. That teachers try to be informative. </label>
+        </td>
+        <td valign="top">
+          <input id="recall9b" type="radio" name="recall" value="b">
+          <label for="recall9b">b. That teachers don’t know everything.</label>
+        </td>
+        <td valign="top">
+          <input id="recall9c" type="radio" name="recall" value="c">
+          <label for="recall9c">c. That teachers will give them incomplete information.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r9" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r9"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 9 slide -->
+
+     <!-- Recall 10 slide -->
+  <div class="slide" id="target10">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall10a" type="radio" name="recall" value="a">
+          <label for="recall10a">a. Children cannot learn anything new from a teacher. </label>
+        </td>
+        <td valign="top">
+          <input id="recall10b" type="radio" name="recall" value="b">
+          <label for="recall10b">b. Children cannot learn new things without a teacher.</label>
+        </td>
+        <td valign="top">
+          <input id="recall10c" type="radio" name="recall" value="c">
+          <label for="recall10c">c. Children can learn new things quickly from a teacher.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r10" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r10"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 10 slide -->
+
+
+  <!-- Control recall 1 slide -->
+  <div class="slide" id="control1">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, how many words does English have dedicated to describing smells?
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control1a" type="radio" name="recall" value="a">
+          <label for="control1a">a. 3 </label>
+        </td>
+        <td valign="top">
+          <input id="control1b" type="radio" name="recall" value="b">
+          <label for="control1b">b. 13 </label>
+        </td>
+        <td valign="top">
+          <input id="control1c" type="radio" name="recall" value="c">
+          <label for="control1c">c. 33 </label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_c1" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_c1"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 1 slide -->
 
   
-   <!-- Vitamins recall 2 slide -->
-  <div class="slide" id="vitamins2">
+  <!-- Control recall 2 slide -->
+  <div class="slide" id="control2">
     <br>
     <br>
     <br>
@@ -532,9 +863,9 @@
     <br>
     <br>
 
-   <!-- Show recall question -->
+    <!-- Show recall question -->
     <div align="center">
-      <p id="recall">According to <strong>Article 2</strong>, vitamin deficiencies are:
+      <p>According to <strong>Article 2</strong>, which of the following is true:
       </p>
     </div>
 
@@ -544,16 +875,16 @@
     <table align="center" class="likert">
       <tr>
         <td valign="top">
-          <input id="vit2a" type="radio" name="recall" value="a">
-          <label for="vit2a">a. Equally common today as they were in the past. </label>
+          <input id="control2a" type="radio" name="recall" value="a">
+          <label for="control2a">a. No languages have more than three words for smells, because most smells are impossible to describe.</label>
         </td>
         <td valign="top">
-          <input id="vit2b" type="radio" name="recall" value="b">
-          <label for="vit2b">b. More common today than they were in the past.</label>
+          <input id="control2b" type="radio" name="recall" value="b">
+          <label for="control2b">b. English is the only language that has few words for smells.</label>
         </td>
         <td valign="top">
-          <input id="vit2c" type="radio" name="recall" value="c">
-          <label for="vit2c">c. Less common today than they were in the past.</label>
+          <input id="control2c" type="radio" name="recall" value="c">
+          <label for="control2c">c. Only a few languages have more than three words for smells.</label>
         </td>
       </tr>
     </table>
@@ -562,17 +893,173 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" id="nextButton_v2" onClick="experiment.log_response()"> next</button>
+          <button type="button" id="nextButton_c2" onClick="experiment.log_response()"> next</button>
         </td>
         <tr>
           <td align="center">
-            <div id="testMessage_v2"> </div>
+            <div id="testMessage_c2"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-  <!-- End Vitamins recall 2 slide -->
+  <!-- End Control recall 2 slide -->
+
+    <!-- Control recall 3 slide -->
+  <div class="slide" id="control3">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, what do the groups known for having many words for smells have in common?
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control3a" type="radio" name="recall" value="a">
+          <label for="control3a">a. They train their children to be able to tell the difference between smells.</label>
+        </td>
+        <td valign="top">
+          <input id="control3b" type="radio" name="recall" value="b">
+          <label for="control3b">b. They are hunter-gatherers.</label>
+        </td>
+        <td valign="top">
+          <input id="control3c" type="radio" name="recall" value="c">
+          <label for="control3c">c. They have unusually good hearing and vision.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_c3" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_c3"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 3 slide -->
+
+    <!-- Control recall 4 slide -->
+  <div class="slide" id="control4">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, when a researcher tested the Jahai of Malaysia using smell tests, she found that:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control4a" type="radio" name="recall" value="a">
+          <label for="control4a">a. Although they had many words for smells, different people used different words to describe the same smell.</label>
+        </td>
+        <td valign="top">
+          <input id="control4b" type="radio" name="recall" value="b">
+          <label for="control4b">b. Most people did not know the meaning of most of the smell words in their language.</label>
+        </td>
+        <td valign="top">
+          <input id="control4c" type="radio" name="recall" value="c">
+          <label for="control4c">c. People were highly consistent in their use of smell words- different people had the same words for the same smells.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_c4" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_c4"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 1 slide -->
+
+    <!-- Control recall 5 slide -->
+  <div class="slide" id="control5">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, before finding the Jahai and Maniq people, researchers previously believed:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control5a" type="radio" name="recall" value="a">
+          <label for="control5a">a. People were better at describing good smells than bad smells. </label>
+        </td>
+        <td valign="top">
+          <input id="control5b" type="radio" name="recall" value="b">
+          <label for="control5b">b. Humans were not capable of describing most smells with words.</label>
+        </td>
+        <td valign="top">
+          <input id="control5c" type="radio" name="recall" value="c">
+          <label for="control5c">c. People were better at describing bad smells than good smells.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_c5" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_c5"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 5 slide -->
 
   <!-- The debriefing slide. -->
   <div class="slide" id="debriefing">
@@ -751,7 +1238,7 @@
         </p>
 
 
-            <p><b>How much did you enjoy reading the <em>first article</em> (about children's learning)?</b></p>
+            <p><b>How enjoyable was the <em>first article</em> (about children's learning)?</b></p>
         <p>
           <select name="enjoy_target" id="enjoy_target" form="demographics">
             <option value="">Choose an answer</option>
@@ -762,9 +1249,9 @@
           </select>
         </p>
 
-            <p><b>Was it easy or difficult to read the <em>second article</em> (about vitamins)?</b></p>
+            <p><b>Was it easy or difficult to read the <em>second article</em> (about smell)?</b></p>
         <p>
-          <select name="reading_ease_vitamins" id="reading_ease_vitamins" form="demographics">
+          <select name="reading_ease_control" id="reading_ease_control" form="demographics">
             <option value="">Choose an answer</option>
             <option value="Very Easy">Very Easy</option>
             <option value="Somewhat Easy">Somewhat Easy</option>
@@ -773,9 +1260,9 @@
           </select>
         </p>
 
-            <p><b>How much did you enjoy reading the <em>second article</em> (about vitamins)?</b></p>
+            <p><b>How enjoyable was the <em>second article</em> (about smell)?</b></p>
         <p>
-          <select name="enjoy_vitamins" id="enjoy_vitamins" form="demographics">
+          <select name="enjoy_control" id="enjoy_control" form="demographics">
             <option value="">Choose an answer</option>
             <option value="Very Enjoyable">Very Enjoyable</option>
             <option value="Somewhat Enjoyable">Somewhat Enjoyable</option>
@@ -784,7 +1271,24 @@
           </select>
         </p>
 
+            <p><b>Had you read either of the articles before this experiment?</b></p>
+        <p>
+          <select name="prior_exposure" id="prior_exposure" form="demographics">
+            <option value="">Choose an answer</option>
+            <option value="no">No, neither article.</option>
+            <option value="early_learning">Yes, the article about children's learning.</option>
+            <option value="smell">Yes, the article about smell.</option>
+            <option value="both">Yes, both articles.</option>
+          </select>
+        </p>
+
     </form>
+
+    <div>
+      <p>The articles used in this study were:<br>
+        <br>1. Gopnick, Alison, "Why Preschool Shouldn't Be Like School", Slate.com, March, 2011<br>
+        <br>2. Yong, Ed, "Why Do Most Languages Have So Few Words for Smells?", TheAtlantic.com, November, 2015 
+      </p>
 
     <div align="center">
       <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>

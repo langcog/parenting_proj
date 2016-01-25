@@ -67,8 +67,10 @@ var atts = ['It is very important that children learn to respect adults, such as
 
 atts = shuffle(atts); 
 
-var slides = ['reading0','reading1','reading2','reading3','target1','target2','target3','target4',
-'vitamins1','vitamins2'];
+var slides = ['reading_instructions','reading1','reading2','recall_instructions',
+'control1','control2','control3','control4','control5', 
+'target1','target2','target3','target4','target5','target6','target7','target8','target9','target10'
+];
 
 var totalTrialsAtt = atts.length;
 var totalTrialsUptake = slides.length;
@@ -135,12 +137,32 @@ var experiment = {
 		expt_aim: [],
 		expt_gen: [],
 		reading_ease_target: [],
-		reading_ease_vitamins: [],
+		reading_ease_control: [],
 		enjoy_target: [],
-		enjoy_vitamins: [],
-		targetrt: [],
-		vitaminsrt: []
+		enjoy_control: [],
+		prior_exposure: [],
+		questionnaire_rt: [],
+		target_rt: [],
+		control_rt: [],
 	},
+
+
+	starttime:function(){
+			starttime = Date.now();
+	},
+	starttarget:function(){
+			starttarget = Date.now();
+			experiment.data.questionnaire_rt = (starttarget-starttime)/1000;
+	},
+	getrttar:function(){
+			endtarget = Date.now();
+			experiment.data.target_rt = (endtarget-starttarget)/1000;
+	},
+	getrtcontrol:function(){
+			endcontrol = Date.now();
+			experiment.data.control_rt = (endcontrol-endtarget)/1000;
+	},
+
 
 	// end the experiment
 	end: function() {
@@ -166,6 +188,87 @@ var experiment = {
 			}
 		}
 
+		if (response_logged) {
+			nextButton_r1.blur();
+			nextButton_r2.blur();
+			nextButton_r3.blur();
+			nextButton_r4.blur();
+			nextButton_r5.blur();
+			nextButton_r6.blur();
+			nextButton_r7.blur();
+			nextButton_r8.blur();
+			nextButton_r9.blur();
+			nextButton_r10.blur();
+			nextButton_c1.blur();
+			nextButton_c2.blur();
+			nextButton_c3.blur();
+			nextButton_c4.blur();
+			nextButton_c5.blur();
+
+
+			//  uncheck radio buttons
+			for (i = 0; i < radio.length; i++) {
+				radio[i].checked = false
+			}
+
+			experiment.next();
+
+		} else {
+			$("#testMessage_r1").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r2").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r3").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r4").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r5").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r6").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r7").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r8").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r9").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r10").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_c1").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_c2").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_c3").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_c4").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_c5").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+		}
+	},
+
+
+// LOG RESPONSE
+	log_response_q: function() {
+
+		var response_logged = false;
+
+		// Array of radio buttons
 
 		var radio = document.getElementsByName("judgment");
 	
@@ -179,55 +282,23 @@ var experiment = {
 	
 		if (response_logged) {
 			nextButton_Att.blur();
-			nextButton_r1.blur();
-			nextButton_r2.blur();
-			nextButton_r3.blur();
-			nextButton_r4.blur();
-			nextButton_v1.blur();
-			nextButton_v2.blur();
+			
 
 			//  uncheck radio buttons
 			for (i = 0; i < radio.length; i++) {
 				radio[i].checked = false
 			}
+
 			experiment.next();
+
 		} else {
 			$("#testMessage_att").html('<font color="red">' + 
 			'Please make a response!' + 
 			 '</font>');
-			$("#testMessage_r1").html('<font color="red">' +
-			'Please make a response!' +
-			'</font>');
-			$("#testMessage_r2").html('<font color="red">' +
-			'Please make a response!' +
-			'</font>');
-			$("#testMessage_r3").html('<font color="red">' +
-			'Please make a response!' +
-			'</font>');
-			$("#testMessage_r4").html('<font color="red">' +
-			'Please make a response!' +
-			'</font>');
-			$("#testMessage_v1").html('<font color="red">' +
-			'Please make a response!' +
-			'</font>');
-			$("#testMessage_v2").html('<font color="red">' +
-			'Please make a response!' +
-			'</font>');
+			
 		}
 	},
-
-	getrtinstruct:function(){
-			starttime = Date.now();
-	},
-	getrttar:function(){
-			endtarget = Date.now();
-			experiment.data.targetrt = (endtarget-starttime)/1000;
-	},
-	getrtvit:function(){
-			endvitamins = Date.now();
-			experiment.data.vitaminsrt = (endvitamins-endtarget)/1000;
-	},
-
+	
 	// The work horse of the sequence - what to do on every trial.
 	next: function() {
 
@@ -238,8 +309,17 @@ var experiment = {
 		$("#testMessage_r2").html(''); 
 		$("#testMessage_r3").html(''); 
 		$("#testMessage_r4").html(''); 
-		$("#testMessage_v1").html(''); 
-		$("#testMessage_v2").html(''); 
+		$("#testMessage_r5").html('');
+		$("#testMessage_r6").html('');
+		$("#testMessage_r7").html('');
+		$("#testMessage_r8").html('');
+		$("#testMessage_r9").html('');
+		$("#testMessage_r10").html('');
+		$("#testMessage_c1").html(''); 
+		$("#testMessage_c2").html(''); 
+		$("#testMessage_c3").html(''); 
+		$("#testMessage_c4").html(''); 
+		$("#testMessage_c5").html(''); 
 
 		$("#progress").attr("style","width:" +
 			    String(100 * (1 - (trials.length)/numTrialsExperiment)) + "%")
@@ -258,14 +338,17 @@ var experiment = {
 	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
 	    	 showSlide("attitudes_slide"); 
 	    	 }
+	    	if (trial_info.slide == "reading_instructions") {
+				showSlide("reading_instructions");              //display slide
+			}           
 			if (trial_info.slide == "reading1") {
 				showSlide("reading1");              //display slide
 			}
 			if (trial_info.slide == "reading2") {
 				showSlide("reading2");              //display slide
 			}
-			if (trial_info.slide == "reading3") {
-				showSlide("reading3");              //display slide
+			if (trial_info.slide == "recall_instructions") {
+				showSlide("recall_instructions");              //display slide
 			}
 			if (trial_info.slide == "target1") {
 				showSlide("target1");              //display slide
@@ -279,12 +362,40 @@ var experiment = {
 			if (trial_info.slide == "target4") {
 				showSlide("target4");              //display slide
 			}
-			if (trial_info.slide == "vitamins1") {
-				showSlide("vitamins1");              //display slide
+			if (trial_info.slide == "target5") {
+				showSlide("target5");              //display slide
 			}
-			if (trial_info.slide == "vitamins2") {
-				showSlide("vitamins2");              //display slide
+			if (trial_info.slide == "target6") {
+				showSlide("target6");              //display slide
 			}
+			if (trial_info.slide == "target7") {
+				showSlide("target7");              //display slide
+			}
+			if (trial_info.slide == "target8") {
+				showSlide("target8");              //display slide
+			}
+			if (trial_info.slide == "target9") {
+				showSlide("target9");              //display slide
+			}
+			if (trial_info.slide == "target10") {
+				showSlide("target10");              //display slide
+			}
+			if (trial_info.slide == "control1") {
+				showSlide("control1");              //display slide
+			}
+			if (trial_info.slide == "control2") {
+				showSlide("control2");              //display slide
+			}
+			if (trial_info.slide == "control3") {
+				showSlide("control3");              //display slide
+			}
+			if (trial_info.slide == "control4") {
+				showSlide("control4");              //display slide
+			}
+			if (trial_info.slide == "control5") {
+				showSlide("control5");              //display slide
+			}
+
 
 		experiment.data.sentence.push(trial_info.sentence);
 		experiment.data.trial_type.push(trial_info.trial_type)
@@ -320,9 +431,10 @@ var experiment = {
 		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
 		experiment.data.expt_gen.push(document.getElementById("expcomments").value);
 		experiment.data.reading_ease_target.push(document.getElementById("reading_ease_target").value);
-		experiment.data.reading_ease_vitamins.push(document.getElementById("reading_ease_vitamins").value);
+		experiment.data.reading_ease_control.push(document.getElementById("reading_ease_control").value);
 		experiment.data.enjoy_target.push(document.getElementById("enjoy_target").value);
-		experiment.data.enjoy_vitamins.push(document.getElementById("enjoy_vitamins").value);
+		experiment.data.enjoy_control.push(document.getElementById("enjoy_control").value);
+		experiment.data.prior_exposure.push(document.getElementById("prior_exposure").value);
 		experiment.end();
 	}
 }
