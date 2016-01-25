@@ -1,0 +1,767 @@
+---
+title: "Parenting Project Attitudes Questionnaire Experiment 6"
+author: "Emily & Mike"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+<style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code {
+  font-size: 11px;
+}
+pre {
+  font-size: 11px;
+}
+</style>
+
+Data analysis of basic parenting values/attitudes survey.
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+
+rm(list=ls())
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(langcog)
+library(plyr); library(dplyr)
+library(ggplot2)
+library(rjson)
+library(stringr)
+library(tidyr)
+library(psych)
+library(nFactors)
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_bw())
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+files <- dir("../production-results/uptake_e1/")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/uptake_e1/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  # clean up different tasks
+  trial_type <- jd$answer$data$trial_type
+  
+  #parenting questionnaire 
+  sent <- jd$answers$data$sentence[trial_type != "uptake"]
+  rating <- as.numeric(jd$answers$data$rating[trial_type != "uptake"]) 
+  
+  #uptake experiment
+  control_recall_1 = jd$answers$data$answer[1]
+  control_recall_2 = jd$answers$data$answer[2]
+  control_recall_3 = jd$answers$data$answer[3]
+  control_recall_4 = jd$answers$data$answer[4]
+  control_recall_5 = jd$answers$data$answer[5]
+  target_generalize_1 = jd$answers$data$answer[6]
+  target_generalize_2 = jd$answers$data$answer[7]
+  target_generalize_3 = jd$answers$data$answer[8]
+  target_generalize_4 = jd$answers$data$answer[9]
+  target_generalize_5 = jd$answers$data$answer[10]
+  target_recall_1 = jd$answers$data$answer[11]
+  target_recall_2 = jd$answers$data$answer[12]
+  target_recall_3 = jd$answers$data$answer[13]
+  target_recall_4 = jd$answers$data$answer[14]
+  target_recall_5 = jd$answers$data$answer[15]
+  reading_time_target = jd$answers$data$target_rt[1]
+  reading_time_control = jd$answers$data$control_rt[1]
+  
+  
+  #demographics
+  race <- as.character(jd$answers$data$race[1])
+  
+  id <- data.frame(workerid = jd$WorkerId, 
+                   sent = sent,
+                   rating = rating,
+                   enjoy_target = jd$answers$data$enjoy_target,
+                   enjoy_control = jd$answers$data$enjoy_control,
+                   reading_ease_target = jd$answers$data$reading_ease_target,
+                   reading_ease_control = jd$answers$data$reading_ease_control,
+                   target_recall_1 = target_recall_1,
+                   target_recall_2 = target_recall_2,
+                   target_recall_3 = target_recall_3,
+                   target_recall_4 = target_recall_4,
+                   target_recall_5 = target_recall_5,
+                   target_generalize_1 = target_generalize_1,
+                   target_generalize_2 = target_generalize_2,
+                   target_generalize_3 = target_generalize_3,
+                   target_generalize_4 = target_generalize_4,
+                   target_generalize_5 = target_generalize_5,
+                   control_recall_1 = control_recall_1,
+                   control_recall_2 = control_recall_2,
+                   control_recall_3 = control_recall_3,
+                   control_recall_4 = control_recall_4,
+                   control_recall_5 = control_recall_5,
+                   children = jd$answers$data$children,
+                   language = jd$answers$data$homelang,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   childAgeYoung = jd$answers$data$childAgeYoung,
+                   childAgeOld = jd$answers$data$childAgeOld,
+                   race = race,
+                   reading_time_target = reading_time_target,
+                   reading_time_control = reading_time_control)
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+Map on question short forms so that we can use these instead. 
+
+```{r}
+labels <- read.csv("sent_forms_e7.csv")
+labels$sent <- as.character(labels$sent)
+```
+
+Clean up labels.
+
+```{r}
+d.raw$sent <- as.character(d.raw$sent)
+d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "’", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
+```
+
+Merge. Recode uptake answers by accuracy.  
+
+```{r}
+d <- left_join(d.raw, labels)
+d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
+
+d$target_generalize_1 <- str_replace(d$target_generalize_1, "a","1")
+d$target_generalize_1 <- str_replace(d$target_generalize_1, "b|c","0")
+d$target_generalize_2 <- str_replace(d$target_generalize_2, "a","1")
+d$target_generalize_2 <- str_replace(d$target_generalize_2, "b|c","0")
+d$target_generalize_3 <- str_replace(d$target_generalize_3, "b","1")
+d$target_generalize_3 <- str_replace(d$target_generalize_3, "a|c","0")
+d$target_generalize_4 <- str_replace(d$target_generalize_4, "c","1")
+d$target_generalize_4 <- str_replace(d$target_generalize_4, "a|b","0")
+d$target_generalize_5 <- str_replace(d$target_generalize_5, "c","1")
+d$target_generalize_5 <- str_replace(d$target_generalize_5, "a|b","0")
+
+d$target_recall_1 <- str_replace(d$target_recall_1, "b","1")
+d$target_recall_1 <- str_replace(d$target_recall_1, "a|c","0")
+d$target_recall_2 <- str_replace(d$target_recall_2, "a","1")
+d$target_recall_2 <- str_replace(d$target_recall_2, "b|c","0")
+d$target_recall_3 <- str_replace(d$target_recall_3, "a","1")
+d$target_recall_3 <- str_replace(d$target_recall_3, "b|c","0")
+d$target_recall_4 <- str_replace(d$target_recall_4, "a","1")
+d$target_recall_4 <- str_replace(d$target_recall_4, "b|c","0")
+d$target_recall_5 <- str_replace(d$target_recall_5, "c","1")
+d$target_recall_5 <- str_replace(d$target_recall_5, "a|b","0")
+
+d$control_recall_1 <- str_replace(d$control_recall_1, "a","1")
+d$control_recall_1 <- str_replace(d$control_recall_1, "b|c","0")
+d$control_recall_2 <- str_replace(d$control_recall_2, "c","1")
+d$control_recall_2 <- str_replace(d$control_recall_2, "a|b","0")
+d$control_recall_3 <- str_replace(d$control_recall_3, "a","1")
+d$control_recall_3 <- str_replace(d$control_recall_3, "b|c","0")
+d$control_recall_4 <- str_replace(d$control_recall_4, "c","1")
+d$control_recall_4 <- str_replace(d$control_recall_4, "a|b","0")
+d$control_recall_5 <- str_replace(d$control_recall_5, "b","1")
+d$control_recall_5 <- str_replace(d$control_recall_5, "a|c","0")
+
+```
+
+Plot demographic info.
+
+```{r}
+subinfo <- d %>% 
+  group_by(workerid) %>%
+  summarise(age = age[1],
+            gender = gender[1],
+            children = children[1],
+            ses = ses[1],
+            education = education[1],
+            language = language[1], 
+            ethnicity = ethnicity[1],
+            youngestChildAge = childAgeYoung[1],
+            oldestChildAge = childAgeOld[1],
+            race = race[1],
+            reading_ease_target = reading_ease_target[1],
+            reading_ease_control = reading_ease_control[1],
+            enjoy_target = enjoy_target[1],
+            enjoy_control = enjoy_control[1],
+            target_recall_1 = as.numeric(target_recall_1[1]),
+            target_recall_2 = as.numeric(target_recall_2[1]),
+            target_recall_3 = as.numeric(target_recall_3[1]),
+            target_recall_4 = as.numeric(target_recall_4[1]),
+            target_recall_5 = as.numeric(target_recall_5[1]),
+            target_generalize_1 = as.numeric(target_generalize_1[1]),
+            target_generalize_2 = as.numeric(target_generalize_2[1]),
+            target_generalize_3 = as.numeric(target_generalize_3[1]),
+            target_generalize_4 = as.numeric(target_generalize_4[1]),
+            target_generalize_5 = as.numeric(target_generalize_5[1]),
+            control_recall_1 = as.numeric(control_recall_1[1]),
+            control_recall_2 = as.numeric(control_recall_2[1]),
+            control_recall_3 = as.numeric(control_recall_3[1]),
+            control_recall_4 = as.numeric(control_recall_4[1]),
+            control_recall_5 = as.numeric(control_recall_5[1]),
+            reading_time_target = reading_time_target[1],
+            reading_time_control = reading_time_control[1])
+
+subinfo$mean_target_recall <- (subinfo$target_recall_1 + subinfo$target_recall_2 + subinfo$target_recall_3 + subinfo$target_recall_4 + subinfo$target_recall_5)/5
+
+subinfo$mean_target_generalize <- (subinfo$target_generalize_1 + subinfo$target_generalize_2 + subinfo$target_generalize_3 + subinfo$target_generalize_4 + subinfo$target_generalize_5)/5
+
+subinfo$mean_control_recall <- (subinfo$control_recall_1 + subinfo$control_recall_2 + subinfo$control_recall_3 + subinfo$control_recall_4 + subinfo$control_recall_5)/5
+
+subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+
+subinfo$gender <- str_replace_all(subinfo$gender, "female|FEMALE|F$|f$|Femal$|Females|Females","Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, "29|24|25|28|32|33|45", "")
+subinfo$gender <- str_replace_all(subinfo$gender, "males", "male")
+subinfo$gender <- str_replace_all(subinfo$gender, " ", "")
+
+subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
+subinfo$language <- str_replace_all(subinfo$language," ", "")
+subinfo$language <- str_replace_all(subinfo$language,"arabic", "Arabic")
+subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
+subinfo$language <- str_replace_all(subinfo$language,"german", "German")
+subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
+
+subinfo$youngestChildAge <- factor(subinfo$youngestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+subinfo$oldestChildAge <- factor(subinfo$oldestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+subinfo$reading_ease_target <- factor(subinfo$reading_ease_target, levels = c("Very Difficult", "Somewhat Difficult", "Somewhat Easy", "Very Easy"))
+
+subinfo$reading_ease_control <- factor(subinfo$reading_ease_control, levels = c("Very Difficult", "Somewhat Difficult", "Somewhat Easy", "Very Easy"))
+
+subinfo$enjoy_target <- factor(subinfo$enjoy_target, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
+
+subinfo$enjoy_control <- factor(subinfo$enjoy_control, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
+
+
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(language, data=subinfo)
+qplot(ethnicity, data=subinfo)
+qplot(race, data=subinfo)
+qplot(youngestChildAge, data=subinfo)
+qplot(oldestChildAge, data=subinfo)
+qplot(reading_ease_target, data=subinfo)
+qplot(reading_ease_control, data=subinfo)
+qplot(enjoy_target, data=subinfo)
+qplot(enjoy_control, data=subinfo)
+
+describe(subinfo$mean_target_recall, skew=FALSE, check=FALSE)
+describe(subinfo$mean_control_recall, skew=FALSE, check=FALSE)
+describe(subinfo$mean_target_generalize, skew=FALSE, check=FALSE)
+describe(subinfo$reading_time_target, skew=FALSE, check=FALSE)
+describe(subinfo$reading_time_control, skew=FALSE, check=FALSE)
+
+describe(subinfo$target_recall_1, skew=FALSE, check=FALSE)
+describe(subinfo$target_recall_2, skew=FALSE, check=FALSE)
+describe(subinfo$target_recall_3, skew=FALSE, check=FALSE)
+describe(subinfo$target_recall_4, skew=FALSE, check=FALSE)
+describe(subinfo$target_recall_5, skew=FALSE, check=FALSE)
+
+describe(subinfo$target_generalize_1, skew=FALSE, check=FALSE)
+describe(subinfo$target_generalize_2, skew=FALSE, check=FALSE)
+describe(subinfo$target_generalize_3, skew=FALSE, check=FALSE)
+describe(subinfo$target_generalize_4, skew=FALSE, check=FALSE)
+describe(subinfo$target_generalize_5, skew=FALSE, check=FALSE)
+
+describe(subinfo$control_recall_1, skew=FALSE, check=FALSE)
+describe(subinfo$control_recall_2, skew=FALSE, check=FALSE)
+describe(subinfo$control_recall_3, skew=FALSE, check=FALSE)
+describe(subinfo$control_recall_4, skew=FALSE, check=FALSE)
+describe(subinfo$control_recall_5, skew=FALSE, check=FALSE)
+
+qplot(workerid, mean_target_recall, data=subinfo)
+qplot(workerid, mean_control_recall, data=subinfo)
+qplot(workerid, mean_target_generalize, data=subinfo)
+qplot(workerid, reading_time_target, data=subinfo)
+qplot(workerid, reading_time_control, data=subinfo)
+
+qplot(workerid, target_recall_1, data=subinfo)
+qplot(workerid, target_recall_2, data=subinfo)
+qplot(workerid, target_recall_3, data=subinfo)
+qplot(workerid, target_recall_4, data=subinfo)
+qplot(workerid, target_recall_5, data=subinfo)
+
+qplot(workerid, target_generalize_1, data=subinfo)
+qplot(workerid, target_generalize_2, data=subinfo)
+qplot(workerid, target_generalize_3, data=subinfo)
+qplot(workerid, target_generalize_4, data=subinfo)
+qplot(workerid, target_generalize_5, data=subinfo)
+
+qplot(workerid, control_recall_1, data=subinfo)
+qplot(workerid, control_recall_2, data=subinfo)
+qplot(workerid, control_recall_3, data=subinfo)
+qplot(workerid, control_recall_4, data=subinfo)
+qplot(workerid, control_recall_5, data=subinfo)
+
+qplot(reading_time_target, mean_target_recall, data=subinfo)
+qplot(reading_time_target, mean_target_generalize, data=subinfo)
+qplot(reading_time_control, mean_control_recall, data=subinfo)
+
+```
+
+# Basic analyses
+
+Now look at mean ratings across sentences.
+
+```{r}
+rating_count <- table(d$rating) 
+rating_count
+prop.table(rating_count) 
+
+ms <- d %>%
+  group_by(category, instrument, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(instrument, category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+
+```
+
+Plot attitude.
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = filter(ms, instrument == "attitudes")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+
+```
+
+Plot mean subscale scores.
+
+```{r}
+mc <- d %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+qplot(category, mean, 
+      geom = "bar", stat = "identity", position = "dodge", 
+      data=mc) + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+```{r}
+mcl <- d %>%
+  group_by(category, workerid) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean))%>%
+  spread(category, mean) 
+  
+```
+
+# Scale reliability
+
+## Whole Scale
+
+```{r}
+wide.attitudes <- d %>% 
+  filter(instrument == "attitudes") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
+alpha(x = alpha.mat)
+```
+
+## Rules and Respect Subscale
+
+```{r}
+wide.rules_respect <- d %>% 
+  filter(category == "rules_respect") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
+alpha(x = alpha.rr)
+```
+
+## Affection and Attachment Subscale
+
+```{r}
+wide.affection <- d %>% 
+  filter(category == "affection") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.af <- as.matrix(select(wide.affection, -workerid))
+alpha(x = alpha.af)
+
+```
+
+## Active Learning Subscale
+
+```{r}
+wide.active_learning <- d %>% 
+  filter(category == "active_learning") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.al <- as.matrix(select(wide.active_learning, -workerid))
+alpha(x = alpha.al)
+```
+
+# Subscales by demographics
+
+Create a data frame that has subscale scores. 
+```{r}
+ss <- d %>%
+  group_by(workerid, category) %>%
+  summarize(rating = mean(rating))
+
+ss <- left_join(ss, subinfo)
+```
+
+## By SES
+
+```{r}
+ms <- ss %>% 
+  filter(ses != "") %>%
+  mutate(ses.level = cut(as.numeric(ses), c(0,3,6,10))) %>%
+  group_by(ses.level, category) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=ses.level)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Race
+
+Drop the sparsest groups. 
+
+```{r}
+ms <- ss %>% 
+  filter(race != "NULL") %>%
+  group_by(race, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating")
+  
+ggplot(ms, aes(category, mean, fill=race)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Gender
+
+```{r}
+ms <- ss %>% 
+  filter(gender %in% c("Male","Female")) %>%
+  group_by(gender, category) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Education
+
+Drop the sparsest groups. 
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(education)) %>%
+  group_by(education, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=education)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Age
+
+Drop the sparsest groups again. 
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(age)) %>%
+  group_by(age, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=age)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## By Children
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(children)) %>%
+  group_by(children, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=children)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## Factors by Ethnicity
+
+```{r}
+ms <- ss %>% 
+  filter(ethnicity != "") %>%
+  group_by(ethnicity, category) %>%
+  filter(n() > 5) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=ethnicity)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+# Factor analysis
+
+Get eigenvalues for determining number of factors. 
+
+```{r}
+att.mat <- select(wide.attitudes, -workerid)
+
+ev <- eigen(cor(x=att.mat)) # get eigenvalues
+
+ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
+               rep=100,cent=.05)
+nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
+plotnScree(nS)
+```
+
+It still looks like Active/Early Learning and Affection are grouping together (with a separate factor that seems to focus on physical affection perhaps?), while Rules and Respect is separate. I'm still wondering if we need to re-think the structure of the subscales. It might be that Early Learning and Affection are not fully differentiated latent theories, and that they group together into a "child development is a project" theory.
+
+```{r}
+item.levels <- c("respect parents teachers", "wait when told","children should be grateful","punish for small rules", "dont impose structure", "kids should not decide", "safe loving environment", "holding and cradling", "give children comfort", "talk about emotions", "not spoiled with too much attention","too much affection does not harm", "can learn good and bad", "learn by playing", "learn from repetetive behaviors", "reasons for rules", "learn math before school", "reading before speaking")
+
+n.factors <- 3
+
+af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
+loadings <- data.frame(af$loadings[,1:n.factors]) %>%
+  mutate(item = rownames(af$loadings)) %>%
+  gather(factor, loading, starts_with("Factor"))
+loadings$item <- factor(loadings$item, item.levels)
+
+labels$item <- labels$short_sent
+loadings <- join(loadings, labels, by = "item")
+
+qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
+  scale_fill_continuous(low="#000000", high="#FFFFFF") + 
+  facet_grid(category ~ ., scales = "free_y")
+
+qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
+  scale_fill_solarized() + 
+  facet_grid(category ~ ., scales = "free_y")
+```
+
+Merge back in subject id info. 
+
+```{r}
+a.scores <- af$scores %>%
+  data.frame %>%
+  mutate(workerid = as.character(wide.attitudes$workerid)) %>%
+  left_join(subinfo)
+```
+
+## Factors by SES
+
+```{r}
+a.factor.names <- c("Affection and Early Learning","Rules and Respect", "Affection 2")
+
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(ses != "") %>%
+  mutate(ses.level = cut(as.numeric(ses), c(0,3,6,10)),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(ses.level, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=ses.level)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## Factors by Gender
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(gender %in% c("Male","Female")) %>%
+  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(gender, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+
+```
+ 
+## Factors by Education
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(education != "") %>%
+  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(education, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=education)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## Factors by Age
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(age != "") %>%
+  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(age, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=age)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## Factors by Children
+
+Do you have children?
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(children != "") %>%
+  mutate(children = children %in% c("1","2","3","4","5","morethan5"),
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(children, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=children)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+How many?
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(children != "") %>%
+  mutate(n.children = children,
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(n.children, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=n.children)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+## Factors by Ethnicity
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(ethnicity != "") %>%
+  mutate(hispanic = ethnicity== "Hispanic",
+         factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(hispanic, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=hispanic)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+``` 
+ 
+## Factors by Race
+
+```{r}
+mf <- a.scores %>% 
+  gather(factor, score, starts_with("Factor")) %>%
+  filter(race != "NULL") %>%
+  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
+         factor.name = a.factor.names[factor.num]) %>%
+  group_by(race, factor.name) %>%
+  multi_boot_standard(col = "score") 
+
+ggplot(mf, aes(factor.name, mean, fill=race)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+``` 
+
+# Conclusions
+Alpha correlations within subscales were lower this time, perhaps because there were fewer items in each subscale (6).
+
+The three factors are not separating out exactly as predicted, but getting closer. The main issue is that the Affection items (this time,"talk about emotions", "holding and cradling", and "safe loving environment") are loading onto the same factor as the Early Learning items. 
+
+...
