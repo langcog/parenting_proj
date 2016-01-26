@@ -29,6 +29,9 @@ Preliminaries.
 ```{r echo=FALSE}
 
 rm(list=ls())
+
+setwd("~/Desktop/parenting_proj/analysis")
+
 knitr::opts_chunk$set(fig.width=8, fig.height=5, 
                       echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
@@ -40,6 +43,7 @@ library(stringr)
 library(tidyr)
 library(psych)
 library(nFactors)
+library(lme4)
 
 select <- dplyr::select # masked by MASS
 
@@ -81,6 +85,7 @@ for (f in files) {
   target_recall_5 = jd$answers$data$answer[15]
   reading_time_target = jd$answers$data$target_rt[1]
   reading_time_control = jd$answers$data$control_rt[1]
+  time_questionnaire = jd$answers$data$questionnaire_rt[1]
   
   
   #demographics
@@ -119,7 +124,8 @@ for (f in files) {
                    childAgeOld = jd$answers$data$childAgeOld,
                    race = race,
                    reading_time_target = reading_time_target,
-                   reading_time_control = reading_time_control)
+                   reading_time_control = reading_time_control,
+                   time_questionnaire = time_questionnaire)
   d.raw <- bind_rows(d.raw, id)
 }
 ```
@@ -149,8 +155,8 @@ Merge. Recode uptake answers by accuracy.
 d <- left_join(d.raw, labels)
 d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
 
-d$target_generalize_1 <- str_replace(d$target_generalize_1, "a","1")
-d$target_generalize_1 <- str_replace(d$target_generalize_1, "b|c","0")
+d$target_generalize_1 <- str_replace(d$target_generalize_1, "b","1")
+d$target_generalize_1 <- str_replace(d$target_generalize_1, "a|c","0")
 d$target_generalize_2 <- str_replace(d$target_generalize_2, "a","1")
 d$target_generalize_2 <- str_replace(d$target_generalize_2, "b|c","0")
 d$target_generalize_3 <- str_replace(d$target_generalize_3, "b","1")
@@ -181,7 +187,6 @@ d$control_recall_4 <- str_replace(d$control_recall_4, "c","1")
 d$control_recall_4 <- str_replace(d$control_recall_4, "a|b","0")
 d$control_recall_5 <- str_replace(d$control_recall_5, "b","1")
 d$control_recall_5 <- str_replace(d$control_recall_5, "a|c","0")
-
 ```
 
 Plot demographic info.
@@ -219,7 +224,8 @@ subinfo <- d %>%
             control_recall_4 = as.numeric(control_recall_4[1]),
             control_recall_5 = as.numeric(control_recall_5[1]),
             reading_time_target = reading_time_target[1],
-            reading_time_control = reading_time_control[1])
+            reading_time_control = reading_time_control[1],
+            time_questionnaire = time_questionnaire[1])
 
 subinfo$mean_target_recall <- (subinfo$target_recall_1 + subinfo$target_recall_2 + subinfo$target_recall_3 + subinfo$target_recall_4 + subinfo$target_recall_5)/5
 
@@ -275,48 +281,6 @@ describe(subinfo$mean_control_recall, skew=FALSE, check=FALSE)
 describe(subinfo$mean_target_generalize, skew=FALSE, check=FALSE)
 describe(subinfo$reading_time_target, skew=FALSE, check=FALSE)
 describe(subinfo$reading_time_control, skew=FALSE, check=FALSE)
-
-describe(subinfo$target_recall_1, skew=FALSE, check=FALSE)
-describe(subinfo$target_recall_2, skew=FALSE, check=FALSE)
-describe(subinfo$target_recall_3, skew=FALSE, check=FALSE)
-describe(subinfo$target_recall_4, skew=FALSE, check=FALSE)
-describe(subinfo$target_recall_5, skew=FALSE, check=FALSE)
-
-describe(subinfo$target_generalize_1, skew=FALSE, check=FALSE)
-describe(subinfo$target_generalize_2, skew=FALSE, check=FALSE)
-describe(subinfo$target_generalize_3, skew=FALSE, check=FALSE)
-describe(subinfo$target_generalize_4, skew=FALSE, check=FALSE)
-describe(subinfo$target_generalize_5, skew=FALSE, check=FALSE)
-
-describe(subinfo$control_recall_1, skew=FALSE, check=FALSE)
-describe(subinfo$control_recall_2, skew=FALSE, check=FALSE)
-describe(subinfo$control_recall_3, skew=FALSE, check=FALSE)
-describe(subinfo$control_recall_4, skew=FALSE, check=FALSE)
-describe(subinfo$control_recall_5, skew=FALSE, check=FALSE)
-
-qplot(workerid, mean_target_recall, data=subinfo)
-qplot(workerid, mean_control_recall, data=subinfo)
-qplot(workerid, mean_target_generalize, data=subinfo)
-qplot(workerid, reading_time_target, data=subinfo)
-qplot(workerid, reading_time_control, data=subinfo)
-
-qplot(workerid, target_recall_1, data=subinfo)
-qplot(workerid, target_recall_2, data=subinfo)
-qplot(workerid, target_recall_3, data=subinfo)
-qplot(workerid, target_recall_4, data=subinfo)
-qplot(workerid, target_recall_5, data=subinfo)
-
-qplot(workerid, target_generalize_1, data=subinfo)
-qplot(workerid, target_generalize_2, data=subinfo)
-qplot(workerid, target_generalize_3, data=subinfo)
-qplot(workerid, target_generalize_4, data=subinfo)
-qplot(workerid, target_generalize_5, data=subinfo)
-
-qplot(workerid, control_recall_1, data=subinfo)
-qplot(workerid, control_recall_2, data=subinfo)
-qplot(workerid, control_recall_3, data=subinfo)
-qplot(workerid, control_recall_4, data=subinfo)
-qplot(workerid, control_recall_5, data=subinfo)
 
 qplot(reading_time_target, mean_target_recall, data=subinfo)
 qplot(reading_time_target, mean_target_generalize, data=subinfo)
@@ -415,7 +379,6 @@ wide.affection <- d %>%
   spread(short_sent, rating)
 alpha.af <- as.matrix(select(wide.affection, -workerid))
 alpha(x = alpha.af)
-
 ```
 
 ## Active Learning Subscale
@@ -429,7 +392,7 @@ alpha.al <- as.matrix(select(wide.active_learning, -workerid))
 alpha(x = alpha.al)
 ```
 
-# Subscales by demographics
+# Information Uptake Analyses
 
 Create a data frame that has subscale scores. 
 ```{r}
@@ -438,8 +401,96 @@ ss <- d %>%
   summarize(rating = mean(rating))
 
 ss <- left_join(ss, subinfo)
+
 ```
 
+## Separate Regressions of Recall and Generalization on Subscale Scores
+
+Visually it appears that active learning subscore is most predictive of generalization and recall of the target article, but no difference for the control article!
+```{r}
+#Separate regressions of recall on subscale score for each category
+qplot(rating, mean_control_recall, data=ss, geom=c("point", "smooth"), 
+   method="lm", formula=y~x, color=category, 
+   main="Regression of control recall on subscale score", 
+   xlab="Subscale Score", ylab="Mean Target Recall")
+
+#Separate regressions of generalization on subscale score for each category
+qplot(rating, mean_target_recall, data=ss, geom=c("point", "smooth"), 
+   method="lm", formula=y~x, color=category, 
+   main="Regression of target recall on subscale score", 
+   xlab="Subscale Score", ylab="Mean Target Recall")
+
+#Separate regressions of generalization on subscale score for each category
+qplot(rating, mean_target_generalize, data=ss, geom=c("point", "smooth"), 
+   method="lm", formula=y~x, color=category, 
+   main="Regression of target generalization on subscale score", 
+   xlab="Subscale Score", ylab="Mean Target Recall")
+```
+
+Mixed Effects Model.
+Gather recall types.
+```{r}
+ssr <- ss %>%
+  gather(task, accuracy, mean_target_recall:mean_control_recall)%>%
+  spread(category, rating)
+
+#glmer( accuracy ~task * category + (1 | workerid), family = "binomial") 
+
+```
+
+Create a wide data frame that has subscale scores. 
+
+In these seperate multiple regressions, active learning and affection scores predict target recall; only active learning scores predict target generalization; no subscale predicts control recall. 
+```{r}
+wide_ss <- ss %>%
+  spread(category, rating)
+
+# Multiple Linear Regression of Recall on Subscale Scores
+fit <- lm(mean_control_recall ~ active_learning + affection + rules_respect, data=wide_ss)
+summary(fit) # show results
+
+# Multiple Linear Regression of Recall on Subscale Scores
+fit <- lm(mean_target_recall ~ active_learning + affection + rules_respect, data=wide_ss)
+summary(fit) # show results
+
+# Multiple Linear Regression of Recall on Subscale Scores
+fit <- lm(mean_target_generalize ~ active_learning + affection + rules_respect, data=wide_ss)
+summary(fit) # show results
+
+```
+
+## Median Splits on Subscales.
+Perform median splits on subscales.
+
+```{r}
+rr_med <-describe(wide_ss$rules_respect)
+al_med <-describe(wide_ss$active_learning)
+a_med <-describe(wide_ss$affection)
+
+wide_ss$rr_split[wide_ss$rules_respect <= rr_med$median] <- "low"
+wide_ss$rr_split[wide_ss$rules_respect > rr_med$median] <- "high"
+
+wide_ss$al_split[wide_ss$active_learning <= al_med$median] <- "low"
+wide_ss$al_split[wide_ss$active_learning > al_med$median] <- "high"
+
+wide_ss$a_split[wide_ss$affection <= a_med$median] <- "low"
+wide_ss$a_split[wide_ss$affection > a_med$median] <- "high"
+
+describeBy(wide_ss$mean_control_recall, group=wide_ss$rr_split)
+describeBy(wide_ss$mean_target_recall, group=wide_ss$rr_split)
+describeBy(wide_ss$mean_target_generalize, group=wide_ss$rr_split)
+
+describeBy(wide_ss$mean_control_recall, group=wide_ss$al_split)
+describeBy(wide_ss$mean_target_recall, group=wide_ss$al_split)
+describeBy(wide_ss$mean_target_generalize, group=wide_ss$al_split)
+
+describeBy(wide_ss$mean_control_recall, group=wide_ss$a_split)
+describeBy(wide_ss$mean_target_recall, group=wide_ss$a_split)
+describeBy(wide_ss$mean_target_generalize, group=wide_ss$a_split)
+```
+
+
+# Subscales by demographics
 ## By SES
 
 ```{r}
@@ -760,8 +811,6 @@ ggplot(mf, aes(factor.name, mean, fill=race)) +
 ``` 
 
 # Conclusions
-Alpha correlations within subscales were lower this time, perhaps because there were fewer items in each subscale (6).
 
-The three factors are not separating out exactly as predicted, but getting closer. The main issue is that the Affection items (this time,"talk about emotions", "holding and cradling", and "safe loving environment") are loading onto the same factor as the Early Learning items. 
 
 ...
