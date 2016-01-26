@@ -32,14 +32,14 @@ rm(list=ls())
 knitr::opts_chunk$set(fig.width=8, fig.height=5, 
                       echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
 library(langcog)
-library(plyr); library(dplyr)
+library(dplyr)
 library(ggplot2)
 library(rjson)
 library(stringr)
 library(tidyr)
-library(psych)
-library(nFactors)
+# library(nFactors)
 
 select <- dplyr::select # masked by MASS
 
@@ -181,58 +181,44 @@ d$control_recall_4 <- str_replace(d$control_recall_4, "c","1")
 d$control_recall_4 <- str_replace(d$control_recall_4, "a|b","0")
 d$control_recall_5 <- str_replace(d$control_recall_5, "b","1")
 d$control_recall_5 <- str_replace(d$control_recall_5, "a|c","0")
-
 ```
 
 Plot demographic info.
 
 ```{r}
-subinfo <- d %>% 
+subinfo <- d %>%
   group_by(workerid) %>%
-  summarise(age = age[1],
-            gender = gender[1],
-            children = children[1],
-            ses = ses[1],
-            education = education[1],
-            language = language[1], 
-            ethnicity = ethnicity[1],
-            youngestChildAge = childAgeYoung[1],
-            oldestChildAge = childAgeOld[1],
-            race = race[1],
-            reading_ease_target = reading_ease_target[1],
-            reading_ease_control = reading_ease_control[1],
-            enjoy_target = enjoy_target[1],
-            enjoy_control = enjoy_control[1],
-            target_recall_1 = as.numeric(target_recall_1[1]),
-            target_recall_2 = as.numeric(target_recall_2[1]),
-            target_recall_3 = as.numeric(target_recall_3[1]),
-            target_recall_4 = as.numeric(target_recall_4[1]),
-            target_recall_5 = as.numeric(target_recall_5[1]),
-            target_generalize_1 = as.numeric(target_generalize_1[1]),
-            target_generalize_2 = as.numeric(target_generalize_2[1]),
-            target_generalize_3 = as.numeric(target_generalize_3[1]),
-            target_generalize_4 = as.numeric(target_generalize_4[1]),
-            target_generalize_5 = as.numeric(target_generalize_5[1]),
-            control_recall_1 = as.numeric(control_recall_1[1]),
-            control_recall_2 = as.numeric(control_recall_2[1]),
-            control_recall_3 = as.numeric(control_recall_3[1]),
-            control_recall_4 = as.numeric(control_recall_4[1]),
-            control_recall_5 = as.numeric(control_recall_5[1]),
-            reading_time_target = reading_time_target[1],
-            reading_time_control = reading_time_control[1])
+  select(-short_sent, -category, -instrument, -reverse_code) %>%
+  distinct 
 
-subinfo$mean_target_recall <- (subinfo$target_recall_1 + subinfo$target_recall_2 + subinfo$target_recall_3 + subinfo$target_recall_4 + subinfo$target_recall_5)/5
+questions <- subinfo %>%
+  select(workerid, starts_with("target"), starts_with("control")) %>%
+  gather(question, correct, starts_with("target"), starts_with("control")) %>%
+  separate(question, c("passage","trial_type","q_num"), sep = "_") %>%
+  group_by(workerid, passage, trial_type) %>%
+  summarise(correct = mean(as.numeric(correct))) %>%
+  unite(trialtype, passage, trial_type) %>%
+  spread(trialtype, correct)
 
-subinfo$mean_target_generalize <- (subinfo$target_generalize_1 + subinfo$target_generalize_2 + subinfo$target_generalize_3 + subinfo$target_generalize_4 + subinfo$target_generalize_5)/5
+subinfo <- subinfo %>%
+  select(-starts_with("target"), -starts_with("control")) %>%
+  left_join(questions)
+```
 
-subinfo$mean_control_recall <- (subinfo$control_recall_1 + subinfo$control_recall_2 + subinfo$control_recall_3 + subinfo$control_recall_4 + subinfo$control_recall_5)/5
+Awful recoding. 
 
-subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+```{r}
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 
-subinfo$gender <- str_replace_all(subinfo$gender, "female|FEMALE|F$|f$|Femal$|Females|Females","Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "29|24|25|28|32|33|45", "")
-subinfo$gender <- str_replace_all(subinfo$gender, "males", "male")
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                              "female|FEMALE|F$|f$|Femal$|Females|Females","Female")
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                                  "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                                  "29|24|25|28|32|33|45", "")
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                                  "males", "male")
 subinfo$gender <- str_replace_all(subinfo$gender, " ", "")
 
 subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
@@ -242,9 +228,9 @@ subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
 subinfo$language <- str_replace_all(subinfo$language,"german", "German")
 subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
 
-subinfo$youngestChildAge <- factor(subinfo$youngestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$youngestChildAge <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
 
-subinfo$oldestChildAge <- factor(subinfo$oldestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$oldestChildAge <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
 
 subinfo$reading_ease_target <- factor(subinfo$reading_ease_target, levels = c("Very Difficult", "Somewhat Difficult", "Somewhat Easy", "Very Easy"))
 
@@ -253,8 +239,9 @@ subinfo$reading_ease_control <- factor(subinfo$reading_ease_control, levels = c(
 subinfo$enjoy_target <- factor(subinfo$enjoy_target, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
 
 subinfo$enjoy_control <- factor(subinfo$enjoy_control, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
+```
 
-
+```{r}
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
 qplot(gender, data=subinfo)
@@ -270,9 +257,9 @@ qplot(reading_ease_control, data=subinfo)
 qplot(enjoy_target, data=subinfo)
 qplot(enjoy_control, data=subinfo)
 
-describe(subinfo$mean_target_recall, skew=FALSE, check=FALSE)
-describe(subinfo$mean_control_recall, skew=FALSE, check=FALSE)
-describe(subinfo$mean_target_generalize, skew=FALSE, check=FALSE)
+describe(subinfo$target_recall, skew=FALSE, check=FALSE)
+describe(subinfo$control_recall, skew=FALSE, check=FALSE)
+describe(subinfo$target_generalize, skew=FALSE, check=FALSE)
 describe(subinfo$reading_time_target, skew=FALSE, check=FALSE)
 describe(subinfo$reading_time_control, skew=FALSE, check=FALSE)
 
@@ -366,9 +353,8 @@ mc <- d %>%
   multi_boot_standard(col = "rating") %>%
   arrange(category, desc(mean)) 
 
-qplot(category, mean, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mc) + 
+ggplot(mc, aes(x = category, y = mean)) + 
+  geom_bar(stat="identity") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 ```
@@ -392,7 +378,7 @@ wide.attitudes <- d %>%
   select(workerid, short_sent, rating) %>% 
   spread(short_sent, rating)
 alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
-alpha(x = alpha.mat)
+summary(alpha(x = alpha.mat))
 ```
 
 ## Rules and Respect Subscale
@@ -403,7 +389,7 @@ wide.rules_respect <- d %>%
   select(workerid, short_sent, rating) %>% 
   spread(short_sent, rating)
 alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
-alpha(x = alpha.rr)
+summary(alpha(x = alpha.rr))
 ```
 
 ## Affection and Attachment Subscale
@@ -414,8 +400,7 @@ wide.affection <- d %>%
   select(workerid, short_sent, rating) %>% 
   spread(short_sent, rating)
 alpha.af <- as.matrix(select(wide.affection, -workerid))
-alpha(x = alpha.af)
-
+summary(alpha(x = alpha.af))
 ```
 
 ## Active Learning Subscale
@@ -426,7 +411,7 @@ wide.active_learning <- d %>%
   select(workerid, short_sent, rating) %>% 
   spread(short_sent, rating)
 alpha.al <- as.matrix(select(wide.active_learning, -workerid))
-alpha(x = alpha.al)
+summary(alpha(x = alpha.al))
 ```
 
 # Subscales by demographics
