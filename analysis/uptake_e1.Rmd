@@ -518,6 +518,7 @@ summary(glmer(correct ~ question_type * rules_respect +
               family = "binomial"))
 ```
 
+The analysis suggested by stats consultant:
 ```{r}
 
 fit <- lm(correct ~ question_type + active_learning + rules_respect + question_type*active_learning + question_type*rules_respect, 
