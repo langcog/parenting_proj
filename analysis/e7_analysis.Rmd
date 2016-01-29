@@ -49,61 +49,34 @@ theme_set(theme_bw())
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("../production-results/uptake_e1/")
+files <- dir("../production-results/e7/")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste("../production-results/uptake_e1/",f,sep="")
+  jf <- paste("../production-results/e7/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   
-  # clean up different tasks
+  # clean up instruction trial
+  sent <- jd$answers$data$sentence
+  rating <- as.numeric(jd$answers$data$rating) 
   trial_type <- jd$answer$data$trial_type
+  sent <- sent[trial_type != "2afc_instructions"]
+  trial_type <- trial_type[trial_type != "2afc_instructions"]
   
-  #parenting questionnaire 
-  sent <- jd$answers$data$sentence[trial_type != "uptake"]
-  rating <- as.numeric(jd$answers$data$rating[trial_type != "uptake"]) 
-  sent <- sent[trial_type != "uptake"]
-  trial_type <- trial_type[trial_type != "uptake"]
-  
-  #uptake experiment
-  target_recall_1 = jd$answers$data$answer[1]
-  target_recall_2 = jd$answers$data$answer[2]
-  target_recall_3 = jd$answers$data$answer[3]
-  target_recall_4 = jd$answers$data$answer[4]
-  vitamins_recall_1 = jd$answers$data$answer[5]
-  vitamins_recall_2 = jd$answers$data$answer[6]
-  
-  #demographics
-  race <- as.character(jd$answers$data$race[1])
-  
-  
+  #left out race because not sure yet how to deal with list format
   id <- data.frame(workerid = jd$WorkerId, 
                    sent = sent,
                    rating = rating,
-                   rt_target = jd$answers$data$target_rt,
-                   rt_vitamins = jd$answers$data$vitamins_rt,
-                   enjoy_target = jd$answers$data$enjoy_target,
-                   enjoy_vitamins = jd$answers$data$enjoy_vitamins,
-                   reading_ease_target = jd$answers$data$reading_ease_target,
-                   reading_ease_vitamins = jd$answers$data$reading_ease_vitamins,
-                   target_recall_1 = target_recall_1,
-                   target_recall_2 = target_recall_2,
-                   target_recall_3 = target_recall_3,
-                   target_recall_4 = target_recall_4,
-                   vitamins_recall_1 = vitamins_recall_1,
-                   vitamins_recall_2 = vitamins_recall_2,
                    children = jd$answers$data$children,
-                   language = jd$answers$data$homelang,
-                   ses = jd$answers$data$ladder,
-                   gender = jd$answers$data$gender,
-                   age = jd$answers$data$age,
-                   education = jd$answers$data$education,
-                   ethnicity = jd$answers$data$ethnicity,
-                   childAgeYoung = jd$answers$data$childAgeYoung,
-                   childAgeOld = jd$answers$data$childAgeOld,
-                   race = race
-                   reading_time_target = jd$answers$data$target_rt,
-                   reading_time_vitamins = jd$answers$data$vitamins_rt)
+                   language = jd$answer$data$homelang,
+                   ses = jd$answer$data$ladder,
+                   gender = jd$answer$data$gender,
+                   age = jd$answer$data$age,
+                   education = jd$answer$data$education,
+                   ethnicity = jd$answer$data$ethnicity,
+                   childAgeYoung = jd$answer$data$childAgeYoung,
+                   childAgeOld = jd$answer$data$childAgeOld
+                   )
   d.raw <- bind_rows(d.raw, id)
 }
 ```
@@ -127,29 +100,15 @@ d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
 ```
 
-Merge. Recode uptake answers by accuracy.  
+Merge.  
 
 ```{r}
 d <- left_join(d.raw, labels)
 d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
-
-d$target_recall_1 <- str_replace(d$target_recall_1, "b","1")
-d$target_recall_1 <- str_replace(d$target_recall_1, "a|c","0")
-d$target_recall_2 <- str_replace(d$target_recall_1, "a","1")
-d$target_recall_2 <- str_replace(d$target_recall_1, "b|c","0")
-d$target_recall_3 <- str_replace(d$target_recall_1, "b","1")
-d$target_recall_3 <- str_replace(d$target_recall_1, "a|c","0")
-d$target_recall_4 <- str_replace(d$target_recall_1, "c","1")
-d$target_recall_4 <- str_replace(d$target_recall_1, "a|b","0")
-d$vitamins_recall_1 <- str_replace(d$vitamins_recall_1, "b","1")
-d$vitamins_recall_1 <- str_replace(d$vitamins_recall_1, "a|c","0")
-d$vitamins_recall_2 <- str_replace(d$vitamins_recall_2, "c","1")
-d$vitamins_recall_2 <- str_replace(d$vitamins_recall_2, "a|b","0")
 ```
 
 Plot demographic info.
 
-Unfortunately low ethnic/racial diversity.
 ```{r}
 subinfo <- d %>% 
   group_by(workerid) %>%
@@ -161,24 +120,8 @@ subinfo <- d %>%
             language = language[1], 
             ethnicity = ethnicity[1],
             youngestChildAge = childAgeYoung[1],
-            oldestChildAge = childAgeOld[1],
-            race = race[1],
-            reading_ease_target = reading_ease_target[1],
-            reading_ease_vitamins = reading_ease_vitamins[1],
-            enjoy_target = enjoy_target[1],
-            enjoy_vitamins = enjoy_vitamins[1],
-            target_recall_1 = as.numeric(target_recall_1[1]),
-            target_recall_2 = as.numeric(target_recall_2[1]),
-            target_recall_3 = as.numeric(target_recall_3[1]),
-            target_recall_4 = as.numeric(target_recall_4[1]),
-            vitamins_recall_1 = as.numeric(vitamins_recall_1[1]),
-            vitamins_recall_2 = as.numeric(vitamins_recall_2[1])
-            reading_time_target = as.numeric()
+            oldestChildAge = childAgeOld[1]
             )
-
-subinfo$mean_target_recall <- (subinfo$target_recall_1 + subinfo$target_recall_2 + subinfo$target_recall_3 + subinfo$target_recall_4)/4
-
-subinfo$mean_vitamins_recall <- (subinfo$vitamins_recall_1 + subinfo$vitamins_recall_2)/2
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 
@@ -200,16 +143,6 @@ subinfo$youngestChildAge <- factor(subinfo$youngestChildAge, levels = c("","0to6
 
 subinfo$oldestChildAge <- factor(subinfo$oldestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
 
-
-subinfo$reading_ease_target <- factor(subinfo$reading_ease_target, levels = c("Very Difficult", "Somewhat Difficult", "Somewhat Easy", "Very Easy"))
-
-subinfo$reading_ease_vitamins <- factor(subinfo$reading_ease_vitamins, levels = c("Very Difficult", "Somewhat Difficult", "Somewhat Easy", "Very Easy"))
-
-subinfo$enjoy_target <- factor(subinfo$enjoy_target, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
-
-subinfo$enjoy_vitamins <- factor(subinfo$enjoy_vitamins, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
-
-
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
 qplot(gender, data=subinfo)
@@ -217,16 +150,9 @@ qplot(education, data=subinfo)
 qplot(age, data=subinfo)
 qplot(language, data=subinfo)
 qplot(ethnicity, data=subinfo)
-qplot(race, data=subinfo)
 qplot(youngestChildAge, data=subinfo)
 qplot(oldestChildAge, data=subinfo)
-qplot(reading_ease_target, data=subinfo)
-qplot(reading_ease_vitamins, data=subinfo)
-qplot(enjoy_target, data=subinfo)
-qplot(enjoy_vitamins, data=subinfo)
 
-describe(subinfo$mean_target_recall, skew=FALSE, check=FALSE)
-describe(subinfo$mean_vitamins_recall, skew=FALSE, check=FALSE)
 ```
 
 # Basic analyses
@@ -278,6 +204,8 @@ qplot(category, mean,
              position = position_dodge(width = .9))
 ```
 
+
+Attempting (and failing) to set up wide data for summarizing subscale means by demographics.
 ```{r}
 mcl <- d %>%
   group_by(category, workerid) %>%
@@ -290,7 +218,7 @@ mcl <- d %>%
 # Scale reliability
 
 ## Whole Scale
-
+This analysis is not especially meaningful as it averages across the three subscales. Raw alpha is .88 which is higher than previous runs.
 ```{r}
 wide.attitudes <- d %>% 
   filter(instrument == "attitudes") %>%
@@ -301,6 +229,8 @@ alpha(x = alpha.mat)
 ```
 
 ## Rules and Respect Subscale
+
+Raw alpha is .78 here. 
 
 ```{r}
 wide.rules_respect <- d %>% 
@@ -313,6 +243,8 @@ alpha(x = alpha.rr)
 
 ## Affection and Attachment Subscale
 
+Raw alpha is .80, which is up from .57 previously!
+
 ```{r}
 wide.affection <- d %>% 
   filter(category == "affection") %>%
@@ -324,6 +256,8 @@ alpha(x = alpha.af)
 ```
 
 ## Active Learning Subscale
+
+Raw alpha is .84, which is much higher than previously!
 
 ```{r}
 wide.active_learning <- d %>% 
@@ -355,24 +289,6 @@ ms <- ss %>%
   multi_boot_standard(col = "rating") 
 
 ggplot(ms, aes(category, mean, fill=ses.level)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## By Race
-
-Drop the sparsest groups. 
-
-```{r}
-ms <- ss %>% 
-  filter(race != "NULL") %>%
-  group_by(race, category) %>%
-  filter(n() > 5) %>%
-  multi_boot_standard(col = "rating")
-  
-ggplot(ms, aes(category, mean, fill=race)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
@@ -432,6 +348,7 @@ ggplot(ms, aes(category, mean, fill=age)) +
 
 ## By Children
 
+
 ```{r}
 ms <- ss %>% 
   filter(!is.na(children)) %>%
@@ -477,7 +394,13 @@ nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
 plotnScree(nS)
 ```
 
-It still looks like Active/Early Learning and Affection are grouping together (with a separate factor that seems to focus on physical affection perhaps?), while Rules and Respect is separate. I'm still wondering if we need to re-think the structure of the subscales. It might be that Early Learning and Affection are not fully differentiated latent theories, and that they group together into a "child development is a project" theory.
+Now plot factor analysis
+
+Because we predicted 3 factors, I am going with 3 here (confirmatory FA)
+
+In the graph items are organized by category, from Early/Active Learning -> Affection and Attachment -> Rules and Respect. 
+
+Things are looking a bit hazy in terms of individual items mapping onto factors. In particular, most of the Early/Active Learning AND Affection and Attachment items map onto Factor 1. Factor 2 has an almost even mix of all 3 categories. Also, it seems like items related to Rules (Factor 3) are separate from those ostensibly related to Respect (Factor 2). It seems that items related to strict rules are most consistently hanging together across experiments. 
 
 ```{r}
 item.levels <- c("respect parents teachers", "wait when told","children should be grateful","punish for small rules", "dont impose structure", "kids should not decide", "safe loving environment", "holding and cradling", "give children comfort", "talk about emotions", "not spoiled with too much attention","too much affection does not harm", "can learn good and bad", "learn by playing", "learn from repetetive behaviors", "reasons for rules", "learn math before school", "reading before speaking")
@@ -491,6 +414,28 @@ loadings <- data.frame(af$loadings[,1:n.factors]) %>%
 loadings$item <- factor(loadings$item, item.levels)
 
 labels$item <- labels$short_sent
+loadings <- join(loadings, labels, by = "item")
+
+qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
+  scale_fill_continuous(low="#000000", high="#FFFFFF") + 
+  facet_grid(category ~ ., scales = "free_y")
+
+qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
+  scale_fill_solarized() + 
+  facet_grid(category ~ ., scales = "free_y")
+```
+
+Now with four factors, based on the exploratory analyses. 
+
+```{r}
+n.factors <- 3
+
+af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
+loadings <- data.frame(af$loadings[,1:n.factors]) %>%
+  mutate(item = rownames(af$loadings)) %>%
+  gather(factor, loading, starts_with("Factor"))
+
+loadings$item <- factor(loadings$item, levels = item.levels)
 loadings <- join(loadings, labels, by = "item")
 
 qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
@@ -646,27 +591,6 @@ ggplot(mf, aes(factor.name, mean, fill=hispanic)) +
   scale_fill_solarized()
 ``` 
  
-## Factors by Race
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(race != "NULL") %>%
-  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(race, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=race)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-``` 
-
 # Conclusions
-Alpha correlations within subscales were lower this time, perhaps because there were fewer items in each subscale (6).
-
-The three factors are not separating out exactly as predicted, but getting closer. The main issue is that the Affection items (this time,"talk about emotions", "holding and cradling", and "safe loving environment") are loading onto the same factor as the Early Learning items. 
 
 ...
