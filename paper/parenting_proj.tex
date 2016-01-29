@@ -1,0 +1,187 @@
+% Template for Cogsci submission with R Markdown
+
+% Stuff changed from original Markdown PLOS Template
+\documentclass[10pt, letterpaper]{article}
+
+\usepackage{cogsci}
+\usepackage{pslatex}
+\usepackage{float}
+\usepackage{caption}
+
+% amsmath package, useful for mathematical formulas
+\usepackage{amsmath}
+
+% amssymb package, useful for mathematical symbols
+\usepackage{amssymb}
+
+% hyperref package, useful for hyperlinks
+\usepackage{hyperref}
+
+% graphicx package, useful for including eps and pdf graphics
+% include graphics with the command \includegraphics
+\usepackage{graphicx}
+
+% Sweave(-like)
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{fontshape=sl}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{fontshape=sl}
+\newenvironment{Schunk}{}{}
+\DefineVerbatimEnvironment{Code}{Verbatim}{}
+\DefineVerbatimEnvironment{CodeInput}{Verbatim}{fontshape=sl}
+\DefineVerbatimEnvironment{CodeOutput}{Verbatim}{}
+\newenvironment{CodeChunk}{}{}
+
+% cite package, to clean up citations in the main text. Do not remove.
+\usepackage{cite}
+
+\usepackage{color}
+
+% Use doublespacing - comment out for single spacing
+%\usepackage{setspace}
+%\doublespacing
+
+
+% % Text layout
+% \topmargin 0.0cm
+% \oddsidemargin 0.5cm
+% \evensidemargin 0.5cm
+% \textwidth 16cm
+% \textheight 21cm
+
+\title{A performance model for early word learning}
+
+
+\author{{\large \bf Emily Hembacher} \\ \texttt{ehembach@stanford.edu} \\ Department of Psychology \\ Stanford University \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\ldots{}
+
+\textbf{Keywords:}
+Parenting attitudes; implicit theories
+\end{abstract}
+
+Child development research is constantly generating information that can
+be brought to bear on best-practices for parenting. For example,
+research on children's learning has demonstrated that pedagogy can
+improve learning in some contexts and limit it in others, suggesting
+that allowing children to play freely and explore is critical for
+learning (Bonawitz et al., 2011; Buchsbaum, Gopnik, Griffiths, \&
+Shafto, 2011). Likewise, a great deal of research has demonstrated the
+importance of engaging young children in elaborative conversations for
+language development and future academic success (Hart \& Risley, 1995;
+Hoff, 2003; Huttenlocher, Waterfall, Vasilyeva, Vevea, \& Hedges, 2010).
+A fundamental challenge we face is how to communicate the results of
+such scientific inquiry to a diverse public in a way that maximizes
+uptake and improves people's daily and long-term decision making.
+
+One critical parameter that may moderate the uptake of new information
+is parents' implicit theories about child development and parenting.
+Research on implicit theories has found that people's lay theories in
+different domains (which may or may not be explicitly articulated)
+organize the processing of new information. For example, people with an
+entity theory of personality tend to interpret people's behaviors as
+stemming from fixed personality traits rather than situational factors
+such as needs, goals, or emotional states (Dweck, Chiu, \& Hong, 1995).
+Similarly, there is evidence that people use lay theories about emotion
+in order to infer people's current emotions from contextual cues (Ong,
+Zaki, \& Goodman, 2015).
+
+To provide an example of how lay theories might operate in the domain of
+parenting, parents who believe that children are not capable of learning
+before they are able to speak may be slower to uptake information
+suggesting that free play is helpful for causal learning among infants.
+Indeed, there is evidence supporting the notion that parents' behaviors
+are guided by implicit lay theories about child development, which vary
+by SES and across cultures. For example, cross-cultural studies have
+found profound differences in how parents interact with infants;
+Richman, Miller \& LeVine (1992) found that mothers in the Gusii
+community of Kenya primarily engaged with their children to soothe them
+when upset, but did not often speak to them with the goal of engaging or
+stimulating them, as did Caucasian parents in the United States. The
+authors attribute this to cultural conventions stemming from the belief
+that there is no purpose in speaking to infants as they will not
+understand what is being said (Richman, Miller \& LeVine, 1992; LeVine,
+2004).
+
+There are also important differences in how parents within western
+cultures interact with their children. Numerous studies have identified
+SES disparities in the amount that parents talk to their children, which
+predicts children's language and academic outcomes (refs). In an effort
+to identify the source of this disparity, Rowe (2008) discovered that
+parents' knowledge of child development (as indexed by their scores on
+the Knowledge of Infant Development Inventory; KIDI) predicted their
+child-directed language, with more knowledgeable parents speaking to
+their children more even when controlling for the amount of speech
+directed at another adult. Although this study examined parents
+knowledge, and not their lay theories per se, this can be taken as
+evidence that parents are approaching parenting with different priors
+with regard to their roles as parents.
+
+There are other examples of parenting theories? dimensions on which
+parents differ; Lareau's (2003) theory of ``concerned cultivation''
+suggests that higher SES parents are more likely to view their child's
+development as a project that requires a great deal of coordination in
+the form of activities and learning experiences, while lower SES parents
+are more likely to view their job as keeping their children safe from
+harm, with the assumption that they will naturally thrive if given
+independence. Furthermore, there have been hundreds of studies based on
+Baumrind's (1971) framework that identifies parents as authoritative,
+authoritarian, or permissive, based on their levels of responsiveness
+and control in their interactions with their children. Thus, parents'
+approach to parenting appear to vary in predictable ways based on their
+knowledge and perceptions surrounding children's learning and
+development. A further question is whether these lay theories also
+moderate the uptake of new information. Previous studies of parenting
+styles have generally relied on observation of parent-child interactions
+or self-report of specific activities and behaviors. To our knowledge
+there is not an existing measure of parents' more general attitudes
+about parenting and child development, which might predict the uptake of
+interventions. The present study had two purposes: first, to establish a
+self-report scale to capture adults' lay theories about child
+development and parenting, and second, to test the hypothesis that
+uptake will be greater for information consistent with people's prior
+lay theories about child development.
+
+In order to establish a new measure of parenting attitudes, we followed
+a structured plan based on psychometric best practices (Clark \& Watson,
+1995; Furr, 2010; Simms, 2008). We generated items corresponding to
+three hypothesized latent theories about parenting: the Early Learning
+theory corresponds to a view of children's early learning that is
+consistent with contemporary child development research, and includes
+the idea that young children can teach themselves by exploring and
+playing (refs). The Affection and Attachment theory captures the notion
+that close parent-child relationships are important for development, and
+includes the ideas that parents should talk to their children about
+their emotions and that children are not spoiled by too much affection
+(refs). The Rules and Respect theory corresponds to the idea that
+parents' primary role is to enforce rules and encourage behavior control
+(refs). We generated items based on a review of the literature on
+parenting attitudes, and conducted psychometric analyses on iterative
+samples of respondents. After establishing a final set of scale items,
+we conducted an experiment to test whether scores on the three subscales
+would predict people's uptake of new information. For this purpose, we
+had participants read a popular press article on one of two parenting
+topics: an article arguing that free play is beneficial to children's
+learning, or an article arguing that time-outs are harmful to children's
+development. We operationalized uptake as accurate recall and
+generalization of the central messages of the target articles. We
+predicted that people's scores on the Early Learning subscale would
+moderate uptake of the ``free play'' article, and that scores on the
+Rules and Respect scale would moderate uptake of the ``time-outs''
+article. (some description of findings that don't exist yet).
+
+\section{Acknowledgements}\label{acknowledgements}
+
+This work supported by a gift from Kinedu, Inc. Thanks to members of the
+Language and Cognition Lab at Stanford for helpful discussion.
+
+\section{References}\label{references}
+
+\small
+
+\end{document}
