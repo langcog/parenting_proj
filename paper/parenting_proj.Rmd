@@ -58,6 +58,22 @@ Although these previous studies provide preliminary evidence that parents’ bel
 
 # Experiment 1
 
+In order to establish a new measure of parenting attitudes, we followed a structured plan based on psychometric best practices (Clark & Watson, 1995; Furr, 2010; Simms, 2008). We generated items corresponding to three hypothesized latent theories about parenting: the Early Learning theory corresponds to a view of children’s early learning that is consistent with contemporary child development research, and includes the idea that young children can teach themselves by exploring and playing. The Affection and Attachment theory captures the notion that close parent-child relationships are important for development, and includes the ideas that parents should talk to their children about their emotions and that children are not spoiled by too much affection. The Rules and Respect theory corresponds to the idea that parents’ primary role is to enforce rules and encourage behavior control. We generated items based on a review of the literature on parenting attitudes, and conducted psychometric analyses on iterative samples of respondents.
+
+## Methods
+
+### Participants
+
+### Procedure
+
+
+## Results
+
+
+# Experiment 2
+
+We next conducted an experiment to test whether scores on the three subscales would predict people’s uptake of new information, as an initial test of the external validity of the scales. For this purpose, we had participants read two popular press articles: an article arguing that free play is beneficial to children’s learning (Gopnik, 2011), and an article about the language of smell (Yong, 2015). We operationalized uptake as accurate recall and generalization of the central message of the target article, and recall of the control article. We predicted that if people’s subscale scores reflect coherent lay theories, they should differentially moderate uptake of the two articles. Specifically, we predicted that scores on the Early Learning subscale would be positively related to recall and generalization of the target article, but not recall of the control article. We predicted that scores on the Rules and Respect subscale would not predict uptake of either article. We excluded scores on the Affection and Attachment subscale from our analyses, since they are not orthogonal to scores on the Early Learning subscale.
+
 ## Methods
 
 ### Participants
