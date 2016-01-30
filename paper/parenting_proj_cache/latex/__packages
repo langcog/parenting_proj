@@ -1,10 +1,4 @@
 base
-methods
-datasets
-utils
-grDevices
-graphics
-stats
 ggplot2
 dplyr
 langcog
@@ -13,3 +7,12 @@ stringr
 magrittr
 readr
 ggrepel
+psych
+rjson
+tidyr
+MASS
+boot
+lattice
+nFactors
+Matrix
+lme4
