@@ -1,5 +1,5 @@
 ---
-title: "A performance model for early word learning"
+title: "A new measure of parents' lay theories of parenting and child development"
 bibliography: parenting.bib
 csl: apa6.csl
 document-params: "10pt, letterpaper"
