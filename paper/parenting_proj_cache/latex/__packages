@@ -1,12 +1,4 @@
 base
-ggplot2
-dplyr
-langcog
-directlabels
-stringr
-magrittr
-readr
-ggrepel
 psych
 rjson
 tidyr
@@ -16,3 +8,11 @@ lattice
 nFactors
 Matrix
 lme4
+ggplot2
+dplyr
+langcog
+directlabels
+stringr
+magrittr
+readr
+ggrepel
