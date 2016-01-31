@@ -25,7 +25,6 @@ message=FALSE, sanitize=TRUE)
 ```
 
 ```{r, libraries}
-suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(psych)
 library(rjson)
 library(tidyr)
@@ -41,6 +40,8 @@ library(stringr)
 library(magrittr)
 library(readr)
 library(ggrepel)
+
+select <- dplyr::select # masked by MASS
 ```
 
 Child development research is constantly generating information that can be brought to bear on best-practices for parenting. For example, research on children’s learning has demonstrated that pedagogy can improve learning in some contexts and limit it in others, suggesting that allowing children to play freely and explore is critical for learning (Bonawitz et al., 2011; Buchsbaum, Gopnik, Griffiths, & Shafto, 2011). Likewise, a great deal of research has demonstrated the importance of engaging young children in elaborative conversations for language development and future academic success (Hart & Risley, 1995; Hoff, 2003; Huttenlocher, Waterfall, Vasilyeva, Vevea, & Hedges, 2010). A fundamental challenge we face is how to communicate the results of such scientific inquiry to a diverse public in a way that maximizes uptake and improves people’s daily and long-term decision making. 
@@ -55,16 +56,15 @@ There are other examples of parenting beliefs on which parents differ; Lareau’
 
 Although these previous studies provide preliminary evidence that parents’ beliefs about parenting and child development affect their parenting behaviors, no previous research has attempted to identify the underlying theories that might organize their behavior and decision-making. Previous research has generally relied on observation of parent-child interactions or self-report of specific activities and behaviors. To our knowledge there is not an existing measure of parents’ more general attitudes about parenting and child development, which might drive behavior and predict the uptake of interventions. To address this gap, the present work establishes a self-report scale that captures adults’ lay theories about child development and parenting. We generated a questionnaire measuring the degree to which parents endorse three potential lay theories: a “rules and respect” theory, an “affection and attachment” theory, and an “early learning” theory. As an initial test of the external validity of the questionnaire, we conducted an experiment to investigate whether parents’ scores on the theory subscales would differentially predict their uptake of parenting information presented via a popular press article about children’s early learning from free play (Gopnik, 2011). We found that higher scores on the “early learning” subscale, but not the “rules and respect” subscale, predicted recall and generalization from the target article (about free play) but not a control article that was unrelated to child development. Thus, parents’ lay theories about parenting and child development as measured by our questionnaire may be a meaningful factor in parents’ behavior and information uptake.
 
-
 # Scale Construction
 
 In order to establish a new measure of parenting attitudes, we followed a structured plan based on psychometric best practices (Clark & Watson, 1995; Furr, 2010; Simms, 2008). We generated items corresponding to three hypothesized latent theories about parenting: the Early Learning theory corresponds to a view of children’s early learning that is consistent with contemporary child development research, and includes the idea that young children can teach themselves by exploring and playing. The Affection and Attachment theory captures the notion that close parent-child relationships are important for development, and includes the ideas that parents should talk to their children about their emotions and that children are not spoiled by too much affection. The Rules and Respect theory corresponds to the idea that parents’ primary role is to enforce rules and encourage behavior control. We generated items based on a review of the literature on parenting attitudes, and conducted psychometric analyses on iterative samples of respondents.
 
-## Procedure for scale construction
+In an initial phase of scale construction, we generated 42 statements that described attitudes consistent with one of three potential implicit theories about parenting: Active Learning (12 items; e.g., “Children can learn about things like good and bad behavior from an early age”), Affection and Attachment (10 items; e.g., “It's important for a baby to have a strong bond with mom”), and Rules and Respect (20 items; e.g., “It is very important that children learn to respect adults, such as parents and teachers”). These statements were generated based on a literature review of parenting attitudes and behaviors. The Affection and Attachment and Rules and Respect subscales are related theoretically to the Authoritative and Authoritarian dimensions of Baumrind’s (1971) parenting framework, as well as theories of attachment parenting (Jones, Cassidy, & Shaver, 2015), but aim to assess beliefs about parenting rather than overt behaviors. The Early Learning subscale aimed to assess the extent to which adults believe that it is important to help infants and toddlers learn through play and conversation. 
 
-## Scale validation
+The initial 42-item scale was administered to 250 adults on Amazon's Mechanical Turk. Participants used a 7-point Likert scale to report the degree to which they agreed with each statement from 0 (Do not Agree) to 6 (Strongly Agree). Chronbach’s alphas for the three subscales were .86 (Active Learning), .81 (Affection and Attachment), and .74 (Rules and Respect). We then conducted Exploratory Factor Analysis (EFA) to assess the dimensionality of the scale. Based on a parallel analysis (Horn, 1965) we retained 5 factors in this initial model. We subsequently dropped any items that had factor loadings less than .40 on the relevant factor, as well as any items that had factor loadings greater than .40 onto another factor. Items were also dropped if analyses revealed that Chronbach’s alpha would be increased by dropping the item. Additional items were dropped such that there were 6 items in each subscale. Some items were re-worded such that half of the items in each subscale were negatively worded to avoid response sets (Simms, 2008).
 
-
+The revised questionnaire was administered to a second group of 250 adults on Amazon's Mechanical Turk. For this sample, Chronbach’s alphas were .76 (Active Learning), .75 (Affection and Attachment), and .69 (Rules and Respect). Because analysis of the previous sample identified 5 factors instead of the hypothesized 3, we again conducted EFA. This time, the parallel analysis identified 3 factors as predicted. The subscale items were roughly grouped according to a priori subscales, although some items from the Affection and Attachment subscale load onto both the Affection and Attachment and Active Learning subscale factors. 
 
 # Experiment 1
 
@@ -74,13 +74,12 @@ We next conducted an experiment to test whether scores on the three subscales wo
 
 ### Participants
 
+Participants were 250 adults recruited from Amazon's Mechanical Turk. 
+
+
 ### Procedure
 
 
-## Results
-
-
-## Discussion
 
 ```{r}
 files <- dir("../production-results/uptake_e2/")
@@ -160,7 +159,6 @@ for (f in files) {
 }
 ```
 
-Map on question short forms so that we can use these instead. 
 
 ```{r}
 labels <- read.csv("../analysis/sent_forms_e7.csv")
@@ -172,7 +170,6 @@ answers$tar_rec <-as.character(answers$tar_rec)
 answers$con_rec <-as.character(answers$con_rec)
 ```
 
-Clean up labels.
 
 ```{r}
 d.raw$sent <- as.character(d.raw$sent)
@@ -184,7 +181,6 @@ d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
 ```
 
-Merge. Recode uptake answers by accuracy.  
 
 ```{r}
 d <- left_join(d.raw, labels)
@@ -249,62 +245,6 @@ subinfo <- subinfo %>%
 
 
 ```{r}
-subinfo$education <- factor(subinfo$education, 
-                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
-
-subinfo$gender <- str_replace_all(subinfo$gender, 
-                              "female|FEMALE|F$|f$|Femal$|Females|Females","Female")
-subinfo$gender <- str_replace_all(subinfo$gender, 
-                                  "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, 
-                                  "29|24|25|28|32|33|45", "")
-subinfo$gender <- str_replace_all(subinfo$gender, 
-                                  "males", "male")
-subinfo$gender <- str_replace_all(subinfo$gender, " ", "")
-
-subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
-subinfo$language <- str_replace_all(subinfo$language," ", "")
-subinfo$language <- str_replace_all(subinfo$language,"arabic", "Arabic")
-subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
-subinfo$language <- str_replace_all(subinfo$language,"german", "German")
-subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
-
-subinfo$youngestChildAge <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
-
-subinfo$oldestChildAge <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
-
-subinfo$reading_ease_target <- factor(subinfo$reading_ease_target, levels = c("Very Difficult", "Somewhat Difficult", "Somewhat Easy", "Very Easy"))
-
-subinfo$reading_ease_control <- factor(subinfo$reading_ease_control, levels = c("Very Difficult", "Somewhat Difficult", "Somewhat Easy", "Very Easy"))
-
-subinfo$enjoy_target <- factor(subinfo$enjoy_target, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
-
-subinfo$enjoy_control <- factor(subinfo$enjoy_control, levels = c("Very Unenjoyable", "Somewhat Unenjoyable", "Somewhat Enjoyable", "Very Enjoyable"))
-```
-
-
-```{r}
-qplot(ses, data=subinfo)
-qplot(children, data=subinfo)
-qplot(gender, data=subinfo)
-qplot(education, data=subinfo)
-qplot(age, data=subinfo)
-qplot(language, data=subinfo)
-qplot(ethnicity, data=subinfo)
-qplot(race, data=subinfo)
-qplot(youngestChildAge, data=subinfo)
-qplot(oldestChildAge, data=subinfo)
-qplot(reading_ease_target, data=subinfo)
-qplot(reading_ease_control, data=subinfo)
-qplot(enjoy_target, data=subinfo)
-qplot(enjoy_control, data=subinfo)
-```
-
-# Basic analyses
-
-Now look at mean ratings across sentences.
-
-```{r}
 rating_count <- table(d$rating) 
 rating_count
 prop.table(rating_count) 
@@ -319,7 +259,7 @@ ms$short_sent_ord <- factor(ms$short_sent,
 
 ```
 
-Plot attitude.
+
 
 ```{r}
 qplot(short_sent_ord, mean, col = category,
@@ -334,20 +274,6 @@ qplot(short_sent_ord, mean, col = category,
 
 ```
 
-Plot mean subscale scores.
-
-```{r}
-mc <- d %>%
-  group_by(category) %>%
-  multi_boot_standard(col = "rating") %>%
-  arrange(category, desc(mean)) 
-
-qplot(category, mean, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mc) + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
-```
 
 ```{r}
 mcl <- d %>%
@@ -358,387 +284,84 @@ mcl <- d %>%
   
 ```
 
-# Scale reliability
-
-## Whole Scale
 
 ```{r}
-wide.attitudes <- d %>% 
-  filter(instrument == "attitudes") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
-alpha(x = alpha.mat)
-```
+ds <- d
+ds$srating <- ave(ds$rating, ds$category, FUN=scale)
 
-## Rules and Respect Subscale
-
-```{r}
-wide.rules_respect <- d %>% 
-  filter(category == "rules_respect") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
-alpha(x = alpha.rr)
-```
-
-## Affection and Attachment Subscale
-
-```{r}
-wide.affection <- d %>% 
-  filter(category == "affection") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.af <- as.matrix(select(wide.affection, -workerid))
-alpha(x = alpha.af)
-
-```
-
-## Active Learning Subscale
-
-```{r}
-wide.active_learning <- d %>% 
-  filter(category == "active_learning") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.al <- as.matrix(select(wide.active_learning, -workerid))
-alpha(x = alpha.al)
-```
-
-# Subscales by demographics
-
-Create a data frame that has subscale scores. 
-```{r}
-ss <- d %>%
+ss <- ds %>%
   group_by(workerid, category) %>%
-  summarize(rating = mean(rating))
+  summarize(srating = mean(srating)) %>%
+  spread(category, srating) %>% 
+  left_join(subinfo) %>%
+  gather(trial_type, correct, control_recall, target_recall, target_generalize)
 
-ss <- left_join(ss, subinfo)
+ss.long <- ss %>%
+  gather(subscale, srating, active_learning, affection, rules_respect)
+
 ```
 
-## By SES
 
 ```{r}
-ms <- ss %>% 
-  filter(ses != "") %>%
-  mutate(ses.level = cut(as.numeric(ses), c(0,3,6,10))) %>%
-  group_by(ses.level, category) %>%
-  multi_boot_standard(col = "rating") 
-
-ggplot(ms, aes(category, mean, fill=ses.level)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
+ggplot(ss.long, aes(x = srating, y = correct, col = subscale)) +
+  geom_jitter() + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~trial_type)
 ```
 
-## By Race
 
-Drop the sparsest groups. 
 
 ```{r}
-ms <- ss %>% 
-  filter(race != "NULL") %>%
-  group_by(race, category) %>%
-  filter(n() > 5) %>%
-  multi_boot_standard(col = "rating")
-  
-ggplot(ms, aes(category, mean, fill=race)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
+exclude <- subinfo$workerid[subinfo$reading_time_target < 30 | subinfo$reading_time_control < 30]
+length(exclude)
+
 ```
 
-## By Gender
+
 
 ```{r}
-ms <- ss %>% 
-  filter(gender %in% c("Male","Female")) %>%
-  group_by(gender, category) %>%
-  multi_boot_standard(col = "rating") 
-
-ggplot(ms, aes(category, mean, fill=gender)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## By Education
-
-Drop the sparsest groups. 
-
-```{r}
-ms <- ss %>% 
-  filter(!is.na(education)) %>%
-  group_by(education, category) %>%
-  filter(n() > 5) %>%
-  multi_boot_standard(col = "rating") 
-
-ggplot(ms, aes(category, mean, fill=education)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## By Age
-
-Drop the sparsest groups again. 
-
-```{r}
-ms <- ss %>% 
-  filter(!is.na(age)) %>%
-  group_by(age, category) %>%
-  filter(n() > 5) %>%
-  multi_boot_standard(col = "rating") 
-
-ggplot(ms, aes(category, mean, fill=age)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## By Children
-
-```{r}
-ms <- ss %>% 
-  filter(!is.na(children)) %>%
-  group_by(children, category) %>%
-  filter(n() > 5) %>%
-  multi_boot_standard(col = "rating") 
-
-ggplot(ms, aes(category, mean, fill=children)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## Factors by Ethnicity
-
-```{r}
-ms <- ss %>% 
-  filter(ethnicity != "") %>%
-  group_by(ethnicity, category) %>%
-  filter(n() > 5) %>%
-  multi_boot_standard(col = "rating") 
-
-ggplot(ms, aes(category, mean, fill=ethnicity)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-# Factor analysis
-
-Get eigenvalues for determining number of factors. 
-
-```{r}
-att.mat <- select(wide.attitudes, -workerid)
-
-ev <- eigen(cor(x=att.mat)) # get eigenvalues
-
-ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
-               rep=100,cent=.05)
-nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
-plotnScree(nS)
+ggplot(filter(ss.long, !workerid %in% exclude), 
+       aes(x = srating, y = correct, col = subscale)) +
+  geom_jitter() + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~trial_type)
 ```
 
 
 ```{r}
-item.levels <- c("respect parents teachers", "wait when told","children should be grateful","punish for small rules", "dont impose structure", "kids should not decide", "safe loving environment", "holding and cradling", "give children comfort", "talk about emotions", "not spoiled with too much attention","too much affection does not harm", "can learn good and bad", "learn by playing", "learn from repetetive behaviors", "reasons for rules", "learn math before school", "reading before speaking")
+subscales <- ds %>%
+  group_by(workerid, category) %>%
+  summarize(srating = mean(srating)) %>%
+  spread(category, srating) 
 
-n.factors <- 3
+ratings <- d %>% 
+  select(workerid, starts_with("target"), starts_with("control")) %>%
+  gather(question, correct, starts_with("target"), starts_with("control")) %>%
+  separate(question, c("passage","trial_type","q_num"), sep = "_") %>%
+  mutate(correct = as.numeric(correct), 
+         q_num = as.numeric(q_num) + 
+           as.numeric(factor(passage)) * 10 + 
+           as.numeric(factor(trial_type)) * 100)
 
-af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
-loadings <- data.frame(af$loadings[,1:n.factors]) %>%
-  mutate(item = rownames(af$loadings)) %>%
-  gather(factor, loading, starts_with("Factor"))
-loadings$item <- factor(loadings$item, item.levels)
-
-labels$item <- labels$short_sent
-loadings <- join(loadings, labels, by = "item")
-
-qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
-  scale_fill_continuous(low="#000000", high="#FFFFFF") + 
-  facet_grid(category ~ ., scales = "free_y")
-
-qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
-  scale_fill_solarized() + 
-  facet_grid(category ~ ., scales = "free_y")
+d.reg <- left_join(ratings, subscales) %>%
+  unite(question_type, passage, trial_type)
 ```
 
-Merge back in subject id info. 
 
 ```{r}
-a.scores <- af$scores %>%
-  data.frame %>%
-  mutate(workerid = as.character(wide.attitudes$workerid)) %>%
-  left_join(subinfo)
+summary(glmer(correct ~ question_type * rules_respect + 
+                question_type * active_learning + 
+                (1|workerid) + 
+                (1|q_num), 
+              data = filter(d.reg, !workerid %in% exclude), 
+              family = "binomial"))
 ```
 
-## Factors by SES
 
-```{r}
-a.factor.names <- c("Affection and Early Learning","Rules and Respect", "Affection 2")
-
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(ses != "") %>%
-  mutate(ses.level = cut(as.numeric(ses), c(0,3,6,10)),
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(ses.level, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=ses.level)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## Factors by Gender
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(gender %in% c("Male","Female")) %>%
-  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(gender, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=gender)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-
-```
- 
-## Factors by Education
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(education != "") %>%
-  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(education, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=education)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## Factors by Age
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(age != "") %>%
-  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(age, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=age)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## Factors by Children
-
-Do you have children?
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(children != "") %>%
-  mutate(children = children %in% c("1","2","3","4","5","morethan5"),
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(children, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=children)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-How many?
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(children != "") %>%
-  mutate(n.children = children,
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(n.children, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=n.children)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-```
-
-## Factors by Ethnicity
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(ethnicity != "") %>%
-  mutate(hispanic = ethnicity== "Hispanic",
-         factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(hispanic, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=hispanic)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-``` 
- 
-## Factors by Race
-
-```{r}
-mf <- a.scores %>% 
-  gather(factor, score, starts_with("Factor")) %>%
-  filter(race != "NULL") %>%
-  mutate(factor.num = as.numeric(str_replace(factor,"Factor","")),
-         factor.name = a.factor.names[factor.num]) %>%
-  group_by(race, factor.name) %>%
-  multi_boot_standard(col = "score") 
-
-ggplot(mf, aes(factor.name, mean, fill=race)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
-``` 
+## Results
 
 
-Alpha correlations within subscales were lower this time, perhaps because there were fewer items in each subscale (6).
-
-The three factors are not separating out exactly as predicted, but getting closer. The main issue is that the Affection items (this time,"talk about emotions", "holding and cradling", and "safe loving environment") are loading onto the same factor as the Early Learning items. 
-
+## Discussion
 
 # Acknowledgements
 
