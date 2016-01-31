@@ -66,6 +66,8 @@ The initial 42-item scale was administered to 250 adults on Amazon's Mechanical 
 
 The revised questionnaire was administered to a second group of 250 adults on Amazon's Mechanical Turk. For this sample, Chronbach’s alphas were .76 (Active Learning), .75 (Affection and Attachment), and .69 (Rules and Respect). Because analysis of the previous sample identified 5 factors instead of the hypothesized 3, we again conducted EFA. This time, the parallel analysis identified 3 factors as predicted. The subscale items were roughly grouped according to a priori subscales, although some items from the Affection and Attachment subscale load onto both the Affection and Attachment and Active Learning subscale factors. 
 
+PUT TABLE WITH SENTENCES BY CATEGORY HERE
+
 # Experiment 1
 
 We next conducted an experiment to test whether scores on the three subscales would predict people’s uptake of new information, as an initial test of the external validity of the scales. For this purpose, we had participants read two popular press articles: an article arguing that free play is beneficial to children’s learning (Gopnik, 2011), and an article about the language of smell (Yong, 2015). We operationalized uptake as accurate recall and generalization of the central message of the target article, and recall of the control article. We predicted that if people’s subscale scores reflect coherent lay theories, they should differentially moderate uptake of the two articles. Specifically, we predicted that scores on the Early Learning subscale would be positively related to recall and generalization of the target article, but not recall of the control article. We predicted that scores on the Rules and Respect subscale would not predict uptake of either article. We excluded scores on the Affection and Attachment subscale from our analyses, since they are not orthogonal to scores on the Early Learning subscale.
@@ -319,7 +321,7 @@ d.reg <- left_join(ratings, subscales) %>%
 ```
 
 
-```{r}
+```{r , include=FALSE}
 summary(glmer(correct ~ question_type * rules_respect + 
                 question_type * active_learning + 
                 (1|workerid) + 
@@ -334,6 +336,12 @@ summary(glmer(correct ~ question_type * rules_respect +
 We excluded 48 participants who spent less than 30 seconds reading one or both of the articles, based on the assumption that they had not had time to read the whole article. Mean accuracy for the remaining sample was .67 (SD = .24) for control recall, .83 (SD = .19) for target recall, and .87 (SD = .22) for target generalization. As we were interested in whether subscale scores would differentially predict uptake of the target article compared to the control article, we fit a generalized linear mixed-effects model with standardized Early Learning and Rules and Respect subscale scores, as well as interaction terms for the subscale scores by question type (i.e., control recall vs. target recall vs. target generalization) as fixed effects, and participants and questions as random effects. Early Learning scores positively predicted target recall and target generalization, whereas Rules and Respect scores positively predicted target recall but not target generalization (Table ##). 
 
 ## Discussion
+
+Understanding the sources of parents’ behaviors and decisions with regard to their parenting is a critical step in improving children’s welfare. There is a large literature outlining the activities and environments that can make a difference in children’s development, including their language (Hart & Risley, 1995), executive functioning (Barker et al., 2014), and conceptual learning (Bonawitz et al., 2011). However, relevant research findings can sometimes be nuanced and unintuitive for those outside of academia. Thus, an important challenge is understanding the lay beliefs parents may have about parenting, and how they relate to parenting best-practices as identified by developmental science. Interventions that aim to deliver new information may be more likely to succeed if they take into account the existing lay beliefs that parents hold about child development (Kumar et al., 2015). 
+
+In the present work, we established a new scale to measure people’s attitudes about parenting and child development in three categories: Rules and Respect, Affection and Attachment, and Early learning. These subscales are meant to capture meaningful differences in how people view child development and the relative importance of different parenting behaviors. We subjected our new scale to psychometric testing, and found acceptably high correlations among subscale items, as well as the predicted factor structure across subscales. In addition, subscale scores meaningfully predicted uptake of new information about parenting. Specifically, participants with high scores on the Early Learning subscale were more likely to generalize the message of the target article about children’s learning to new scenarios, whereas high scores on the Rules and Respect subscale did not predict generalization of the article. However, high scores on the Early Learning and Rules and Respect subscales both predicted recall of the target article. Although this was not predicted, it is possible that participants who more strongly endorse the Rules and Respect items are more interested in child development in general than people who respond more moderately on those items, which could explain greater recall of the information in the children’s learning article. 
+
+In summary, this work provides initial evidence that meaningful differences in adults’ attitudes about child development and parenting can be assessed by our new scale. Future work should determine whether subscale scores differentially predict parents observable behaviors with their children, such as the quality of conversations they engage their child in, which would provide additional support for our scale.
 
 # Acknowledgements
 

@@ -231,6 +231,8 @@ subscale items were roughly grouped according to a priori subscales,
 although some items from the Affection and Attachment subscale load onto
 both the Affection and Attachment and Active Learning subscale factors.
 
+PUT TABLE WITH SENTENCES BY CATEGORY HERE
+
 \section{Experiment 1}\label{experiment-1}
 
 We next conducted an experiment to test whether scores on the three
@@ -285,59 +287,6 @@ a table?
 
 \includegraphics{figs/unnamed-chunk-10-1} \end{CodeChunk}
 
-\textbackslash{}begin\{CodeChunk\} \textbackslash{}begin\{CodeOutput\}
-Generalized linear mixed model fit by maximum likelihood (Laplace
-Approximation) {[}glmerMod{]} Family: binomial ( logit ) Formula:
-correct \textasciitilde{} question\_type * rules\_respect +
-question\_type * active\_learning +\\ (1 \textbar{} workerid) + (1
-\textbar{} q\_num) Data: filter(d.reg, !workerid \%in\% exclude)
-
-\begin{verbatim}
- AIC      BIC   logLik deviance df.resid 
-\end{verbatim}
-
-39100.8 39198.8 -19539.4 39078.8 54529
-
-Scaled residuals: Min 1Q Median 3Q Max -6.3483 0.0554 0.2232 0.4042
-8.7323
-
-Random effects: Groups Name Variance Std.Dev. workerid (Intercept)
-2.7895 1.6702\\ q\_num (Intercept) 0.6011 0.7753\\Number of obs: 54540,
-groups: workerid, 202; q\_num, 15
-
-Fixed effects: Estimate Std. Error z value (Intercept) 1.11009 0.36004
-3.083 question\_typetarget\_generalize 1.56790 0.48045 3.263
-question\_typetarget\_recall 1.27814 0.48109 2.657 rules\_respect
--0.10182 0.21071 -0.483 active\_learning 0.27433 0.22355 1.227
-question\_typetarget\_generalize:rules\_respect -0.05937 0.06306 -0.942
-question\_typetarget\_recall:rules\_respect 0.32354 0.05755 5.622
-question\_typetarget\_generalize:active\_learning 0.61527 0.05663 10.864
-question\_typetarget\_recall:active\_learning 0.48608 0.05420 8.968
-Pr(\textgreater{}\textbar{}z\textbar{})\\(Intercept) 0.00205 **
-question\_typetarget\_generalize 0.00110 ** question\_typetarget\_recall
-0.00789 ** rules\_respect 0.62895\\active\_learning
-0.21978\\question\_typetarget\_generalize:rules\_respect
-0.34643\\question\_typetarget\_recall:rules\_respect 1.88e-08
-\textbf{\emph{ question\_typetarget\_generalize:active\_learning
-\textless{} 2e-16 }} question\_typetarget\_recall:active\_learning
-\textless{} 2e-16 *** --- Signif. codes: 0 `\emph{\textbf{' 0.001 '}'
-0.01 '}' 0.05 `.' 0.1 `' 1
-
-Correlation of Fixed Effects: (Intr) qstn\_typtrgt\_g qstn\_typtrgt\_r
-rls\_rs actv\_l qstn\_typtrgt\_g -0.655\\qstn\_typtrgt\_r -0.657
-0.487\\rules\_rspct -0.001 0.002 0.000\\activ\_lrnng -0.067 0.003 0.000
--0.254\\qstn\_typtrgt\_gnrlz:r\_ 0.001 -0.003 -0.001 -0.088 0.025
-qstn\_typtrgt\_rcll:r\_ 0.002 -0.001 0.000 -0.099 0.028
-qstn\_typtrgt\_gnrlz:c\_ 0.005 0.001 -0.002 0.029 -0.093
-qstn\_typtrgt\_rcll:c\_ 0.005 -0.003 -0.003 0.032 -0.099
-qstn\_typtrgt\_gnrlz:r\_ qstn\_typtrgt\_rcll:r\_
-qstn\_typtrgt\_g\\qstn\_typtrgt\_r\\rules\_rspct\\activ\_lrnng\\qstn\_typtrgt\_gnrlz:r\_\\qstn\_typtrgt\_rcll:r\_
-0.401\\qstn\_typtrgt\_gnrlz:c\_ -0.386 -0.141\\qstn\_typtrgt\_rcll:c\_
--0.133 -0.335\\ qstn\_typtrgt\_gnrlz:c\_
-qstn\_typtrgt\_g\\qstn\_typtrgt\_r\\rules\_rspct\\activ\_lrnng\\qstn\_typtrgt\_gnrlz:r\_\\qstn\_typtrgt\_rcll:r\_\\qstn\_typtrgt\_gnrlz:c\_\\qstn\_typtrgt\_rcll:c\_
-0.446\\\textbackslash{}end\{CodeOutput\}
-\textbackslash{}end\{CodeChunk\}
-
 \subsection{Results}\label{results}
 
 We excluded 48 participants who spent less than 30 seconds reading one
@@ -346,18 +295,58 @@ time to read the whole article. Mean accuracy for the remaining sample
 was .67 (SD = .24) for control recall, .83 (SD = .19) for target recall,
 and .87 (SD = .22) for target generalization. As we were interested in
 whether subscale scores would differentially predict uptake of the
-target article compared to the control article, we conducted a
-mixed-effects regression with standardized Early Learning and Rules and
-Respect subscale scores, as well as interaction terms for the subscale
-scores by question type (i.e., control recall vs.~target recall
+target article compared to the control article, we fit a generalized
+linear mixed-effects model with standardized Early Learning and Rules
+and Respect subscale scores, as well as interaction terms for the
+subscale scores by question type (i.e., control recall vs.~target recall
 vs.~target generalization) as fixed effects, and participants and
-questions as random effects. There was a significant interaction of
-subscale score with question type, such that Early Learning scores
-positively predicted target recall and target generalization, whereas
-Rules and Respect scores predicted target recall but not target
-generalization (Table \#\#).
+questions as random effects. Early Learning scores positively predicted
+target recall and target generalization, whereas Rules and Respect
+scores positively predicted target recall but not target generalization
+(Table \#\#).
 
 \subsection{Discussion}\label{discussion}
+
+Understanding the sources of parents' behaviors and decisions with
+regard to their parenting is a critical step in improving children's
+welfare. There is a huge literature outlining the activities and
+environments that can make a difference in children's development,
+including their language, executive functioning, and conceptual
+learning. However, relevant research findings can sometimes be nuanced
+and unintuitive for those outside of academia. Thus, an important
+challenge is understanding the lay beliefs parents may have about
+parenting, and how they relate to parenting best-practices as identified
+by developmental science. Interventions that aim to deliver new
+information may be more likely to succeed if they take into account the
+existing lay beliefs that parents hold about child development (Kumar et
+al., 2015).
+
+In the present work, we established a new scale to measure people's
+attitudes about parenting and child development in three categories:
+Rules and Respect, Affection and Attachment, and Early learning. These
+subscales are meant to capture meaningful differences in how people view
+child development and the relative importance of different parenting
+behaviors. We subjected our new scale to psychometric testing, and found
+acceptably high correlations among subscale items, as well as the
+predicted factor structure across subscales. In addition, subscale
+scores meaningfully predicted uptake of new information about parenting.
+Specifically, participants with high scores on the Early Learning
+subscale were more likely to generalize the message of the target
+article about children's learning to new scenarios, whereas high scores
+on the Rules and Respect subscale did not predict generalization of the
+article. However, high scores on the Early Learning and Rules and
+Respect subscales both predicted recall of the target article. Although
+this was not predicted, it is possible that participants who more
+strongly endorse the Rules and Respect items are more interested in
+child development in general than people who respond more moderately on
+those items, which could explain greater recall of the information in
+the children's learning article.
+
+In summary, this work provides initial evidence that meaningful
+differences in adults' attitudes about child development and parenting
+can be assessed by our new scale. Future work should determine whether
+subscale scores differentially predict parents observable behaviors with
+their children, which would provide additional support for our scale.
 
 \section{Acknowledgements}\label{acknowledgements}
 
