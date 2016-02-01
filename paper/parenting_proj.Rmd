@@ -40,6 +40,7 @@ library(stringr)
 library(magrittr)
 library(readr)
 library(ggrepel)
+library(xtable)
 
 select <- dplyr::select # masked by MASS
 ```
@@ -66,7 +67,17 @@ The initial 42-item scale was administered to 250 adults on Amazon's Mechanical 
 
 The revised questionnaire was administered to a second group of 250 adults on Amazon's Mechanical Turk. For this sample, Chronbach’s alphas were .76 (Active Learning), .75 (Affection and Attachment), and .69 (Rules and Respect). Because analysis of the previous sample identified 5 factors instead of the hypothesized 3, we again conducted EFA. This time, the parallel analysis identified 3 factors as predicted. The subscale items were roughly grouped according to a priori subscales, although some items from the Affection and Attachment subscale load onto both the Affection and Attachment and Active Learning subscale factors. 
 
-PUT TABLE WITH SENTENCES BY CATEGORY HERE
+```{r items, results="asis"}
+
+items <- read.csv("../analysis/scale_items.csv")
+colnames(items) <- c("Rules and Respect", "Affection and Attachment", "Early Learning")
+
+scale_table <- xtable(items, caption = "Parenting Attitudes Scale")
+
+print(scale_table, type = "latex", comment = FALSE, include.rownames = FALSE,
+      table.placement = "t", format.args = list(big.mark = ","))
+
+```
 
 # Experiment 1
 
@@ -291,8 +302,8 @@ length(exclude)
 ```
 
 
+```{r fig.height=3.5, fig.width=7, fig.env='figure*', fig.align='center', fig.pos='!h', fig.cap='Relationship between subscale scores and uptake of articles.'}
 
-```{r}
 ggplot(filter(ss.long, !workerid %in% exclude), 
        aes(x = srating, y = correct, col = subscale)) +
   geom_jitter() + 
