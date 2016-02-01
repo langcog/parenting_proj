@@ -8,7 +8,7 @@ author-information:
     \author{{\large \bf Emily Hembacher} \\ \texttt{ehembach@stanford.edu} \\ Department of Psychology \\ Stanford University \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
 
 abstract: 
-    "..."
+    "Child development research suggests that parenting practices play an important role in shaping children’s outcomes. For example, children whose parents engage them in high-quality conversations, and who are given opportunities for free play, are at an advantage for learning and later academic outcomes. However, communicating the results of relevant scientific findings to parents remains a challenge. One possible moderator of uptake of parenting information is the implicit theories parents hold with regard to child development and parenting. As a first step in investigating this possibility, the present work establishes a new measure of parenting attitudes, and examines whether scores on three subscales, corresponding to lay theories about rules and respect, affection and attachment, and early learning, differentially predict uptake of a popular press article about children’s early learning. Results showed that scores on the early learning subscale, but not the rules and respect subscale, predicted generalization from the article."
 
 keywords:
     "Parenting attitudes; implicit theories"
