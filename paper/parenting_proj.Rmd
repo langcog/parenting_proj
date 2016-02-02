@@ -546,7 +546,7 @@ exclude <- subinfo$workerid[subinfo$reading_time_target < 30 |
 
 As a planned exclusion criterion, we excluded `r length(exclude)` participants who spent less than 30 seconds reading one or both of the articles, based on the assumption that they had not had time to read the whole article. Mean accuracy for the remaining sample was `r round(mean(subinfo$control_recall[!subinfo$workerid %in% exclude]),2)` (SD = `r round(sd(subinfo$control_recall[!subinfo$workerid %in% exclude]),2)`) for control recall, `r round(mean(subinfo$target_recall[!subinfo$workerid %in% exclude]),2)` (SD = `r round(sd(subinfo$target_recall[!subinfo$workerid %in% exclude]),2)`) for target recall, and `r round(mean(subinfo$target_generalize[!subinfo$workerid %in% exclude]),2)` (SD = `r round(sd(subinfo$target_generalize[!subinfo$workerid %in% exclude]),2)`) for target generalization. 
 
-```{r relation, fig.height=3, fig.width=7, fig.env='figure*', fig.align='center', fig.pos='!h', fig.scap='Relationship between subscale scores and uptake. Dots show individual participants. Lines show linear models and 95% CIs. Points are jittered to avoid overplotting.'}
+```{r relation, fig.height=3, fig.width=7, fig.env='figure*', fig.align='center', fig.pos='t', fig.cap="Relationship between subscale scores and uptake. Dots show individual participants. Lines show linear models and 95\\% CIs. Points are jittered to avoid overplotting."}
 
 ss.long$Subscale <- factor(ss.long$subscale, 
                            levels = c("active_learning","rules_respect"), 
