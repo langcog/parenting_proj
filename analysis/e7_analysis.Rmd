@@ -33,13 +33,14 @@ knitr::opts_chunk$set(fig.width=8, fig.height=5,
                       echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(langcog)
-library(plyr); library(dplyr)
 library(ggplot2)
 library(rjson)
 library(stringr)
 library(tidyr)
 library(psych)
 library(nFactors)
+library(dplyr)
+library(lme4)
 
 select <- dplyr::select # masked by MASS
 
@@ -112,16 +113,21 @@ Plot demographic info.
 ```{r}
 subinfo <- d %>% 
   group_by(workerid) %>%
-  summarise(age = age[1],
-            gender = gender[1],
-            children = children[1],
-            ses = ses[1],
-            education = education[1],
-            language = language[1], 
-            ethnicity = ethnicity[1],
-            youngestChildAge = childAgeYoung[1],
-            oldestChildAge = childAgeOld[1]
-            )
+  select(workerid, age, gender, children, ses, education, language, 
+         ethnicity, childAgeYoung, childAgeOld) %>%
+  dplyr::rename(youngestChildAge = childAgeYoung,
+         oldestChildAge = childAgeOld) %>%
+  distinct
+#   summarise(age = age[1],
+#             gender = gender[1],
+#             children = children[1],
+#             ses = ses[1],
+#             education = education[1],
+#             language = language[1], 
+#             ethnicity = ethnicity[1],
+#             youngestChildAge = childAgeYoung[1],
+#             oldestChildAge = childAgeOld[1]
+#             )
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 
@@ -197,9 +203,8 @@ mc <- d %>%
   multi_boot_standard(col = "rating") %>%
   arrange(category, desc(mean)) 
 
-qplot(category, mean, 
-      geom = "bar", stat = "identity", position = "dodge", 
-      data=mc) + 
+ggplot(mc, aes(x = category, y = mean)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 ```
@@ -273,8 +278,8 @@ alpha(x = alpha.al)
 Create a data frame that has subscale scores. 
 ```{r}
 ss <- d %>%
-  group_by(workerid, category) %>%
-  summarize(rating = mean(rating))
+  dplyr::group_by(workerid, category) %>%
+  dplyr::summarise(rating = mean(rating))
 
 ss <- left_join(ss, subinfo)
 ```
@@ -308,6 +313,31 @@ ggplot(ms, aes(category, mean, fill=gender)) +
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
   scale_fill_solarized()
+
+knitr::kable(coef(summary(lmer(rating ~ category * gender + (1|workerid), 
+     data =   ss %>% filter(gender %in% c("Male","Female"))))), digits = 2)
+```
+
+
+## By Parent Status
+
+```{r}
+ms <- ss %>% 
+  filter(!is.na(children), children != "") %>%
+  mutate(parent = children != "0") %>%
+  group_by(parent, category) %>%
+  multi_boot_standard(col = "rating") 
+
+ggplot(ms, aes(category, mean, fill=parent)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+
+knitr::kable(coef(summary(lmer(rating ~ category * parent + (1|workerid), 
+     data = ss %>% 
+       filter(!is.na(children), children != "") %>%
+       mutate(parent = children != "0")))), digits = 2)
 ```
 
 ## By Education

@@ -1,13 +1,14 @@
 base
 psych
 rjson
-tidyr
 MASS
 boot
 lattice
 nFactors
 Matrix
 lme4
+tidyr
+knitr
 ggplot2
 dplyr
 langcog

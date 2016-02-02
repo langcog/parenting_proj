@@ -187,6 +187,38 @@ was unrelated to child development. Thus, parents' lay theories about
 parenting and child development as measured by our questionnaire may be
 a meaningful factor in parents' behavior and information uptake.
 
+\begin{table*}[h]
+\centering
+\begin{tabular}{p{1.25in}p{5.25in}}
+  \hline
+Subscale & Full item \\ 
+  \hline
+Rules/Respect & It is very important that children learn to respect adults, such as parents and teachers. \\ 
+   & It is important for young children to learn to control their impulses (e.g., waiting when told to wait). \\ 
+  & Children should be taught to be grateful to their parents. \\ 
+  & Children should not be punished for breaking small rules.* \\ 
+  & Parents should follow their childrens lead rather than imposing structure in the form of rules.* \\ 
+  & Young children should be allowed to make their own decisions, such as what to eat for dinner.* \\ 
+  \hline
+  Affection/Attachment & Parents need to provide safe and loving environments for their children. \\ 
+   & Holding and cradling babies is important for forming strong bonds between parent and child. \\ 
+   & Children should be given comfort and understanding when they are scared or unhappy. \\ 
+   & Parents do not need to talk to their child about his or her emotions.* \\ 
+   & Children become spoiled if they receive too much attention from parents.* \\ 
+   & Too much affection can make a child weak.* \\ 
+   \hline
+  Early Learning & Children can learn about things like good and bad behavior from a very early age. \\ 
+   & Young children can teach themselves things by exploring and playing. \\ 
+   & Babies repetitive behaviors (e.g., banging a cup on the table) are a way for them to explore cause and effect. \\ 
+   & It is not helpful for adults to explain the reasons for rules to young children because they won't understand.* \\ 
+   & Children don't need to learn about numbers and math until they go to school.* \\ 
+   & Reading books to children is not helpful if they have not yet learned to speak.* \\ 
+   \hline
+   *Reverse coded
+\end{tabular}
+\caption{Parenting Attitudes Scale items.\label{tab:items}} 
+\end{table*}
+
 \section{Scale Construction}\label{scale-construction}
 
 In order to establish a new measure of parenting attitudes, we followed
@@ -245,45 +277,53 @@ negatively worded to avoid response sets (Simms, 2008).
 \subsection{Revised questionnaire
 norming}\label{revised-questionnaire-norming}
 
+\begin{CodeChunk}
+\begin{figure*}[h]
+
+{\centering \includegraphics{figs/loadings-1} 
+
+}
+
+\caption[Factor loadings for subscale items]{Factor loadings for subscale items.}\label{fig:loadings}
+\end{figure*}
+\end{CodeChunk}
+
 The revised questionnaire was administered to a second group of 250
 adults on Amazon's Mechanical Turk. Table \ref{tab:items} gives the full
 list of items. For this sample, Cronbach's alphas were .76 (Active
 Learning), .75 (Affection and Attachment), and .69 (Rules and Respect).
 Because analysis of the previous sample identified 5 factors instead of
 the hypothesized 3, we again conducted EFA. This time, the parallel
-analysis identified 3 factors as predicted. The subscale items were
-roughly grouped according to a priori subscales, although some items
-from the Affection and Attachment subscale load onto both the Affection
-and Attachment and Active Learning subscale factors.
+analysis identified 3 factors as predicted. We next examined the
+loadings of individual items onto the three factors (Figure
+\ref{fig:loadings}). Items loaded onto the three factors roughly
+consistent with our a priori subscales, although some items from the
+Affection and Attachment subscale loaded onto both the Affection and
+Attachment and Active Learning factors. Given the loadings of Early
+Learning and Affection and Attachment items onto a single factor, it is
+possible that participants responses on these items were driven by a
+more general hands-on attitude towards parenting, similar to Lareau's
+(2003) Concerted Cultivation theory. Interestingly, when we conducted an
+exploratory analysis of factor loadings by gender, we found that female
+gender loaded highly positively onto the Affection and Attachment factor
+that did not include Early Learning items (.44), while the opposite was
+true for male gender (-.20). Thus, it is possible that these items
+reflect a theory related to Affection and Attachment that is seperable
+from the hands-on approach and differentiated by gender.
 
-\begin{table*}[t]
-\centering
-\begin{tabular}{p{1.25in}p{5.25in}}
-  \hline
-Subscale & Full item \\ 
-  \hline
-Rules/Respect & It is very important that children learn to respect adults, such as parents and teachers. \\ 
-   & It is important for young children to learn to control their impulses (e.g., waiting when told to wait). \\ 
-  & Children should be taught to be grateful to their parents. \\ 
-  & Children should not be punished for breaking small rules. \\ 
-  & Parents should follow their childrens lead rather than imposing structure in the form of rules. \\ 
-  & Young children should be allowed to make their own decisions, such as what to eat for dinner. \\ 
-  Affection/Attachment & Parents need to provide safe and loving environments for their children. \\ 
-   & Holding and cradling babies is important for forming strong bonds between parent and child. \\ 
-   & Children should be given comfort and understanding when they are scared or unhappy. \\ 
-   & Parents do not need to talk to their child about his or her emotions. \\ 
-   & Children become spoiled if they receive too much attention from parents. \\ 
-   & Too much affection can make a child weak. \\ 
-  Early Learning & Children can learn about things like good and bad behavior from a very early age. \\ 
-   & Young children can teach themselves things by exploring and playing. \\ 
-   & Babies repetitive behaviors (e.g., banging a cup on the table) are a way for them to explore cause and effect. \\ 
-   & It is not helpful for adults to explain the reasons for rules to young children because they won't understand. \\ 
-   & Children don't need to learn about numbers and math until they go to school. \\ 
-   & Reading books to children is not helpful if they have not yet learned to speak. \\ 
-   \hline
-\end{tabular}
-\caption{Parenting Attitudes Scale items.\label{tab:items}} 
-\end{table*}
+As one test of the external validity of the subscales, we fit linear
+mixed-effects models predicting subscale scores based on gender and
+parenthood status (i.e., whether or not the participant reported having
+children) with participants as random effects. The model including
+gender revealed that females had higher scores on Early Learning, β =
+0.41, SE = .19, and Affection and Attachment β = 0.34, SE = .23, whereas
+gender had no effect on Rules and Respect scores. The model including
+parenthood status revealed that parents had higher scores on the
+Affection and Attachment subscale compared to non-parents, β = 0.35, SE
+= 13, whereas parenthood status had no effect on Early Learning or Rules
+and Respect scores. Although it is not possible to determine the source
+of these differences, they provide some intuitive support for the notion
+that subscale scores tap meaningful constructs that vary across groups.
 
 \subsection{Initial Validity Evidence}\label{initial-validity-evidence}
 
@@ -294,7 +334,7 @@ subscales would predict people's uptake of new information, as an
 initial test of the external validity of the scales. For this purpose,
 we had participants read two popular press articles: an article arguing
 that free play is beneficial to children's learning (A. Gopnik, 2011),
-and a control article about the language of smell ({\textbf{???}}). We
+and a control article about the language of smell (Yong, 2015). We
 operationalized uptake as accurate recall and generalization of the
 central message of the target article, and recall of the control
 article. We predicted that if people's subscale scores reflect coherent
@@ -329,7 +369,39 @@ about the control article, and then answered five 3AFC generalization
 and five 3AFC recall questions about the target article. The recall
 questions assessed participants' memory for specific details of the
 text, and the generalization questions assessed participants' ability to
-generalize from the meaning of the text to new situations.
+generalize from the meaning of the text to new situations (Table
+\ref{tab:uptake}). The alternative choices for recall and generalization
+questions were designed to reflect reasonable options that were
+nonetheless inconsistent with the articles.
+
+\begin{table*}[t]
+\centering
+\begin{tabular}{p{1.25in}p{5.25in}}
+  \hline
+Uptake category \\ 
+  \hline
+Control recall 
+& According to Article 2, what do the groups known for having many words for smells have in common? \\ 
+  & A) They train their children to be able to tell the difference between smells.\\ 
+  & B) They are hunter-gatherers.*\\ 
+  & C) They have unusually good hearing and vision.\\ 
+\hline
+Target recall
+  & According to Article 1, children were more likely to find new and better ways to make a toy work when the experimenter:\\ 
+  & A) Pretended to be clueless about how the toy worked when playing with it.*\\ 
+  & B) Pretended to be an expert about the toy when playing with it.\\ 
+  & C) Pretended not to care about the toy.\\ 
+  \hline
+  Target generalization 
+  & Based on Article 1, preschool directors should plan to have:\\ 
+  & A) More structured time in which children are taught lessons and skills.\\ 
+  & B) More time spent memorizing things that will be helpful later, such as the ABCs.\\
+  & C) More time for children to play outside and with toys.*\\
+   \hline
+*Correct answer   
+\end{tabular}
+\caption{Examples of uptake questions.\label{tab:uptake}} 
+\end{table*}
 
 \subsection{Results and discussion}\label{results-and-discussion}
 
@@ -427,6 +499,20 @@ subscale were more likely to generalize the message of the target
 article about children's learning to new scenarios, whereas high scores
 on the Rules and Respect subscale did not predict generalization of the
 article.
+
+One possibility that deserves consideration is that participants who
+scored higher on the Active Learning subscale would have been more
+likely to respond correctly to the target generalization and recall
+questions even without having read the article. It is very possible that
+adults who believe that children's early learning is a priority, and who
+believe young children are capable of learning a lot, are more likely to
+already possess the knowledge presented in the target article, or might
+intuitively answer the questions based on their implicit theories of
+children's learning. Although this would mean their advantage on the
+target generalization items might not stem from better generalization of
+concepts consistent with their implicit theories, it would still provide
+validation that subscale scores are predictive of how parents reason
+about children's learning.
 
 In sum, this work provides initial evidence that meaningful differences
 in adults' attitudes about child development and parenting can be
@@ -547,5 +633,8 @@ status, knowledge of child development and child vocabulary skill.
 Simms, L. J. (2008). Classical and Modern Methods of Psychological Scale
 Construction. \emph{Social and Personality Psychology Compass},
 \emph{2}(1), 414--433.
+
+Yong, E. (2015). \emph{Why Do Most Languages Have so Few Words for
+Smells?}
 
 \end{document}
