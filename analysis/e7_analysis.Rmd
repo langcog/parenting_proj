@@ -623,4 +623,7 @@ ggplot(mf, aes(factor.name, mean, fill=hispanic)) +
  
 # Conclusions
 
+pmaleaffec=2*pnorm(-abs(1.49))
+pmaleearlylearn=2*pnorm(-abs(2.21))
+parentaffection=2*pnorm(-abs(2.75))
 ...
