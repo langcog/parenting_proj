@@ -90,7 +90,7 @@ There are many other examples of parenting beliefs on which parents differ. For 
 
 Although these previous studies provide preliminary evidence that parents’ beliefs about parenting and child development affect their parenting behaviors, no previous research has attempted to identify the underlying _theories_ that might organize their behavior and decision-making. Previous research has generally relied on observation of parent-child interactions or self-report of specific activities and behaviors. To our knowledge there is not an existing measure of parents’ more general attitudes about parenting and child development, which might drive behavior and predict the uptake of interventions. 
 
-To address this gap, the present work establishes a self-report scale that captures adults’ lay theories about child development and parenting. We generated a questionnaire measuring the degree to which parents endorse three potential lay theories: a "Rules and Respect"" theory, an “Affection and Attachment” theory, and an “Early Learning” theory. As an initial test of the external validity of the questionnaire, we conducted an experiment to investigate whether parents’ scores on the theory subscales would differentially predict their uptake of parenting information presented via a popular press article about children’s early learning from free play (Gopnik, 2011). Higher scores on the Early Learning subscale, but not the Rules and Respect subscale, predicted recall and generalization from the target article (about free play) but not a control article that was unrelated to child development. Thus, parents’ lay theories about parenting and child development as measured by our questionnaire may be a meaningful factor in parents’ behavior and information uptake.
+To address this gap, the present work establishes a self-report scale that captures adults’ lay theories about child development and parenting. We generated a questionnaire measuring the degree to which parents endorse three potential lay theories: a "Rules and Respect"" theory, an “Affection and Attachment” theory, and an “Early Learning” theory. As an initial test of the external validity of the questionnaire, we conducted an experiment to investigate whether parents’ scores on these subscales would differentially predict their uptake of parenting information presented via a popular press article about children’s early learning from free play (Gopnik, 2011). Higher scores on the Early Learning subscale predicted improved uptake in terms of both recall and generalization of information the article about children's learning, but not a control article. Furthermore, the Rules and Respect subscale predicted improved uptake in terms of recall but not generalization of the presented information, suggesting that parents' implicit theories do affect how they process and use new information about child development, and that these differences may be detectable through self-report measures.
 
 # Scale Construction
 
@@ -225,7 +225,7 @@ nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
 # plotnScree(nS)
 ```
 
-```{r loadings, fig.height=3, fig.width=7, fig.env='figure*', fig.align='center', fig.pos='', fig.cap='Factor loadings for subscale items.'}
+```{r loadings, fig.height=3, fig.width=7, fig.env='figure*', fig.align='center', fig.pos='', fig.cap='Factor loadings for subscale items. EL = Early Learning, AA =Affection and Attachment, RR = Rules and Respect. *Indicates reverse-coded items.'}
 
 n.factors <- 3
 
@@ -240,9 +240,9 @@ loadings <- left_join(loadings, labels, by = "item")
 loadings$Category <- factor(loadings$category, 
                             levels = c("active_learning","affection",
                                        "rules_respect"),
-                            labels = c("Early Learning", 
-                                       "Affection and Attachment", 
-                                       "Rules and Respect"))
+                            labels = c("EL", 
+                                       "AA", 
+                                       "RR"))
 qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
   scale_fill_continuous(low="#000000", high="#FFFFFF") + 
   facet_grid(Category ~ ., scales = "free_y")
@@ -251,9 +251,9 @@ qplot(factor, item, fill=loading, geom="tile", data = loadings) +
 
 ## Item construction 
 
-In an initial phase of scale construction, we generated 42 statements that described attitudes consistent with one of three potential implicit theories about parenting: Active Learning (12 items; e.g., “Children can learn about things like good and bad behavior from an early age”), Affection and Attachment (10 items; e.g., “It's important for a baby to have a strong bond with mom”), and Rules and Respect (20 items; e.g., “It is very important that children learn to respect adults, such as parents and teachers”). These statements were generated based on a literature review of parenting attitudes and behaviors. The Affection and Attachment and Rules and Respect subscales are related theoretically to the Authoritative and Authoritarian dimensions of @baumrind1971's parenting framework, as well as theories of attachment parenting [@jones2014], but aim to assess beliefs about parenting rather than overt behaviors. The Early Learning subscale aimed to assess the extent to which adults believe that it is important to help infants and toddlers learn through play and conversation. 
+In an initial phase of scale construction, we generated 42 statements that described attitudes consistent with one of three potential implicit theories about parenting: Early Learning (12 items; e.g., “Children can learn about things like good and bad behavior from an early age”), Affection and Attachment (10 items; e.g., “It's important for a baby to have a strong bond with mom”), and Rules and Respect (20 items; e.g., “It is very important that children learn to respect adults, such as parents and teachers”). These statements were generated based on a literature review of parenting attitudes and behaviors. The Affection and Attachment and Rules and Respect subscales are related theoretically to the Authoritative and Authoritarian dimensions of @baumrind1971's parenting framework, as well as theories of attachment parenting [@jones2014], but aim to assess beliefs about parenting rather than overt behaviors. The Early Learning subscale aimed to assess the extent to which adults believe that it is important to help infants and toddlers learn through play and conversation. 
 
-The initial 42-item scale was administered to 250 adults on Amazon's Mechanical Turk. Participants used a 7-point Likert scale to report the degree to which they agreed with each statement from 0 (Do not Agree) to 6 (Strongly Agree). Cronbach’s alphas for the three subscales were .86 (Active Learning), .81 (Affection and Attachment), and .74 (Rules and Respect). We then conducted Exploratory Factor Analysis (EFA) to assess the dimensionality of the scale. Based on a parallel analysis [@horn1965], we retained 5 factors in this initial model. We subsequently dropped any items that had factor loadings less than .40 on the relevant factor, as well as any items that had factor loadings greater than .40 onto another factor. Items were also dropped if analyses revealed that Cronbach’s alpha would be increased by dropping the item. We then dropped additional items with lower loadings until there were 6 items in each subscale. Some items were rephrased such that half of the items in each subscale were negatively worded to avoid response sets [@simms2008].
+The initial 42-item scale was administered to 250 adults on Amazon's Mechanical Turk. Participants used a 7-point Likert scale to report the degree to which they agreed with each statement from 0 (Do not Agree) to 6 (Strongly Agree). Cronbach’s alphas for the three subscales were .86 (Early Learning), .81 (Affection and Attachment), and .74 (Rules and Respect). We then conducted Exploratory Factor Analysis (EFA) to assess the dimensionality of the scale. Based on a parallel analysis [@horn1965], we retained 5 factors in this initial model. We subsequently dropped any items that had factor loadings less than .40 on the relevant factor, as well as any items that had factor loadings greater than .40 onto another factor. Items were also dropped if analyses revealed that Cronbach’s alpha would be increased by dropping the item. We then dropped additional items with lower loadings until there were 6 items in each subscale. Some items were rephrased such that half of the items in each subscale were negatively worded to avoid response sets [@simms2008].
 
 
 ## Revised questionnaire norming
@@ -288,7 +288,7 @@ mf <- a.scores %>%
 ```
 
 
-The revised questionnaire was administered to a final group of 250 adults on Amazon's Mechanical Turk. Table \ref{tab:items} gives the full list of items. For this sample, Cronbach’s alphas were .76 (Active Learning), .75 (Affection and Attachment), and .69 (Rules and Respect). Because analysis of the previous sample identified 5 factors instead of the hypothesized 3, we again conducted EFA. This time, the parallel analysis identified 3 factors as predicted. We next examined the loadings of individual items onto the three factors (Figure \ref{fig:loadings}). Items loaded onto the three factors roughly consistent with our a priori subscales, although some items from the Affection and Attachment subscale loaded onto both the Affection and Attachment and Active Learning factors. 
+The revised questionnaire was administered to a final group of 250 adults on Amazon's Mechanical Turk. Table \ref{tab:items} gives the full list of items. For this sample, Cronbach’s alphas were .76 (Early Learning), .75 (Affection and Attachment), and .69 (Rules and Respect). Because analysis of the previous sample identified 5 factors instead of the hypothesized 3, we again conducted EFA. This time, the parallel analysis identified 3 factors as predicted. We next examined the loadings of individual items onto the three factors (Figure \ref{fig:loadings}). Items loaded onto the three factors roughly consistent with our a priori subscales, although some items from the Affection and Attachment subscale loaded onto both the Affection and Attachment and Early Learning factors. 
 
 Given the loadings of Early Learning and Affection and Attachment items onto a single factor, it is possible that participants responses on these items were driven by a more general hands-on attitude towards parenting, similar to Lareau's (2003) Concerted Cultivation theory. Interestingly, when we conducted an exploratory analysis of factor loadings by gender, we found that female gender loaded highly positively onto the Affection and Attachment factor that did not include Early Learning items (.44), while the opposite was true for male gender (-.20). Thus, it is possible that these items reflect a theory related to Affection and Attachment that is separable from the hands-on approach and differentiated by gender.
 
@@ -550,7 +550,7 @@ As a planned exclusion criterion, we excluded `r length(exclude)` participants w
 
 ss.long$Subscale <- factor(ss.long$subscale, 
                            levels = c("active_learning","rules_respect"), 
-                           labels = c("Active Learning","Rules and Respect"))
+                           labels = c("Early Learning","Rules and Respect"))
 ss.long$Trial_type <- factor(ss.long$trial_type, 
                            levels = c("control_recall","target_recall",
                                       "target_generalize"), 
@@ -575,7 +575,7 @@ ggplot(filter(ss.long, !workerid %in% exclude),
 ```
 
 
-Figure \ref{fig:relation} shows proportion correct on each of the three trial types, plotted by standardized subscale scores. Regression lines show the relationship between subscale scores and proportion correct. Qualitatively, there was not strong evidence of a relationship between Rules and Respect scores and performance (though target recall showed some trend). In contrast, we observed a stronger relationship between performance and Active Learning scores, most especially for target generalization trials. 
+Figure \ref{fig:relation} shows proportion correct on each of the three trial types, plotted by standardized subscale scores. Regression lines show the relationship between subscale scores and proportion correct. Qualitatively, there was not strong evidence of a relationship between Rules and Respect scores and performance (though target recall showed some trend). In contrast, we observed a stronger relationship between performance and Early Learning scores, most especially for target generalization trials. 
 
 ```{r}
 subscales <- ds %>%
@@ -603,7 +603,7 @@ lm <- glmer(correct ~ question_type * rules_respect +
               family = "binomial")
 ```
 
-To quantify these trends, we fit a generalized logistic mixed-effects model with standardized Early Learning and Rules and Respect subscale scores, as well as interaction terms for the subscale scores by question type (i.e., control recall vs. target recall vs. target generalization) as fixed effects, and participants and questions as random effects.^[This random effects specification was the maximal convergent random effect structure.] Coefficient estimates are shown in Table \ref{tab:lmer}. Early Learning scores interacted positively with target recall and target generalization to predict correct performance, whereas Rules and Respect scores interacted positively with target recall but not target generalization, and coefficient magnitudes were relatively lower. Thus, Active Learning scores differentially predicted generalization from the target passage.^[These results held when Affection/Attachment items were included in the analysis as well. Affection/Attachment scores also moderated generalization, though not as strongly as Early Learning scores.] 
+To quantify these trends, we fit a generalized logistic mixed-effects model with standardized Early Learning and Rules and Respect subscale scores, as well as interaction terms for the subscale scores by question type (i.e., control recall vs. target recall vs. target generalization) as fixed effects, and participants and questions as random effects.^[This random effects specification was the maximal convergent random effect structure.] Coefficient estimates are shown in Table \ref{tab:lmer}. Early Learning scores interacted positively with target recall and target generalization to predict correct performance, whereas Rules and Respect scores interacted positively with target recall but not target generalization, and coefficient magnitudes were relatively lower. Thus, Early Learning scores differentially predicted generalization from the target passage.^[These results held when Affection/Attachment items were included in the analysis as well. Affection/Attachment scores also moderated generalization, though not as strongly as Early Learning scores.] These results suggest that people's implicit theories about child development may organize the processing of new information in this domain.
 
 ```{r lmer, results="asis"}
 # commented out, output below. 
@@ -623,14 +623,14 @@ Predictor & Estimate & Std. Error & z value & $p$ \\
   Targ gen & 1.57 & 0.49 & 3.19 & 0.00 \\ 
   Targ recall & 1.28 & 0.49 & 2.59 & 0.01 \\ 
   Rules/Respect & -0.10 & 0.21 & -0.48 & 0.63 \\ 
-  Active Learning & 0.27 & 0.22 & 1.22 & 0.22 \\ 
+  Early Learning & 0.27 & 0.22 & 1.22 & 0.22 \\ 
   Targ gen $\times$ R/R & -0.06 & 0.06 & -0.94 & 0.35 \\ 
   Targ recall $\times$ R/R& 0.32 & 0.06 & 5.62 & 0.00 \\ 
   Targ gen $\times$ AL & 0.62 & 0.06 & 10.86 & 0.00 \\ 
   Targ recall $\times$ AL & 0.49 & 0.05 & 8.97 & 0.00 \\ 
    \hline
 \end{tabular}
-\caption{Fixed-effect coefficients for linear mixed effects model predicting task performance in Experiment 1. AL = Active Learning; RR = Rules and Respect.\label{tab:lmer}} 
+\caption{Fixed-effect coefficients for linear mixed effects model predicting task performance in Experiment 1. AL = Early Learning; RR = Rules and Respect.\label{tab:lmer}} 
 \end{table}
 
 # General Discussion
@@ -639,7 +639,7 @@ Understanding the sources of parents’ behaviors and decisions with regard to t
 
 In the present work, we established a new scale to measure people’s attitudes about parenting and child development in three categories: Rules and Respect, Affection and Attachment, and Early Learning. These subscales are meant to capture meaningful differences in how people view child development and the relative importance of different parenting behaviors. We subjected our new scale to psychometric testing, and found acceptably high correlations among subscale items, as well as the predicted factor structure across subscales. In addition, subscale scores meaningfully predicted uptake of new information about parenting. Specifically, participants with high scores on the Early Learning subscale were more likely to generalize the message of the target article about children’s learning to new scenarios, whereas high scores on the Rules and Respect subscale did not predict generalization of the article. 
 
-One possibility that deserves consideration is that participants who scored higher on the Active Learning subscale would have been more likely to respond correctly to the target generalization and recall questions even without having read the article. It is very possible that adults who believe that children's early learning is a priority, and who believe young children are capable of learning a lot, are more likely to already possess the knowledge presented in the target article, or might intuitively answer the questions based on their implicit theories of children's learning. Although this explanation would mean their advantage on the target generalization items might not stem from better generalization of concepts consistent with their implicit theories, it would still provide validation that subscale scores are predictive of how parents reason about children's learning.
+One possibility that deserves consideration is that participants who scored higher on the Early Learning subscale would have been more likely to respond correctly to the target generalization and recall questions even without having read the article. It is very possible that adults who believe that children's early learning is a priority, and who believe young children are capable of learning a lot, are more likely to already possess the knowledge presented in the target article, or might intuitively answer the questions based on their implicit theories of children's learning. Although this explanation would mean their advantage on the target generalization items might not stem from better generalization of concepts consistent with their implicit theories, it would still provide validation that subscale scores are predictive of how parents reason about children's learning.
 
 In sum, this work provides initial evidence that meaningful differences in adults’ attitudes about child development and parenting can be assessed by our new scale. This initial evidence for the reliability and validity of our parenting measure must be supplemented with further evidence in both areas across a broader range of participants. In addition, future work should target predictive validity by determining whether subscale scores differentially predict parents observable behaviors with their children, such as the quality of conversations they engage their child in, which would provide additional support for our scale.
 
