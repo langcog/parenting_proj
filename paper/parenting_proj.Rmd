@@ -3,6 +3,8 @@ title: "Measuring lay theories of parenting and child development"
 bibliography: parenting.bib
 csl: apa6.csl
 document-params: "10pt, letterpaper"
+nocite: | 
+  @kumar2015
 
 author-information: 
     \author{{\large \bf Emily Hembacher} \\ \texttt{ehembach@stanford.edu} \\ Department of Psychology \\ Stanford University \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
@@ -49,7 +51,7 @@ Child development research is constantly generating information that can be brou
 
 One critical parameter that may moderate parenting behavior is parents’ lay theories about child development and parenting. Lay theories reflect the core beliefs that people hold in different domains, which may or may not be explicitly articulated, but organize the processing of new information and decision-making [@dweck1988;@ong2015]. For example, people with an entity theory of personality tend to interpret people’s behaviors as stemming from fixed personality traits rather than situational factors such as needs, goals, or emotional states [@dweck1995]. 
 
-There are two reasons to focus on parents’ lay theories. First, parents’ lay theories might be an important explanatory factor for many of the behaviors parents engage in with their child. For example, a parent who believes that building a strong emotional bond with their baby is one of the most important goals of parenting might have more physical contact with their child than a parent who does not hold this theory. Secondly, parents’ lay theories may moderate the uptake of new information about parenting. It is well-established that people more easily encode new information that is consistent with an existing schema or mental model they hold [@bransford1972]. In addition, previous research has found that interventions on public health beliefs are more successful when they take into account people’s existing belief structures in the domain [@kumar2015]. 
+There are two reasons to focus on parents’ lay theories. First, parents’ lay theories might be an important explanatory factor for many of the behaviors parents engage in with their child. For example, a parent who believes that building a strong emotional bond with their baby is one of the most important goals of parenting might have more physical contact with their child than a parent who does not hold this theory. Secondly, parents’ lay theories may moderate the uptake of new information about parenting. It is well-established that people more easily encode new information that is consistent with an existing schema or mental model they hold [@bransford1972]. In addition, previous research has found that interventions on public health beliefs are more successful when they take into account people’s existing belief structures in the domain (Kumar et al., 2015). 
 
 There is some evidence supporting the notion that parents’ behaviors are mediated by implicit lay theories about child development, which vary by SES and across cultures. For example, cross-cultural studies have found profound differences in how parents interact with infants. @richman1992 found that mothers in the Gusii community of Kenya primarily engaged with their children to soothe them when upset, but did not often speak to them with the goal of engaging or stimulating them, as did Caucasian parents in the United States. The authors attribute this behavior to cultural conventions stemming from the belief that there is no purpose in speaking to infants, as they will not understand what is being said [@richman1992;@levine2004].
 
@@ -315,6 +317,7 @@ Target recall
   & A) More structured time in which children are taught lessons and skills.\\ 
   & B) More time spent memorizing things that will be helpful later, such as the ABCs.\\
   & C) More time for children to play outside and with toys.*\\
+  \hline
 \end{tabular}
 \caption{Examples of uptake questions. *Marks correct answer. \label{tab:uptake}} 
 \end{table*}
@@ -626,11 +629,11 @@ Predictor & Estimate & Std. Error & z value & $p$ \\
   Early Learning & 0.27 & 0.22 & 1.22 & 0.22 \\ 
   Targ gen $\times$ R/R & -0.06 & 0.06 & -0.94 & 0.35 \\ 
   Targ recall $\times$ R/R& 0.32 & 0.06 & 5.62 & 0.00 \\ 
-  Targ gen $\times$ AL & 0.62 & 0.06 & 10.86 & 0.00 \\ 
-  Targ recall $\times$ AL & 0.49 & 0.05 & 8.97 & 0.00 \\ 
+  Targ gen $\times$ EL & 0.62 & 0.06 & 10.86 & 0.00 \\ 
+  Targ recall $\times$ EL & 0.49 & 0.05 & 8.97 & 0.00 \\ 
    \hline
 \end{tabular}
-\caption{Fixed-effect coefficients for linear mixed effects model predicting task performance in Experiment 1. AL = Early Learning; RR = Rules and Respect.\label{tab:lmer}} 
+\caption{Fixed-effect coefficients for linear mixed effects model predicting task performance in Experiment 1. EL = Early Learning; RR = Rules and Respect.\label{tab:lmer}} 
 \end{table}
 
 # General Discussion
