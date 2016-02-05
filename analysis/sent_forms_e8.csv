@@ -1,0 +1,25 @@
+sent,short_sent,category,reverse_code,instrument
+Children can learn about things like good and bad behavior from a very early age.,can learn about  good and bad behavior,active_learning,0,attitudes
+Young children can teach themselves things by exploring and playing.,can teach themselves by playing,active_learning,0,attitudes
+Babies repetitive behaviors (e.g. banging a cup on the table) are a way for them to learn about the consequences of actions.,repetetive behaviors to explore cause and effect,active_learning,0,attitudes
+It is important to give young children new experiences and sensations.,new experiences and sensations,active_learning,0,attitudes
+It is not helpful for adults to explain the reasons for rules to young children because they wont understand.,not helpful to explain reasons for rules,active_learning,1,attitudes
+Children dont need to learn about numbers and math until they go to school.,dont need to learn math before school,active_learning,1,attitudes
+Reading books to children is not helpful if they have not yet learned to speak.,reading not helpful before they can speak,active_learning,1,attitudes
+Babies dont learn about the world until they learn to speak.,learn before speaking,active_learning,1,attitudes
+It is important for children to be able to express their emotions.,children should express emotions,affection,0,attitudes
+Parents should pay close attention to what their child wants and desires.,pay attention to childrens desires,affection,0,attitudes
+Children should be given comfort and understanding when they are scared or unhappy.,children should be given comfort ,affection,0,attitudes
+"If children have a good bond with their parents, they are more likely to have good friendships and relationships later on.",good bond with parents for future friendships,affection,0,attitudes
+It does not matter if young children feel emotionally close to their parents.,children emotionally close to parents,affection,1,attitudes
+Children become spoiled if they receive too much attention from parents.,become spoiled with too much attention ,affection,1,attitudes
+Too much affection can make a child weak.,too much affection can make a child weak,affection,1,attitudes
+It is inappropriate for parents to act like friends to their children.,parents act like friends to children,affection,1,attitudes
+"It is very important that children learn to respect adults, such as parents and teachers.",learn to respect adults,rules_respect,0,attitudes
+"It is important for young children to learn to control their impulses (e.g., waiting when told to wait).",learn to control impulses,rules_respect,0,attitudes
+Children should be taught to be grateful to their parents.,be grateful to parents,rules_respect,0,attitudes
+It is important to let young children know when they have broken a rule.,let children know when break rule,rules_respect,0,attitudes
+Children should not be punished for breaking small rules.,not punished for breaking small rules,rules_respect,1,attitudes
+Parents should follow their childrens lead rather than imposing structure in the form of rules.,parents should follow childrens lead,rules_respect,1,attitudes
+"Young children should be allowed to make their own decisions, such as what to eat for dinner.",allowed to make decisions,rules_respect,1,attitudes
+Parents do not need to worry if their child misbehaves a lot.,worry if child misbehaves,rules_respect,1,attitudes
