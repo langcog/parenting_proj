@@ -223,7 +223,7 @@ mcl <- d %>%
 # Scale reliability
 
 ## Whole Scale
-This analysis is not especially meaningful as it averages across the three subscales. Raw alpha is .88 which is higher than previous runs.
+
 ```{r}
 wide.attitudes <- d %>% 
   filter(instrument == "attitudes") %>%
@@ -235,7 +235,7 @@ alpha(x = alpha.mat)
 
 ## Rules and Respect Subscale
 
-Raw alpha is .78 here. 
+
 
 ```{r}
 wide.rules_respect <- d %>% 
@@ -248,7 +248,7 @@ alpha(x = alpha.rr)
 
 ## Affection and Attachment Subscale
 
-Raw alpha is .80, which is up from .57 previously!
+
 
 ```{r}
 wide.affection <- d %>% 
@@ -262,7 +262,6 @@ alpha(x = alpha.af)
 
 ## Active Learning Subscale
 
-Raw alpha is .84, which is much higher than previously!
 
 ```{r}
 wide.active_learning <- d %>% 
@@ -439,11 +438,6 @@ plotnScree(nS)
 
 Now plot factor analysis
 
-Because we predicted 3 factors, I am going with 3 here (confirmatory FA)
-
-In the graph items are organized by category, from Early/Active Learning -> Affection and Attachment -> Rules and Respect. 
-
-Things are looking a bit hazy in terms of individual items mapping onto factors. In particular, most of the Early/Active Learning AND Affection and Attachment items map onto Factor 1. Factor 2 has an almost even mix of all 3 categories. Also, it seems like items related to Rules (Factor 3) are separate from those ostensibly related to Respect (Factor 2). It seems that items related to strict rules are most consistently hanging together across experiments. 
 
 ```{r}
 
@@ -468,27 +462,6 @@ qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) +
   facet_grid(category ~ ., scales = "free_y")
 ```
 
-Now with four factors, based on the exploratory analyses. 
-
-```{r}
-n.factors <- 3
-
-af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
-loadings <- data.frame(af$loadings[,1:n.factors]) %>%
-  mutate(item = rownames(af$loadings)) %>%
-  gather(factor, loading, starts_with("Factor"))
-
-loadings$item <- factor(loadings$item, levels = item.levels)
-loadings <- join(loadings, labels, by = "item")
-
-qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
-  scale_fill_continuous(low="#000000", high="#FFFFFF") + 
-  facet_grid(category ~ ., scales = "free_y")
-
-qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
-  scale_fill_solarized() + 
-  facet_grid(category ~ ., scales = "free_y")
-```
 
 Merge back in subject id info. 
 
@@ -502,7 +475,7 @@ a.scores <- af$scores %>%
 ## Factors by SES
 
 ```{r}
-a.factor.names <- c("Active Learning","Affection and Attachment", "Rules and Respect")
+a.factor.names <- c("Early Learning","Affection and Attachment", "Rules and Respect")
 
 mf <- a.scores %>% 
   gather(factor, score, starts_with("Factor")) %>%
@@ -636,4 +609,7 @@ ggplot(mf, aes(factor.name, mean, fill=hispanic)) +
  
 # Conclusions
 
+Chronbach's alpha for Rules and Respect is up to .8 from .69; Affection and attachment is .71 down from .75; Early Learning is down to .75 from .76. 
+
+Parallel analysis revealed 3 factors, and the items load somewhat well onto the factors. Rules and Respect items are all on one factor which is nice; Affection and Attachment and Early Learning are cross-loading. 
 ...
