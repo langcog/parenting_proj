@@ -457,7 +457,7 @@ qplot(factor, item, fill=loading, geom="tile", data = loadings) +
   scale_fill_continuous(low="#000000", high="#FFFFFF") + 
   facet_grid(category ~ ., scales = "free_y")
 
-qplot(factor, item, fill=loading > .4, geom="tile", data = loadings) + 
+qplot(factor, item, fill=loading > .35, geom="tile", data = loadings) + 
   scale_fill_solarized() + 
   facet_grid(category ~ ., scales = "free_y")
 ```
