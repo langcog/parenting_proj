@@ -1,0 +1,447 @@
+---
+title: "Parenting Project Attitudes Questionnaire Uptake Control Experiment 1"
+author: "Emily & Mike"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+<style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code {
+  font-size: 11px;
+}
+pre {
+  font-size: 11px;
+}
+</style>
+
+Data analysis of basic parenting values/attitudes survey.
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+
+rm(list=ls())
+
+setwd("~/Desktop/parenting_proj/analysis")
+
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
+library(langcog)
+library(dplyr)
+library(ggplot2)
+library(rjson)
+library(stringr)
+library(tidyr)
+library(psych)
+library(nFactors)
+library(lme4)
+# library(nFactors)
+
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_bw())
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+files <- dir("../production-results/uptake_control_e1/")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/uptake_control_e1/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  # clean up different tasks
+  trial_type <- jd$answer$data$trial_type
+  
+  #parenting questionnaire 
+  sent <- jd$answers$data$sentence[trial_type != "uptake"]
+  rating <- as.numeric(jd$answers$data$rating[trial_type != "uptake"]) 
+  
+  #uptake experiment
+  control_recall_1 = as.character(jd$answers$data$answer[1])
+  control_recall_2 = as.character(jd$answers$data$answer[2])
+  control_recall_3 = as.character(jd$answers$data$answer[3])
+  control_recall_4 = as.character(jd$answers$data$answer[4])
+  control_recall_5 = as.character(jd$answers$data$answer[5])
+  target_generalize_1 = as.character(jd$answers$data$answer[6])
+  target_generalize_2 = as.character(jd$answers$data$answer[7])
+  target_generalize_3 = as.character(jd$answers$data$answer[8])
+  target_generalize_4 = as.character(jd$answers$data$answer[9])
+  target_generalize_5 = as.character(jd$answers$data$answer[10])
+  target_recall_1 = as.character(jd$answers$data$answer[11])
+  target_recall_2 = as.character(jd$answers$data$answer[12])
+  target_recall_3 = as.character(jd$answers$data$answer[13])
+  target_recall_4 = as.character(jd$answers$data$answer[14])
+  target_recall_5 = as.character(jd$answers$data$answer[15])
+  
+  #demographics
+  race <- as.character(jd$answers$data$race[1])
+  
+  id <- data.frame(workerid = jd$WorkerId, 
+                   sent = sent,
+                   rating = rating,
+                   target_recall_1 = target_recall_1,
+                   target_recall_2 = target_recall_2,
+                   target_recall_3 = target_recall_3,
+                   target_recall_4 = target_recall_4,
+                   target_recall_5 = target_recall_5,
+                   target_generalize_1 = target_generalize_1,
+                   target_generalize_2 = target_generalize_2,
+                   target_generalize_3 = target_generalize_3,
+                   target_generalize_4 = target_generalize_4,
+                   target_generalize_5 = target_generalize_5,
+                   control_recall_1 = control_recall_1,
+                   control_recall_2 = control_recall_2,
+                   control_recall_3 = control_recall_3,
+                   control_recall_4 = control_recall_4,
+                   control_recall_5 = control_recall_5,
+                   children = jd$answers$data$children,
+                   language = jd$answers$data$homelang,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   childAgeYoung = jd$answers$data$childAgeYoung,
+                   childAgeOld = jd$answers$data$childAgeOld,
+                   race = race
+                    )
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+Map on question short forms so that we can use these instead. 
+
+```{r}
+labels <- read.csv("sent_forms_e7.csv")
+labels$sent <- as.character(labels$sent)
+
+answers <- read.csv("uptake_key.csv")
+answers$tar_gen <-as.character(answers$tar_gen)
+answers$tar_rec <-as.character(answers$tar_rec)
+answers$con_rec <-as.character(answers$con_rec)
+```
+
+Clean up labels.
+
+```{r}
+d.raw$sent <- as.character(d.raw$sent)
+d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "’", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
+```
+
+Merge. Recode uptake answers by accuracy.  
+
+```{r}
+d <- left_join(d.raw, labels)
+d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
+
+d$target_generalize_1[d$target_generalize_1 != answers$tar_gen[1]] <- 0
+d$target_generalize_1[d$target_generalize_1 == answers$tar_gen[1]] <- 1
+d$target_generalize_2[d$target_generalize_2 != answers$tar_gen[2]] <- 0
+d$target_generalize_2[d$target_generalize_2 == answers$tar_gen[2]] <- 1
+d$target_generalize_3[d$target_generalize_3 != answers$tar_gen[3]] <- 0
+d$target_generalize_3[d$target_generalize_3 == answers$tar_gen[3]] <- 1
+d$target_generalize_4[d$target_generalize_4 != answers$tar_gen[4]] <- 0
+d$target_generalize_4[d$target_generalize_4 == answers$tar_gen[4]] <- 1
+d$target_generalize_5[d$target_generalize_5 != answers$tar_gen[5]] <- 0
+d$target_generalize_5[d$target_generalize_5 == answers$tar_gen[5]] <- 1
+
+d$target_recall_1[d$target_recall_1 != answers$tar_rec[1]] <- 0
+d$target_recall_1[d$target_recall_1 == answers$tar_rec[1]] <- 1
+d$target_recall_2[d$target_recall_2 != answers$tar_rec[2]] <- 0
+d$target_recall_2[d$target_recall_2 == answers$tar_rec[2]] <- 1
+d$target_recall_3[d$target_recall_3 != answers$tar_rec[3]] <- 0
+d$target_recall_3[d$target_recall_3 == answers$tar_rec[3]] <- 1
+d$target_recall_4[d$target_recall_4 != answers$tar_rec[4]] <- 0
+d$target_recall_4[d$target_recall_4 == answers$tar_rec[4]] <- 1
+d$target_recall_5[d$target_recall_5 != answers$tar_rec[5]] <- 0
+d$target_recall_5[d$target_recall_5 == answers$tar_rec[5]] <- 1
+
+d$control_recall_1[d$control_recall_1 != answers$con_rec[1]] <- 0
+d$control_recall_1[d$control_recall_1 == answers$con_rec[1]] <- 1
+d$control_recall_2[d$control_recall_2 != answers$con_rec[2]] <- 0
+d$control_recall_2[d$control_recall_2 == answers$con_rec[2]] <- 1
+d$control_recall_3[d$control_recall_3 != answers$con_rec[3]] <- 0
+d$control_recall_3[d$control_recall_3 == answers$con_rec[3]] <- 1
+d$control_recall_4[d$control_recall_4 != answers$con_rec[4]] <- 0
+d$control_recall_4[d$control_recall_4 == answers$con_rec[4]] <- 1
+d$control_recall_5[d$control_recall_5 != answers$con_rec[5]] <- 0
+d$control_recall_5[d$control_recall_5 == answers$con_rec[5]] <- 1
+```
+
+Plot demographic info.
+
+```{r}
+subinfo <- d %>%
+  group_by(workerid) %>%
+  select(-short_sent, -category, -instrument, -reverse_code) %>%
+  distinct 
+
+questions <- subinfo %>%
+  select(workerid, starts_with("target"), starts_with("control")) %>%
+  gather(question, correct, starts_with("target"), starts_with("control")) %>%
+  separate(question, c("passage","trial_type","q_num"), sep = "_") %>%
+  group_by(workerid, passage, trial_type) %>%
+  summarise(correct = mean(as.numeric(correct))) %>%
+  unite(trialtype, passage, trial_type) %>%
+  spread(trialtype, correct)
+
+subinfo <- subinfo %>%
+  select(-starts_with("target"), -starts_with("control")) %>%
+  left_join(questions) %>%
+  select(-sent, -rating)
+```
+
+
+```{r}
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                              "female|FEMALE|F$|f$|Femal$|Females|Females","Female")
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                                  "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                                  "29|24|25|28|32|33|45", "")
+subinfo$gender <- str_replace_all(subinfo$gender, 
+                                  "males", "male")
+subinfo$gender <- str_replace_all(subinfo$gender, " ", "")
+
+subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
+subinfo$language <- str_replace_all(subinfo$language," ", "")
+subinfo$language <- str_replace_all(subinfo$language,"arabic", "Arabic")
+subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
+subinfo$language <- str_replace_all(subinfo$language,"german", "German")
+subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
+
+subinfo$youngestChildAge <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+subinfo$oldestChildAge <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+```
+
+```{r}
+
+
+
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(language, data=subinfo)
+qplot(ethnicity, data=subinfo)
+qplot(race, data=subinfo)
+qplot(youngestChildAge, data=subinfo)
+qplot(oldestChildAge, data=subinfo)
+qplot(reading_ease_target, data=subinfo)
+qplot(reading_ease_control, data=subinfo)
+qplot(enjoy_target, data=subinfo)
+qplot(enjoy_control, data=subinfo)
+```
+
+# Basic analyses
+
+Now look at mean ratings across sentences.
+
+```{r}
+rating_count <- table(d$rating) 
+rating_count
+prop.table(rating_count) 
+
+rating_count <- table(subinfo$age) 
+rating_count
+
+
+ms <- d %>%
+  group_by(category, instrument, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(instrument, category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+```
+
+Plot attitude.
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = filter(ms, instrument == "attitudes")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+Plot mean subscale scores.
+
+```{r}
+mc <- d %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+ggplot(mc, aes(x = category, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+```{r}
+mcl <- d %>%
+  group_by(category, workerid) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean))%>%
+  spread(category, mean) 
+  
+```
+
+# Scale reliability
+
+## Whole Scale
+
+```{r}
+wide.attitudes <- d %>% 
+  filter(instrument == "attitudes") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
+summary(alpha(x = alpha.mat))
+```
+
+## Rules and Respect Subscale
+
+```{r}
+wide.rules_respect <- d %>% 
+  filter(category == "rules_respect") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
+summary(alpha(x = alpha.rr))
+```
+
+## Affection and Attachment Subscale
+
+```{r}
+wide.affection <- d %>% 
+  filter(category == "affection") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.af <- as.matrix(select(wide.affection, -workerid))
+summary(alpha(x = alpha.af))
+```
+
+## Active Learning Subscale
+
+```{r}
+wide.active_learning <- d %>% 
+  filter(category == "active_learning") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.al <- as.matrix(select(wide.active_learning, -workerid))
+summary(alpha(x = alpha.al))
+```
+
+# Information Uptake Analyses
+
+Create a data frame that has subscale scores. 
+
+Standardize ratings within subscale.
+```{r}
+ds <- d
+ds$srating <- ave(ds$rating, ds$category, FUN=scale)
+
+ss <- ds %>%
+  group_by(workerid, category) %>%
+  summarize(srating = mean(srating)) %>%
+  spread(category, srating) %>% 
+  left_join(subinfo) %>%
+  gather(trial_type, correct, control_recall, target_recall, target_generalize)
+
+ss.long <- ss %>%
+  gather(subscale, srating, active_learning, affection, rules_respect)
+
+```
+
+## Plots
+
+```{r}
+ggplot(ss.long, aes(x = srating, y = correct, col = subscale)) +
+  geom_jitter() + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~trial_type)
+```
+
+Now with some exclusions, exploratory. 
+
+```{r}
+exclude <- subinfo$workerid[subinfo$reading_time_target < 30 | subinfo$reading_time_control < 30]
+length(exclude)
+qplot(subinfo$reading_time_target, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$reading_time_control, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+```
+
+Replot with exclusions. 
+
+```{r}
+ggplot(filter(ss.long, !workerid %in% exclude), 
+       aes(x = srating, y = correct, col = subscale)) +
+  geom_jitter() + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~trial_type)
+```
+
+## Stats 
+
+```{r}
+subscales <- ds %>%
+  group_by(workerid, category) %>%
+  summarize(srating = mean(srating)) %>%
+  spread(category, srating) 
+
+ratings <- d %>% 
+  select(workerid, starts_with("target"), starts_with("control")) %>%
+  gather(question, correct, starts_with("target"), starts_with("control")) %>%
+  separate(question, c("passage","trial_type","q_num"), sep = "_") %>%
+  mutate(correct = as.numeric(correct), 
+         q_num = as.numeric(q_num) + 
+           as.numeric(factor(passage)) * 10 + 
+           as.numeric(factor(trial_type)) * 100)
+
+d.reg <- left_join(ratings, subscales) %>%
+  unite(question_type, passage, trial_type)
+```
+
+
+```{r}
+summary(glmer(correct ~ question_type * rules_respect + 
+                question_type * active_learning + 
+                (1|workerid) + 
+                (1|q_num), 
+              data = filter(d.reg, !workerid %in% exclude), 
+              family = "binomial"))
+```
+
