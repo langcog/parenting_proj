@@ -47,7 +47,6 @@ library(nFactors)
 library(lme4)
 # library(nFactors)
 
-
 select <- dplyr::select # masked by MASS
 
 theme_set(theme_bw())
@@ -239,9 +238,6 @@ subinfo$oldestChildAge <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7t
 ```
 
 ```{r}
-
-
-
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
 qplot(gender, data=subinfo)
@@ -252,10 +248,6 @@ qplot(ethnicity, data=subinfo)
 qplot(race, data=subinfo)
 qplot(youngestChildAge, data=subinfo)
 qplot(oldestChildAge, data=subinfo)
-qplot(reading_ease_target, data=subinfo)
-qplot(reading_ease_control, data=subinfo)
-qplot(enjoy_target, data=subinfo)
-qplot(enjoy_control, data=subinfo)
 ```
 
 # Basic analyses
@@ -266,10 +258,6 @@ Now look at mean ratings across sentences.
 rating_count <- table(d$rating) 
 rating_count
 prop.table(rating_count) 
-
-rating_count <- table(subinfo$age) 
-rating_count
-
 
 ms <- d %>%
   group_by(category, instrument, short_sent, reverse_code) %>%
@@ -314,7 +302,6 @@ mcl <- d %>%
   multi_boot_standard(col = "rating") %>%
   arrange(category, desc(mean))%>%
   spread(category, mean) 
-  
 ```
 
 # Scale reliability
@@ -322,45 +309,45 @@ mcl <- d %>%
 ## Whole Scale
 
 ```{r}
-wide.attitudes <- d %>% 
-  filter(instrument == "attitudes") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
-summary(alpha(x = alpha.mat))
+# wide.attitudes <- d %>% 
+#   filter(instrument == "attitudes") %>%
+#   select(workerid, short_sent, rating) %>% 
+#   spread(short_sent, rating)
+# alpha.mat <- as.matrix(select(wide.attitudes, -workerid))
+# summary(alpha(x = alpha.mat))
 ```
 
 ## Rules and Respect Subscale
 
 ```{r}
-wide.rules_respect <- d %>% 
-  filter(category == "rules_respect") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
-summary(alpha(x = alpha.rr))
+# wide.rules_respect <- d %>% 
+#   filter(category == "rules_respect") %>%
+#   select(workerid, short_sent, rating) %>% 
+#   spread(short_sent, rating)
+# alpha.rr <- as.matrix(select(wide.rules_respect, -workerid))
+# summary(alpha(x = alpha.rr))
 ```
 
 ## Affection and Attachment Subscale
 
 ```{r}
-wide.affection <- d %>% 
-  filter(category == "affection") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.af <- as.matrix(select(wide.affection, -workerid))
-summary(alpha(x = alpha.af))
+# wide.affection <- d %>% 
+#   filter(category == "affection") %>%
+#   select(workerid, short_sent, rating) %>% 
+#   spread(short_sent, rating)
+# alpha.af <- as.matrix(select(wide.affection, -workerid))
+# summary(alpha(x = alpha.af))
 ```
 
 ## Active Learning Subscale
 
 ```{r}
-wide.active_learning <- d %>% 
-  filter(category == "active_learning") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-alpha.al <- as.matrix(select(wide.active_learning, -workerid))
-summary(alpha(x = alpha.al))
+# wide.active_learning <- d %>% 
+#   filter(category == "active_learning") %>%
+#   select(workerid, short_sent, rating) %>% 
+#   spread(short_sent, rating)
+# alpha.al <- as.matrix(select(wide.active_learning, -workerid))
+# summary(alpha(x = alpha.al))
 ```
 
 # Information Uptake Analyses
@@ -396,22 +383,22 @@ ggplot(ss.long, aes(x = srating, y = correct, col = subscale)) +
 Now with some exclusions, exploratory. 
 
 ```{r}
-exclude <- subinfo$workerid[subinfo$reading_time_target < 30 | subinfo$reading_time_control < 30]
-length(exclude)
-qplot(subinfo$reading_time_target, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-qplot(subinfo$reading_time_control, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
+# exclude <- subinfo$workerid[subinfo$reading_time_target < 30 | subinfo$reading_time_control < 30]
+# length(exclude)
+# qplot(subinfo$reading_time_target, binwidth = 15) + 
+#   geom_vline(xintercept =15, lty =2, col="red")
+# qplot(subinfo$reading_time_control, binwidth = 15) + 
+#   geom_vline(xintercept =15, lty =2, col="red")
 ```
 
 Replot with exclusions. 
 
 ```{r}
-ggplot(filter(ss.long, !workerid %in% exclude), 
-       aes(x = srating, y = correct, col = subscale)) +
-  geom_jitter() + 
-  geom_smooth(method="lm", se=FALSE) + 
-  facet_wrap(~trial_type)
+# ggplot(filter(ss.long, !workerid %in% exclude), 
+#        aes(x = srating, y = correct, col = subscale)) +
+#   geom_jitter() + 
+#   geom_smooth(method="lm", se=FALSE) + 
+#   facet_wrap(~trial_type)
 ```
 
 ## Stats 
