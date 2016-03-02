@@ -235,8 +235,6 @@ alpha(x = alpha.mat)
 
 ## Rules and Respect Subscale
 
-
-
 ```{r}
 wide.rules_respect <- d %>% 
   filter(category == "rules_respect") %>%
