@@ -97,7 +97,15 @@ var numTrialsExperiment = totalTrialsAtt + totalTrialsPriorities + 1;
 
 var trials = [];
 
+
+
 // first build attitudes question trials
+
+
+trials.push(trial = {sentence: "", 
+	trial_number_block: 0,
+	trial_type: "attitudes_instruct"});
+
 for (i = 0; i < totalTrialsAtt; i++) {
 	trial = {
 		sentence: atts[i],
@@ -225,6 +233,10 @@ var experiment = {
 	
 
 	    // check which trial type you're in and display correct slide
+	     if (trial_info.trial_type == "attitudes_instruct") {
+	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
+	    	 showSlide("attitudes_instruct");              //display slide
+	    } 
 	    if (trial_info.trial_type == "attitudes") {
 	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
 	    	 showSlide("attitudes_slide");              //display slide
