@@ -41,9 +41,6 @@ function shuffle (a)
 }
 
 
-
-
-
 // ############################## Configuration settings ##############################
 
 
@@ -93,10 +90,9 @@ priorities = shuffle(priorities);
 
 var totalTrialsAtt = atts.length;
 var totalTrialsPriorities = priorities.length;
-var numTrialsExperiment = totalTrialsAtt + totalTrialsPriorities + 1;
+var numTrialsExperiment = totalTrialsAtt + totalTrialsPriorities + 2;
 
 var trials = [];
-
 
 
 // first build attitudes question trials
@@ -233,7 +229,7 @@ var experiment = {
 	
 
 	    // check which trial type you're in and display correct slide
-	     if (trial_info.trial_type == "attitudes_instruct") {
+	    if (trial_info.trial_type == "attitudes_instruct") {
 	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
 	    	 showSlide("attitudes_instruct");              //display slide
 	    } 
