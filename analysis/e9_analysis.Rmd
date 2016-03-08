@@ -42,6 +42,7 @@ library(psych)
 library(nFactors)
 library(dplyr)
 library(lme4)
+library(xtable)
 
 select <- dplyr::select # masked by MASS
 
@@ -117,7 +118,7 @@ Merge.
 
 ```{r}
 d <- left_join(d.raw, labels)
-d$rating[d$reverse_code == 1 & d$instrument=="attitudes"] <- 6 - d$rating[d$reverse_code == 1 & d$instrument=="attitudes"]
+d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
 ```
 
 Plot demographic info.
@@ -311,37 +312,47 @@ ss_wide <- ss %>%
   spread(category, rating)%>%
   select(EL, AA, RR)
 
-cor(ss_wide, y = NULL, use = "everything",
-    method = c("pearson", "kendall", "spearman"))
+ctab <- cor(ss_wide)
+round(ctab, 2)
 
 ```
 
 ## Does Subscale Score Predict Parenting Goals?
 
-Standardize ratings within subscale.
 ```{r}
-
 ds <- d
-ds$srating <- ave(ds$rating, ds$category, FUN=scale)
+ds$rating <- ave(ds$rating, ds$category, FUN=scale)
 
-ss <- ds %>%
+ss.goals <- ds %>%
   group_by(workerid, category) %>%
-  summarize(srating = mean(srating)) %>%
-  spread(category, srating) %>% 
-  left_join(subinfo) %>%
-  gather(trial_type, correct, control_recall, target_recall, target_generalize)
+  summarize(rating = mean(rating)) %>%
+  spread(category, rating) %>%
+  gather("subscale","rating_subscale",AA, EL, RR) %>%
+  gather("goal","rating_goal",AA_goals, EL_goals, RR_goals)
 
-ss.long <- ss %>%
-  gather(subscale, srating, active_learning, affection, rules_respect)
-
-```
-
-```{r}
-ggplot(ss.long, aes(x = srating, y = correct, col = subscale)) +
+ggplot(ss.goals, aes(x = rating_subscale, y = rating_goal, col = subscale)) +
   geom_jitter() + 
   geom_smooth(method="lm", se=FALSE) + 
-  facet_wrap(~trial_type)
+  facet_wrap(~goal)
+
 ```
+
+```{r}
+
+ss.goals <- ds %>%
+  group_by(workerid, category) %>%
+  summarize(rating = mean(rating)) %>%
+  spread(category, rating) %>%
+  gather("goal","rating_goal",AA_goals, EL_goals, RR_goals)
+
+lm <- lm(rating_goal ~ 
+                 EL*goal +
+                 AA*goal +
+                 RR*goal, data = ss.goals)
+
+summary(lm)
+```
+
 
 ## By SES
 

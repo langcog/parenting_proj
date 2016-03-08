@@ -25,11 +25,11 @@ Reading books to children is not helpful if they have not yet learned to speak.,
 Babies cant learn about the world until they learn to speak.,learn before speaking,EL,1,attitudes
 respects and follows the rules of society.,respects and follows the rules of society,RR_goals,0,priorities
 stays out of trouble.,stays out of trouble,RR_goals,0,priorities
-forges their own path.,forges their own path,RR_goals,0,priorities
-is creative and innovative.,is creative and innovative,EL_goals,1,priorities
+forges their own path.,forges their own path*reverse coded,RR_goals,1,priorities
+is creative and innovative.,is creative and innovative,EL_goals,0,priorities
 is professionally successful.,is professionally successful,EL_goals,0,priorities
 is curious and knowledgeable about the world.,is curious and knowledgeable about the world,EL_goals,0,priorities
 is kind and generous to others.,is kind and generous to others,AA_goals,0,priorities
 gives back to their community.,gives back to their community,AA_goals,0,priorities
 fits in with peers and colleagues.,fits in with peers and colleagues,AA_goals,0,priorities
-is not overly reliant on family support.,is not overly reliant on family support,AA_goals,1,priorities
+is not overly reliant on family support.,is not overly reliant on family support *reverse coded,AA_goals,1,priorities
