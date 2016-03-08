@@ -117,7 +117,7 @@ Merge.
 
 ```{r}
 d <- left_join(d.raw, labels)
-d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
+d$rating[d$reverse_code == 1 & d$instrument=="attitudes"] <- 6 - d$rating[d$reverse_code == 1 & d$instrument=="attitudes"]
 ```
 
 Plot demographic info.
@@ -127,9 +127,7 @@ subinfo <- d %>%
   group_by(workerid) %>%
   select(workerid, age, gender, children, ses, education, language, 
          ethnicity, childAgeYoung, childAgeOld) %>%
-  dplyr::rename(youngestChildAge = childAgeYoung,
-         oldestChildAge = childAgeOld) %>%
-  distinct
+  distinct%>%
   summarise(age = age[1],
             gender = gender[1],
             children = children[1],
@@ -137,8 +135,8 @@ subinfo <- d %>%
             education = education[1],
             language = language[1], 
             ethnicity = ethnicity[1],
-            youngestChildAge = childAgeYoung[1],
-            oldestChildAge = childAgeOld[1]
+            childAgeYoung = childAgeYoung[1],
+            childAgeOld = childAgeOld[1]
             )
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
@@ -157,9 +155,11 @@ subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
 subinfo$language <- str_replace_all(subinfo$language,"german", "German")
 subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
 
-subinfo$youngestChildAge <- factor(subinfo$youngestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$childAgeYoung <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
 
-subinfo$oldestChildAge <- factor(subinfo$oldestChildAge, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+subinfo$childAgeOld <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+subinfo$ses <- factor(subinfo$ses, levels = c("1","2","3","4","5","6","7","8","9","10"))
 
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
@@ -168,8 +168,8 @@ qplot(education, data=subinfo)
 qplot(age, data=subinfo)
 qplot(language, data=subinfo)
 qplot(ethnicity, data=subinfo)
-qplot(youngestChildAge, data=subinfo)
-qplot(oldestChildAge, data=subinfo)
+qplot(childAgeYoung, data=subinfo)
+qplot(childAgeOld, data=subinfo)
 
 ```
 
@@ -178,9 +178,8 @@ qplot(oldestChildAge, data=subinfo)
 Now look at mean ratings across sentences.
 
 ```{r}
-rating_count <- table(d$rating) 
+rating_count <- table(d$rating[d$instrument != "priorities"]) 
 rating_count
-prop.table(rating_count) 
 
 ms <- d %>%
   group_by(category, instrument, short_sent, reverse_code) %>%
@@ -205,6 +204,16 @@ qplot(short_sent_ord, mean, col = category,
   ylim(c(0,6)) + 
   scale_colour_solarized()
 
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = filter(ms, instrument == "priorities")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+
 ```
 
 Plot mean subscale scores.
@@ -212,6 +221,7 @@ Plot mean subscale scores.
 ```{r}
 mc <- d %>%
   group_by(category) %>%
+  filter(instrument == "attitudes")%>%
   multi_boot_standard(col = "rating") %>%
   arrange(category, desc(mean)) 
 
@@ -219,18 +229,19 @@ ggplot(mc, aes(x = category, y = mean)) +
   geom_bar(stat = "identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
-```
 
-
-
-```{r}
-mcl <- d %>%
-  group_by(category, workerid) %>%
+mp <- d %>%
+  group_by(category) %>%
+  filter(instrument == "priorities")%>%
   multi_boot_standard(col = "rating") %>%
-  arrange(category, desc(mean))%>%
-  spread(category, mean) 
-  
+  arrange(category, desc(mean)) 
+
+ggplot(mp, aes(x = category, y = mean)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
 ```
+
 
 # Scale reliability
 
@@ -287,6 +298,7 @@ alpha(x = alpha.al)
 Create a data frame that has subscale scores. 
 ```{r}
 ss <- d %>%
+  filter(instrument == "attitudes")%>%
   dplyr::group_by(workerid, category) %>%
   dplyr::summarise(rating = mean(rating))
 
@@ -304,7 +316,32 @@ cor(ss_wide, y = NULL, use = "everything",
 
 ```
 
+## Does Subscale Score Predict Parenting Goals?
 
+Standardize ratings within subscale.
+```{r}
+
+ds <- d
+ds$srating <- ave(ds$rating, ds$category, FUN=scale)
+
+ss <- ds %>%
+  group_by(workerid, category) %>%
+  summarize(srating = mean(srating)) %>%
+  spread(category, srating) %>% 
+  left_join(subinfo) %>%
+  gather(trial_type, correct, control_recall, target_recall, target_generalize)
+
+ss.long <- ss %>%
+  gather(subscale, srating, active_learning, affection, rules_respect)
+
+```
+
+```{r}
+ggplot(ss.long, aes(x = srating, y = correct, col = subscale)) +
+  geom_jitter() + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~trial_type)
+```
 
 ## By SES
 
@@ -641,6 +678,12 @@ ggplot(mf, aes(factor.name, mean, fill=hispanic)) +
              position = position_dodge(width = .9)) + 
   scale_fill_solarized()
 ``` 
+ 
+ 
+ 
+ 
+ 
+ 
  
 # Conclusions
 
