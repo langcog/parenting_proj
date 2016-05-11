@@ -3,9 +3,8 @@ title: "Measuring lay theories of parenting and child development"
 bibliography: parenting.bib
 csl: apa6.csl
 document-params: "10pt, letterpaper"
-nocite: | 
+nocite: |
   @kumar2015
-
 author-information: 
     \author{{\large \bf Emily Hembacher} \\ \texttt{ehembach@stanford.edu} \\ Department of Psychology \\ Stanford University \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
 
@@ -88,7 +87,7 @@ Rules/Respect & It is very important that children learn to respect adults, such
 \caption{Parenting Attitudes Scale items. *Indicates reverse coded items.\label{tab:items}}
 \end{table*}
 
-There are many other examples of parenting beliefs on which parents differ. For example,  @lareau2003's Concerted Cultivation theory suggests that higher SES parents are more likely to view their child’s development as a project that requires a great deal of coordination in the form of activities and learning experiences, while lower SES parents are more likely to view their job as keeping their children safe from harm, with the assumption that they will naturally thrive if given independence. There have also been hundreds of studies based on @baumrind1971’s framework that identifies parents as authoritative, authoritarian, or permissive, according to their levels of responsiveness and control in their interactions with their children. In sum, parents’ approaches to parenting appear to vary in predictable ways based on their knowledge and perceptions about children’s learning and development. 
+There are many other examples of parenting beliefs on which parents differ. For example,  @lareau2003’s Concerted Cultivation theory suggests that higher SES parents are more likely to view their child’s development as a project that requires a great deal of coordination in the form of activities and learning experiences, while lower SES parents are more likely to view their job as keeping their children safe from harm, with the assumption that they will naturally thrive if given independence. There have also been hundreds of studies based on @baumrind1971’s framework that identifies parents as authoritative, authoritarian, or permissive, according to their levels of responsiveness and control in their interactions with their children. In sum, parents’ approaches to parenting appear to vary in predictable ways based on their knowledge and perceptions about children’s learning and development. 
 
 Although these previous studies provide preliminary evidence that parents’ beliefs about parenting and child development affect their parenting behaviors, no previous research has attempted to identify the underlying _theories_ that might organize their behavior and decision-making. Previous research has generally relied on observation of parent-child interactions or self-report of specific activities and behaviors. To our knowledge there is not an existing measure of parents’ more general attitudes about parenting and child development, which might drive behavior and predict the uptake of interventions. 
 
@@ -96,7 +95,7 @@ To address this gap, the present work establishes a self-report scale that captu
 
 # Scale Construction
 
-To establish a new measure of parenting attitudes, we followed a structured plan based on psychometric best practices [@clark1995;@furr2011;@simms2008]. We generated items corresponding to three hypothesized latent theories about parenting. The Early Learning theory corresponds to a view of children’s early learning that is consistent with contemporary child development research, and includes the idea that young children can teach themselves by exploring and playing. The Affection and Attachment theory captures the notion that close parent-child relationships are important for development, and includes the ideas that parents should talk to their children about their emotions and that children are not spoiled by too much affection. The Rules and Respect theory corresponds to the idea that parents’ primary role is to enforce rules and encourage behavior control. We generated items based on a review of the literature on parenting attitudes, and conducted psychometric analyses on iterative samples of respondents collected on Amazon Mechanical Turk, both parents and non-parents (seven in total).
+To establish a new measure of parenting attitudes, we followed a structured plan based on psychometric best practices [@clark1995;@furr2011;@simms2008]. We generated items corresponding to three hypothesized latent theories about parenting. The Early Learning theory corresponds to a view of children’s early learning that is consistent with contemporary child development research, and includes the idea that young children can teach themselves by exploring and playing. The Affection and Attachment theory captures the notion that close parent-child relationships are important for development, and includes the ideas that parents should talk to their children about their emotions and that children are not spoiled by too much affection. The Rules and Respect theory corresponds to the idea that parents’ primary role is to enforce rules and encourage behavior control. We generated hypothesized subscales and items based on a review of the literature on parenting attitudes, and conducted psychometric analyses on iterative samples of respondents collected on Amazon Mechanical Turk, both parents and non-parents (seven in total).
 
 ```{r}
 files <- dir("../production-results/e7/")
@@ -541,7 +540,7 @@ ss <- ds %>%
   tidyr::gather(trial_type, correct, control_recall, target_recall, target_generalize)
 
 ss.long <- ss %>%
-  tidyr::gather(subscale, srating, active_learning,rules_respect)
+  tidyr::gather(subscale, srating, early_learning,rules_respect)
 
 exclude <- subinfo$workerid[subinfo$reading_time_target < 30 | 
                               subinfo$reading_time_control < 30]
@@ -579,7 +578,7 @@ ggplot(filter(ss.long, !workerid %in% exclude),
 ```
 
 
-Figure \ref{fig:relation} shows proportion correct on each of the three trial types, plotted by standardized subscale scores. Regression lines show the relationship between subscale scores and proportion correct. Qualitatively, there was not strong evidence of a relationship between Rules and Respect scores and performance (though target recall showed some trend). In contrast, we observed a stronger relationship between performance and Early Learning scores, most especially for target generalization trials. 
+Figure \ref{fig:relation} shows proportion correct on each of the three trial types, plotted by standardized subscale scores. Regression lines show the relationship between subscale scores and proportion correct. Qualitatively, there was not strong evidence of a relationship between Rules and Respect scores and performance (though target recall showed some trend). In contrast, we observed a stronger relationship between performance and Early Learning scores, especially for target generalization trials. 
 
 ```{r}
 subscales <- ds %>%
@@ -600,7 +599,7 @@ d.reg <- left_join(ratings, subscales) %>%
   tidyr::unite(question_type, passage, trial_type)
 
 lm <- glmer(correct ~ question_type * rules_respect + 
-                question_type * active_learning + 
+                question_type * early_learning + 
                 (1|workerid) + 
                 (1|q_num), 
               data = filter(d.reg, !workerid %in% exclude), 
@@ -647,7 +646,7 @@ One possibility that deserves consideration is that participants who scored high
 
 In sum, this work provides initial evidence that meaningful differences in adults’ attitudes about child development and parenting can be assessed by our new scale. This initial evidence for the reliability and validity of our parenting measure must be supplemented with further evidence in both areas across a broader range of participants. In addition, future work should target predictive validity by determining whether subscale scores differentially predict parents observable behaviors with their children, such as the quality of conversations they engage their child in, which would provide additional support for our scale.
 
-Implicit theories are a powerful driver of human behavior. Often, the interaction between interventions and their subjects' underlying beliefs can produce powerful, non-linear results. Thus, given both the variability in attitudes towards parenting across cultures and the importance of improving parenting outcomes, it behooves us to understand implicit theories of parenting. The current work takes a first step in this direction. 
+Implicit theories are a powerful driver of human behavior. Sometimes, the interaction between interventions and their subjects' underlying beliefs can produce powerful, non-linear results [@medin2014;@nyhan2014]. Thus, given both the variability in attitudes towards parenting across cultures and the importance of improving parenting outcomes, it behooves us to understand implicit theories of parenting. The current work takes a first step in this direction. 
 
 # Acknowledgements
 
