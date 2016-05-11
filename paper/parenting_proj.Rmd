@@ -500,7 +500,7 @@ subinfo <- subinfo %>%
 ```
 
 
-# Experiment 
+# Experiment 1
 
 We next conducted an experiment to test whether scores on the three subscales would predict people’s uptake of new information, as an initial test of the external validity of the scales. For this purpose, we had participants read two popular press articles: an article arguing that free play is beneficial to children’s learning (Gopnik, 2011), and a control article about the language of smell [@yong2015]. We operationalized uptake as accurate recall and generalization of the central message of the target article, and recall of the control article. We predicted that if people’s subscale scores reflect coherent lay theories, they should differentially moderate uptake of the two articles. Specifically, we predicted that scores on the Early Learning subscale would be positively related to recall and generalization of the target article, but not recall of the control article. We predicted that scores on the Rules and Respect subscale would not predict uptake of either article. We excluded scores on the Affection and Attachment subscale from our analyses, since they are not orthogonal to scores on the Early Learning subscale. A sample analysis plan was pregistered at 
 osf.io/6umza.
@@ -608,6 +608,26 @@ lm <- glmer(correct ~ question_type * rules_respect +
 
 To quantify these trends, we fit a generalized logistic mixed-effects model with standardized Early Learning and Rules and Respect subscale scores, as well as interaction terms for the subscale scores by question type (i.e., control recall vs. target recall vs. target generalization) as fixed effects, and participants and questions as random effects.^[This random effects specification was the maximal convergent random effect structure.] Coefficient estimates are shown in Table \ref{tab:lmer}. Early Learning scores interacted positively with target recall and target generalization to predict correct performance, whereas Rules and Respect scores interacted positively with target recall but not target generalization, and coefficient magnitudes were relatively lower. Thus, Early Learning scores differentially predicted generalization from the target passage.^[These results held when Affection/Attachment items were included in the analysis as well. Affection/Attachment scores also moderated generalization, though not as strongly as Early Learning scores.] These results suggest that people's implicit theories about child development may organize the processing of new information in this domain.
 
+# Experiment 2
+
+One possible explanation for these results is that participants who scored higher on the Early Learning subscale would have been more likely to respond correctly to the target generalization and recall questions even without having read the article. For example, participants with high Early Learning scores might have pre-existing knowledge that is consistent with the information presented in the target article, or might intuitively answer the questions based on their implicit theories of children's learning. To address this possibility, we conducted a second experiment in which half of the participants read the articles as in Experiment 1, and the remaining half answered the recall and generalization questions without having read the articles.
+
+## Methods
+
+### Participants 
+
+Participants were `r length(unique(d.raw$workerid))` adults recruited from Amazon Mechanical Turk. Of these participants, `r sum(subinfo$children == "0")` reported having children, `r sum(subinfo$children != "0" & subinfo$children != "")` reported having no children, and `r sum(subinfo$children == "")` did not respond. 
+
+### Procedure
+
+The procedure was identical to Experiment 1, except that half of the participants (*n* = ) were not presented with the articles. 
+
+## Results and discussion
+
+We found that 
+
+Although this explanation would mean their advantage on the target generalization items might not stem from better generalization of concepts consistent with their implicit theories, it would still provide validation that subscale scores are predictive of how parents reason about children's learning.
+
 ```{r lmer, results="asis"}
 # commented out, output below. 
 # lmer_table <- xtable(coef(summary(lm)), caption = "Fixed-effect coefficients for logistic mixed effects model predicting task performance in Experiment 1.")
@@ -641,8 +661,6 @@ Predictor & Estimate & Std. Error & z value & $p$ \\
 Understanding the sources of parents’ behaviors and decisions with regard to their parenting is a critical step in improving children’s welfare. There is a large literature outlining the activities and environments that can make a difference in children’s development, including their language [@hart1995] and executive functioning [@barker2014]. Relevant research findings can sometimes be nuanced and unintuitive for those outside of academia, however. Thus, an important challenge is understanding the lay beliefs parents may have about parenting, and how they relate to parenting best practices as identified by developmental science. Interventions that aim to deliver new information may be more likely to succeed if they take into account the existing lay beliefs that parents hold about child development (Kumar et al., 2015). 
 
 In the present work, we established a new scale to measure people’s attitudes about parenting and child development in three categories: Rules and Respect, Affection and Attachment, and Early Learning. These subscales are meant to capture meaningful differences in how people view child development and the relative importance of different parenting behaviors. We subjected our new scale to psychometric testing, and found acceptably high correlations among subscale items, as well as the predicted factor structure across subscales. In addition, subscale scores meaningfully predicted uptake of new information about parenting. Specifically, participants with high scores on the Early Learning subscale were more likely to generalize the message of the target article about children’s learning to new scenarios, whereas high scores on the Rules and Respect subscale did not predict generalization of the article. 
-
-One possibility that deserves consideration is that participants who scored higher on the Early Learning subscale would have been more likely to respond correctly to the target generalization and recall questions even without having read the article. It is very possible that adults who believe that children's early learning is a priority, and who believe young children are capable of learning a lot, are more likely to already possess the knowledge presented in the target article, or might intuitively answer the questions based on their implicit theories of children's learning. Although this explanation would mean their advantage on the target generalization items might not stem from better generalization of concepts consistent with their implicit theories, it would still provide validation that subscale scores are predictive of how parents reason about children's learning.
 
 In sum, this work provides initial evidence that meaningful differences in adults’ attitudes about child development and parenting can be assessed by our new scale. This initial evidence for the reliability and validity of our parenting measure must be supplemented with further evidence in both areas across a broader range of participants. In addition, future work should target predictive validity by determining whether subscale scores differentially predict parents observable behaviors with their children, such as the quality of conversations they engage their child in, which would provide additional support for our scale.
 
