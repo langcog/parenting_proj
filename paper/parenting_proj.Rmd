@@ -9,7 +9,7 @@ author-information:
     \author{{\large \bf Emily Hembacher} \\ \texttt{ehembach@stanford.edu} \\ Department of Psychology \\ Stanford University \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
 
 abstract: 
-    "Child development research suggests that parenting practices play an important role in shaping children’s outcomes. For example, children whose parents engage them in high-quality conversations and who are given opportunities for free play are at an advantage for learning and later academic outcomes. However, communicating the results of relevant scientific findings to parents remains a challenge. One possible moderator of uptake of parenting information is the implicit theories parents hold with regard to child development and parenting. As a first step in investigating this possibility, the present work establishes a new measure of parenting attitudes including three subscales corresponding to lay theories about rules and respect, affection and attachment, and early learning. We then examine whether subscale scores differentially predict uptake of a popular press article about children’s early learning. Scores on the early learning subscale, but not the rules and respect subscale, predicted generalization from the article, providing first evidence of the validity of this measure."
+    "Parenting practices are known to play an important role in shaping children’s outcomes. For example, children whose parents engage them in high-quality conversations and who are given opportunities for free play are at an advantage for learning and later academic outcomes. However, communicating the results of relevant scientific findings to parents remains a challenge. One possible moderator of uptake of parenting information is the implicit theories parents hold with regard to child development and parenting. As a first step in investigating this possibility, the present work establishes a new measure of parenting attitudes including three subscales corresponding to attitudes about rules and respect, affection and attachment, and early learning. We then examine whether subscale scores predict uptake of new information about children’s learning. Scores on the Early Learning subscale, but not the Rules and Respect subscale, predicted generalization from the article, providing initial evidence of the validity of this measure."
 
 keywords:
     "Parenting attitudes; implicit theories"
@@ -72,8 +72,8 @@ Rules and Respect & It is very important that children learn to respect adults, 
   & Parents should follow their children's lead rather than imposing structure in the form of rules.* \\ 
   & Young children should be allowed to make their own decisions, such as what to eat for dinner.* \\ 
   \hline
-  Affection and Attachment & Parents need to provide safe and loving environments for their children. \\ 
-   & Holding and cradling babies is important for forming strong bonds between parent and child. \\ 
+  Affection and & Parents need to provide safe and loving environments for their children. \\ 
+   Attachment & Holding and cradling babies is important for forming strong bonds between parent and child. \\ 
    & Children should be given comfort and understanding when they are scared or unhappy. \\ 
    & Parents do not need to talk to their child about his or her emotions.* \\ 
    & Children become spoiled if they receive too much attention from parents.* \\ 
@@ -255,13 +255,11 @@ qplot(factor, item, fill=loading, geom="tile", data = loadings) +
 
 ## Item construction 
 
-In an initial phase of scale construction, we generated 42 statements that described attitudes consistent with one of three potential implicit theories about parenting: Early Learning (12 items; e.g., “Children can learn about things like good and bad behavior from an early age”), Affection and Attachment (10 items; e.g., “It's important for a baby to have a strong bond with mom”), and Rules and Respect (20 items; e.g., “It is very important that children learn to respect adults, such as parents and teachers”). These statements were generated based on a literature review of parenting attitudes and behaviors. The Affection and Attachment and Rules and Respect subscales are related theoretically to the Authoritative and Authoritarian dimensions of @baumrind1971's parenting framework, as well as theories of attachment parenting [@jones2014], but aim to assess beliefs about parenting rather than overt behaviors. The Early Learning subscale aimed to assess the extent to which adults believe that it is important to help infants and toddlers learn through play and conversation. 
+In an initial phase of scale construction, we generated 42 statements that described attitudes consistent with one of three potential implicit theories about parenting: Early Learning (12 items), Affection and Attachment (10 items), and Rules and Respect (20 items). These statements were generated based on a literature review of parenting attitudes and behaviors. The Affection and Attachment and Rules and Respect subscales are related theoretically to the Authoritative and Authoritarian dimensions of @baumrind1971's parenting framework, as well as theories of attachment parenting [@jones2014], but aim to assess beliefs about parenting rather than overt behaviors. The Early Learning subscale aimed to assess the extent to which adults believe that it is important to help infants and toddlers learn through play and conversation. 
 
 The initial 42-item scale was administered to 250 adults on Amazon's Mechanical Turk. Participants used a 7-point Likert scale to report the degree to which they agreed with each statement from 0 (Do not Agree) to 6 (Strongly Agree). Cronbach’s alphas for the three subscales were .86 (Early Learning), .81 (Affection and Attachment), and .74 (Rules and Respect). We then conducted Exploratory Factor Analysis (EFA) to assess the dimensionality of the scale. Based on a parallel analysis [@horn1965], we retained 5 factors in this initial model. We subsequently dropped any items that had factor loadings less than .40 on the relevant factor, as well as any items that had factor loadings greater than .40 onto another factor. Items were also dropped if analyses revealed that Cronbach’s alpha would be increased by dropping the item. We then dropped additional items with lower loadings until there were 6 items in each subscale. Some items were rephrased such that half of the items in each subscale were negatively worded to avoid response sets [@simms2008].
 
-
 ## Revised questionnaire norming
-
 
 ```{r}
 a.scores <- af$scores %>%
@@ -269,7 +267,6 @@ a.scores <- af$scores %>%
   mutate(workerid = as.character(wide.attitudes$workerid)) %>%
   left_join(subinfo)
 ```
-
 
 ```{r}
 
@@ -290,7 +287,6 @@ mf <- a.scores %>%
 #   scale_fill_solarized()
 
 ```
-
 
 The revised questionnaire was administered to a final group of 250 adults on Amazon's Mechanical Turk. Table \ref{tab:items} gives the full list of items^[The most recent version of the questionnaire is available at https://github.com/langcog/parenting_proj]. For this sample, Cronbach’s alphas were .76 (Early Learning), .75 (Affection and Attachment), and .69 (Rules and Respect). Because analysis of the previous sample identified 5 factors instead of the hypothesized 3, we again conducted EFA. This time, the parallel analysis identified 3 factors as predicted. We next examined the loadings of individual items onto the three factors (Figure \ref{fig:loadings}). Items loaded onto the three factors roughly consistent with our a priori subscales, although some items from the Affection and Attachment subscale loaded onto both the Affection and Attachment and Early Learning factors. 
 
@@ -418,8 +414,6 @@ for (f in files) {
 
 ```
 
-
-
 ```{r}
 labels <- read.csv("../analysis/sent_forms_e7.csv")
 labels$sent <- as.character(labels$sent)
@@ -430,7 +424,6 @@ answers$tar_rec <-as.character(answers$tar_rec)
 answers$con_rec <-as.character(answers$con_rec)
 ```
 
-
 ```{r}
 d.raw$sent <- as.character(d.raw$sent)
 d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
@@ -440,7 +433,6 @@ d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
 d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
 ```
-
 
 ```{r}
 d <- left_join(d.raw, labels)
@@ -480,7 +472,6 @@ d$control_recall_5[d$control_recall_5 != answers$con_rec[5]] <- 0
 d$control_recall_5[d$control_recall_5 == answers$con_rec[5]] <- 1
 ```
 
-
 ```{r}
 subinfo <- d %>%
   group_by(workerid) %>%
@@ -516,7 +507,6 @@ Participants were `r length(unique(d.raw$workerid))` adults recruited from Amazo
 ### Procedure
 
 Participants first completed the 18-item parenting questionnaire described above. They were then instructed to read two popular press articles at their own pace. They first read a target article about children's early learning ("Why Preschool Shouldn't Be Like School," Alison Gopnik, Slate, 2011), and then read a control article about the language of smell ("Why Do Most Languages Have So Few Words For Smells?", Ed Yong, The Atlantic, 2015). After reading both articles, they first answered five 3-alternative forced-choice recall questions about the control article, and then answered five 3AFC generalization and five 3AFC recall questions about the target article. The recall questions assessed participants' memory for specific details of the text, and the generalization questions assessed participants' ability to generalize from the meaning of the text to new situations (Table \ref{tab:uptake}). The alternative choices for recall and generalization questions were designed to reflect reasonable options that were nonetheless inconsistent with the articles.
-
 
 ## Results and discussion
 
@@ -640,7 +630,7 @@ One possible explanation for these results is that participants who scored highe
 
 # General Discussion
 
-Understanding the sources of parents’ behaviors and decisions with regard to their parenting is a critical step in improving children’s welfare. There is a large literature outlining the activities and environments that can make a difference in children’s development, including their language [@hart1995] and executive functioning [@barker2014]. Relevant research findings can sometimes be nuanced and unintuitive for those outside of academia, however. Thus, an important challenge is understanding the lay beliefs parents may have about parenting, and how they relate to parenting best practices as identified by developmental science. Interventions that aim to deliver new information may be more likely to succeed if they take into account the existing lay beliefs that parents hold about child development (Kumar et al., 2015). 
+Understanding the sources of parents’ behaviors and decisions with regard to their parenting is a critical step in improving children’s welfare. There is a large literature outlining the activities and environments that can make a difference in children’s development, including their language [@hart1995] and executive functioning [@barker2014]. Relevant research findings can sometimes be nuanced and unintuitive for those outside of academia, however. Thus, an important challenge is understanding the lay beliefs parents may have about parenting, and how they relate to parenting best practices as identified by developmental science. Interventions that aim to deliver new information may be more likely to succeed if they take into account parents' lay beliefs about child development (Kumar et al., 2015). 
 
 In the present work, we established a new scale to measure people’s attitudes about parenting and child development in three categories: Rules and Respect, Affection and Attachment, and Early Learning. These subscales are meant to capture meaningful differences in how people view child development and the relative importance of different parenting behaviors. We subjected our new scale to psychometric testing, and found acceptably high correlations among subscale items, as well as the predicted factor structure across subscales. In addition, subscale scores meaningfully predicted responses to questions about children's learning, and uptake of new information on the topic. Specifically, participants with high scores on the Early Learning subscale were more likely to generalize the message of the target article about children’s learning to new scenarios, whereas high scores on the Rules and Respect subscale did not predict generalization of the article. 
 
