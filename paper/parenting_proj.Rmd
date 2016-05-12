@@ -65,14 +65,14 @@ There are also important differences in how parents within western cultures inte
   \hline
 Subscale & Full item \\ 
   \hline
-Rules/Respect & It is very important that children learn to respect adults, such as parents and teachers. \\ 
+Rules and Respect & It is very important that children learn to respect adults, such as parents and teachers. \\ 
    & It is important for young children to learn to control their impulses (e.g., waiting when told to wait). \\ 
   & Children should be taught to be grateful to their parents. \\ 
   & Children should not be punished for breaking small rules.* \\ 
   & Parents should follow their children's lead rather than imposing structure in the form of rules.* \\ 
   & Young children should be allowed to make their own decisions, such as what to eat for dinner.* \\ 
   \hline
-  Affection/Attachment & Parents need to provide safe and loving environments for their children. \\ 
+  Affection and Attachment & Parents need to provide safe and loving environments for their children. \\ 
    & Holding and cradling babies is important for forming strong bonds between parent and child. \\ 
    & Children should be given comfort and understanding when they are scared or unhappy. \\ 
    & Parents do not need to talk to their child about his or her emotions.* \\ 
@@ -625,7 +625,7 @@ Predictor & Estimate & Std. Error & z value & $p$ \\
   Cntl recall & 1.11 & 0.37 & 2.98 & 0.00 \\ 
   Targ gen & 1.57 & 0.49 & 3.19 & 0.00 \\ 
   Targ recall & 1.28 & 0.49 & 2.59 & 0.01 \\ 
-  Rules/Respect & -0.10 & 0.21 & -0.48 & 0.63 \\ 
+  Rules and Respect & -0.10 & 0.21 & -0.48 & 0.63 \\ 
   Early Learning & 0.27 & 0.22 & 1.22 & 0.22 \\ 
   Targ gen $\times$ R/R & -0.06 & 0.06 & -0.94 & 0.35 \\ 
   Targ recall $\times$ R/R& 0.32 & 0.06 & 5.62 & 0.00 \\ 
