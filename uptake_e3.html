@@ -1,0 +1,1447 @@
+<!-- ## Code -->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning from Science Articles</title>
+  <script src="jquery-1.11.2.min.js"></script>
+  <script src="mmturkey-0.6.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="uptake_style.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+  <!-- The instructions slide. -->
+  <div class="slide" id="instructions">
+    <br>
+    <img src="images/stanford.png" alt="Stanford University">
+    <p id='logo-text'>Stanford Language and Cognition Lab</p>
+    <p class="block-text">In this experiment, you will first answer a few questions about your beliefs about parenting and child development, and then you will read two brief articles about science topics, and answer some questions about the articles. If you've already been in a hit of this type ("Child Development Survey" or "Learning from Science Articles"), please don't accept this one.</p>
+
+    <button type="button" onclick="this.blur(); experiment.next(), experiment.starttime()">Start</button>
+
+    <p class="block-text">
+      <br> <b> Note: you won't be able to preview this HIT before accepting it because it's so short. </b></p>
+
+    <p class="block-text" id="legal">By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact us at <a href="mailto://languagecoglab@gmail.com.">languagecoglab@gmail.com</a>.
+      You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences.
+      Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you. Note however that we have recently been made aware that your public Amazon.com profile can be accessed via your
+      worker ID if you do not choose to opt out. If you would like to opt out of this feature, you may follow instructions available <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=16465241">here</a>.</p>
+  </div>
+
+
+  <!-- Progress Bar -->
+
+<div class="progress">
+  <div id="progress" class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+  </div>
+</div>
+
+<!-- Questionnaire slide 1 - attitudes -->
+
+<div class="slide" id="attitudes_slide">
+  <br>
+
+  <div align="center">
+    <h5>How much do you agree with the following statement with regard to <b>babies and toddlers</b>?</h5><br>
+  </div>
+
+  <!-- Show sentence from attitudes scale -->
+  <div align="center">
+    <p id ="attitudes">{{}}</p> 
+  </div>
+
+  <br>
+
+  <!-- Likert radio buttons -->
+  <table align = "center"><tr>
+    <td align="center">
+      <tr>
+        <td></td>
+        <td></td>
+        <td>Do Not Agree</td>
+        <td></td>
+        <td></td>
+        <td>Agree Somewhat</td>
+        <td></td>
+        <td></td>
+        <td>Strongly Agree</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td><input id ="likert1" type="radio" name="judgment" value = "0">
+          <label for="likert1">0</label></td>
+        <td><input id ="likert2" type="radio" name="judgment" value = "1">
+            <label for="likert2">1</label></td>
+        <td><input id ="likert3" type="radio" name="judgment" value = "2">
+              <label for="likert3">2</label></td>
+        <td><input id ="likert4" type="radio" name="judgment" value = "3">
+                <label for="likert4">3</label></td>
+        <td><input id ="likert5" type="radio" name="judgment" value = "4">
+                  <label for="likert5">4</label></td>
+        <td><input id ="likert6" type="radio" name="judgment" value = "5">
+                    <label for="likert6">5</label></td>
+        <td><input id ="likert7" type="radio" name="judgment" value = "6">
+                      <label for="likert7">6</label></td>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center"><tr>
+      <td align="center">
+        <button type="button" id="nextButton_Att" onClick="experiment.log_response_q()"> next</button>
+      </td> 
+      <tr><td align="center">
+        <div id="testMessage_att"> </div>
+      </td></tr>
+    </table>
+</div>
+
+
+  <!-- Reading instructions slide -->
+  <div class="slide" id="reading_instructions">
+
+    <br>
+
+    <p class="block-text">You will now be asked to read three short articles. Please read them <em>carefully</em> at your own pace. After you finish reading all three articles, we will ask you questions about them. 
+
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.starttarget()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- End reading instructions slide -->
+
+  <!-- Slide 1 Target Article -->
+  <div class="slide" id="reading1">
+    <br>
+
+    <div align="center">
+      <h5>This is the <b>first</b> of three articles you'll be asked to read. Please read the text at your own pace. Once you have finished reading, click "Continue."</h5>
+      <br>
+    </div>
+
+    <!-- Show parenting article -->
+    <div class="block-text">
+      <p id="article">
+        Ours is an age of pedagogy. Anxious parents instruct their children more and more, at younger and younger ages, until they're reading books to babies in the womb. They pressure teachers to make kindergartens and nurseries more like schools. So does the law—the 2001 No Child Left Behind Act explicitly urged more direct instruction in federally funded preschools.
+        <br>
+        <br>
+        There are skeptics, of course, including some parents, many preschool teachers, and even a few policy-makers. Shouldn't very young children be allowed to explore, inquire, play, and discover, they ask? Perhaps direct instruction can help children learn specific facts and skills, but what about curiosity and creativity—abilities that are even more important for learning in the long run?
+        <br>
+        <br>
+        Developmental scientists like me explore the basic science of learning by designing controlled experiments. We might start by saying: Suppose we gave a group of 4-year-olds exactly the same problems and only varied on whether we taught them directly or encouraged them to figure it out for themselves? Would they learn different things and develop different solutions? 
+        <br>
+        <br>
+       In one study, MIT professor Laura Schulz, her graduate student Elizabeth Bonawitz, and their colleagues looked at how 4-year-olds learned about a new toy with four tubes. Each tube could do something interesting: If you pulled on one tube it squeaked, if you looked inside another tube you found a hidden mirror, and so on. For one group of children, the experimenter said: "I just found this toy!" As she brought out the toy, she pulled the first tube, as if by accident, and it squeaked. She acted surprised ("Huh! Did you see that? Let me try to do that!") and pulled the tube again to make it squeak a second time. With the other children, the experimenter acted more like a teacher. She said, "I'm going to show you how my toy works. Watch this!" and deliberately made the tube squeak. Then she left both groups of children alone to play with the toy.
+        <br>
+        <br>
+       All of the children pulled the first tube to make it squeak. The question was whether they would also learn about the other things the toy could do. The children from the first group played with the toy longer and discovered more of its "hidden" features than those in the second group. In other words, direct instruction made the children less curious and less likely to discover new information.
+        <br>
+        <br>
+       This provides scientific support for the intuitions many teachers have had all along: Direct instruction really can limit young children's learning. Teaching is a very effective way to get children to learn something specific—this tube squeaks, say, or a squish then a press then a pull causes the music to play. But it also makes children less likely to discover unexpected information and to draw unexpected conclusions.
+        <br>
+        <br>
+        Why might children behave this way? Adults often assume that most learning is the result of teaching and that exploratory, spontaneous learning is unusual. But actually, spontaneous learning is more fundamental. It's this kind of learning, in fact, that allows kids to learn from teachers in the first place. 
+        <br>
+        <br>
+        Some researchers argue that learning from teachers first requires you to learn about teachers. For example, if you know how teachers work, you tend to assume that they are trying to be informative. When the teacher in the tube-toy experiment doesn't go looking for hidden features inside the tubes, the learner unconsciously thinks: "She's a teacher. If there were something interesting in there, she would have showed it to me." These assumptions lead children to narrow in, and to consider just the specific information a teacher provides. Without a teacher present, children look for a much wider range of information and consider a greater range of options.
+      </p>
+    </div>
+    <br>
+
+    <!-- Next button -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttar()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- end first article slide -->
+
+  <!-- Slide 2 Control Article -->
+  <div class="slide" id="reading2">
+    <br>
+
+    <div align="center">
+      <h5>This is the <b>second</b> of the articles. Please read the following text at your own pace. Once you have finished reading, click "Continue."
+    </h5>
+      <br>
+    </div>
+
+    <!-- Show control article -->
+    <div class="block-text">
+      <p id="article">
+        The first time a baby reaches for an object isn’t on most parents’ checklist of significant, or even particularly adorable, milestones. But a new study suggests that the act of reaching is a crucial part of a child’s development that, when mastered early, can lead to better motor skills, attention spans, and even vocabularies later on.
+        <br>
+        <br>
+        Researchers at the University of Pittsburgh were interested in the effects of different types of reach-training on infants’ development. They instructed 25 mothers of three-month-olds to engage with their children on reach-related activities for ten minutes a day over the course of two weeks. Some of the mothers were given Velcro mittens for the babies to wear, as well as Velcroed toys for them to grab. The remaining mothers were also given mittens and toys, but without the Velcro. The children who wore the Velcro mittens were more likely to establish contact, whether accidentally or on purpose, with the toys. This, the researchers hypothesized, created an incentive for them to continue reaching.  
+        <br>
+        <br>
+        When the children reached 15 months, the researchers recorded them playing with a bead-maze toy and used a frame-by-frame coding software to track the children’s visual and physical engagement with it. They also had parents filled out a survey in which they rated their child’s temperament. They discovered that the babies who had done the reach-training with the Velcro mittens and toys had more advanced motor skills and longer attention spans than those who did not, after researchers accounted for any differences in grasping abilities before the training. 
+        <br>
+        <br>
+        Psychologists call these types of results a “developmental cascade,” meaning that the early adoption of one skill can lead to the learning of a number of other skills and therefore affect the child’s overall long-term development. In this case, the act of reaching teaches children to focus and interact with world around her or him. That interaction can lead to more verbal attention from her or his parents, which is crucial for language development.
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Next button-->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttarget2()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- end control article slide -->
+
+
+ <!-- Slide 3 Target3 Article -->
+  <div class="slide" id="reading3">
+    <br>
+
+    <div align="center">
+      <h5>This is the <b>second</b> of the articles. Please read the following text at your own pace. Once you have finished reading, click "Continue."
+    </h5>
+      <br>
+    </div>
+
+    <!-- Show target3 article -->
+    <div class="block-text">
+      <p id="article">
+        Fans of “Got Your Nose” take note: Unexpected experiences that violate infants' innate knowledge of the world, like a ball appearing to roll through a solid wall, stimulate interest and help them figure out where to focus their learning efforts. The discovery not only shows that very young babies already have sophisticated expectations, but that the ones who experience surprises learn more efficiently than those who don't.
+        <br>
+        <br>
+        “Our research shows these surprising events are special opportunities to learn,” said cognitive psychologist Aimee E. Stahl of Johns Hopkins University. “If there's a mismatch between what you predicted should happen and what you actually observed, that's a special opportunity to revise the knowledge that you have and learn something new.”
+        <br>
+        <br>
+        To test the idea, Stahl and co-author Lisa Feigenson showed a group of 11-month-olds a series of expected and unexpected events. A ball or toy car, for example, rolled down an incline and was either stopped by a solid wall or appeared to pass through it. Similarly, a ball or car could roll into a gap in a track and fall to the ground, or it might appear to “magically” pass over it and keep going.
+        <br>
+        <br>
+        When given a choice, the infants touched, explored and played with the objects that defied their expectations much more often than they selected those that had behaved normally. And like budding scientists, the infants tested those objects for the specific behavior that had surprised them. When a toy car appeared to pass through a wall, the infants banged it to be sure it was solid. When it appeared to roll over an open gap, they picked it up and dropped it to be sure it would fall.
+        <br>
+        <br>
+        “It's really specific behavior, and it's remarkably sophisticated,” Stahl notes. “It's not that they just want to explore an object because it did something surprising. It's what we'd call hypothesis testing, like scientists do all the time, and babies seem to be doing the same thing. They are testing hypotheses to try and get an explanation for how that object behaved in a really strange way.”
+        <br>
+        <br>
+        The results appear to demonstrate that babies use surprising events to guide their cognitive growth in a world already awash with stimuli. “There's an overwhelming quantity of input in the environment,” Stahl says. “How does anybody, let alone a baby with comparably limited cognitive resources, figure out what they should pay attention to or learn about versus what they should ignore? I think our results show that the knowledge they are born with appears to guide what you should learn about or seek more information about in the future.”
+    </div>
+
+    <br>
+
+    <!-- Next button-->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttarget3()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- end control target3 slide -->
+
+
+  <!-- Recall instructions slide -->
+  <div class="slide" id="recall_instructions">
+
+    <br>
+
+    <p class="block-text">You will now be asked to answer a few questions about the articles that you just read.</p>
+
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" onClick="this.blur(); experiment.next()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- End recall instructions slide -->
+
+    <!-- Recall 1 slide -->
+  <div class="slide" id="target1_1">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+   <!-- Show recall question -->
+    <div align="center">
+      <p>Based on Article 1, when children see a teacher demonstrate the function of a toy, they
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall1a" type="radio" name="recall" value="a">
+          <label for="recall1a">a. Explore the toy less because they have become bored by the toy. </label>
+        </td>
+        <td valign="top">
+          <input id="recall1b" type="radio" name="recall" value="b">
+          <label for="recall1b">b. Explore the toy less because they assume the teacher has showed them everything there is to know about the toy.</label>
+        </td>
+        <td valign="top">
+          <input id="recall1c" type="radio" name="recall" value="c">
+          <label for="recall1c">c. Explore the toy more because they have become more interested in the toy.</label>
+        </td>
+         <td valign="top">
+          <input id="recall1c" type="radio" name="recall" value="c">
+          <label for="recall1c">d. Explore the toy more because they assume the teacher has not showed them everything there is to know about the toy</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r1" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r1"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 1 slide -->
+
+      <!-- Recall 2 slide -->
+  <div class="slide" id="target1_2">
+    <br>
+
+   <!-- Show recall question -->
+    <div align="center">
+     <img src="images/register.png" width=200px>
+      <p>A teacher and child are playing with the toy cash register above. The teacher says she is an expert at this toy, and presses several different keys followed by the open key. The register opens! Based on <strong>Article 1</strong>, the child is more likely to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall2a" type="radio" name="recall" value="a">
+          <label for="recall2a">a. Imitate the teacher by pressing the same set of keys to make the box open. </label>
+        </td>
+        <td valign="top">
+          <input id="recall2b" type="radio" name="recall" value="b">
+          <label for="recall2b">b. Understand that only the final key made the box open, and press that key.</label>
+        </td>
+        <td valign="top">
+          <input id="recall2c" type="radio" name="recall" value="c">
+          <label for="recall2c">c. Try pressing a different set of keys to figure out how to make the box open.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r2" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r2"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 2 slide -->
+
+  <!-- Recall 3 slide -->
+  <div class="slide" id="target1_3">
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <img src="images/toy.png" width=200px>
+      <p>Based on <strong>Article 1</strong>, when playing with the above toy with a child, is it better to:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+       <tr>
+        <td valign="top">
+          <input id="recall3a" type="radio" name="recall" value="a">
+          <label for="recall3a">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+        </td>
+        <td valign="top">
+          <input id="recall3b" type="radio" name="recall" value="b">
+          <label for="recall3b">b. Let the child play freely with the toy without instruction.</label>
+        </td>
+        <td valign="top">
+          <input id="recall3c" type="radio" name="recall" value="c">
+          <label for="recall3c">c. Quiz the child about shapes and colors.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r3" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r3"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 3 slide -->
+
+   <!-- Recall 4 slide -->
+  <div class="slide" id="target1_4">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+   <!-- Show recall question -->
+    <div align="center">
+      <p>Based on <strong>Article 1</strong>, preschool directors should plan to have:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall4a" type="radio" name="recall" value="a">
+          <label for="recall4a">a. More time spent memorizing things that will be helpful later, such as the ABCs.</label>
+        </td>
+        <td valign="top">
+          <input id="recall4b" type="radio" name="recall" value="b">
+          <label for="recall4b">b. More structured time in which children are taught lessons and skills.</label>
+        </td>
+        <td valign="top">
+          <input id="recall4c" type="radio" name="recall" value="c">
+          <label for="recall4c">c. More time for children to play outside and with toys.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r4" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r4"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 4 slide -->
+
+  <!-- Recall 5 slide -->
+  <div class="slide" id="target1_5">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>Based on <strong>Article 1</strong>, when playing with blocks with a toddler, you should:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall5a" type="radio" name="recall" value="a">
+          <label for="recall5a">a. Avoid saying anything about the blocks, to avoid interfering with the child’s learning. </label>
+        </td>
+        <td valign="top">
+          <input id="recall5b" type="radio" name="recall" value="b">
+          <label for="recall5b">b. Demonstrate for the child how to build a tower and then have her imitate you.</label>
+        </td>
+        <td valign="top">
+          <input id="recall5c" type="radio" name="recall" value="c">
+          <label for="recall5c">c. Encourage the child to play with the blocks however she wants.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r5" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r5"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 5 slide -->
+
+   <!-- Recall 6 slide -->
+  <div class="slide" id="target1_6">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, when an experimenter acted more like a teacher and showed children how to make a toy squeak, children:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall6a" type="radio" name="recall" value="a">
+          <label for="recall6a">a. Played with the toy more than if the experimenter acted surprised by the toy. </label>
+        </td>
+        <td valign="top">
+          <input id="recall6b" type="radio" name="recall" value="b">
+          <label for="recall6b">b. Played with the toy less than if the experimenter acted surprised by the toy.</label>
+        </td>
+        <td valign="top">
+          <input id="recall6c" type="radio" name="recall" value="c">
+          <label for="recall6c">c. Played with the toy the same amount whether or not the experimenter acted surprised by the toy.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r6" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r6"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 6 slide -->
+
+   <!-- Recall 7 slide -->
+  <div class="slide" id="target2_1">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, children explore and discover more when:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall7a" type="radio" name="recall" value="a">
+          <label for="recall7a">a. Adults let them play freely without instruction. </label>
+        </td>
+        <td valign="top">
+          <input id="recall7b" type="radio" name="recall" value="b">
+          <label for="recall7b">b. Adults choose which items children play with.</label>
+        </td>
+        <td valign="top">
+          <input id="recall7c" type="radio" name="recall" value="c">
+          <label for="recall7c">c. Adults show them exactly how something works.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r7" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r7"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 7 slide -->
+
+  <!-- Recall 8 slide -->
+  <div class="slide" id="target2_2">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, children were more likely to find new and better ways to make a toy work when the experimenter:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall8a" type="radio" name="recall" value="a">
+          <label for="recall8a">a. Pretended to be clueless about how the toy worked when playing with it. </label>
+        </td>
+        <td valign="top">
+          <input id="recall8b" type="radio" name="recall" value="b">
+          <label for="recall8b">b. Pretended to be an expert about the toy when playing with it.</label>
+        </td>
+        <td valign="top">
+          <input id="recall8c" type="radio" name="recall" value="c">
+          <label for="recall8c">c. Pretended not to care about the toy.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r8" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r8"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 8 slide -->
+
+     <!-- Recall 9 slide -->
+  <div class="slide" id="target2_3">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, children believe:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall9a" type="radio" name="recall" value="a">
+          <label for="recall9a">a. That teachers try to be informative. </label>
+        </td>
+        <td valign="top">
+          <input id="recall9b" type="radio" name="recall" value="b">
+          <label for="recall9b">b. That teachers don’t know everything.</label>
+        </td>
+        <td valign="top">
+          <input id="recall9c" type="radio" name="recall" value="c">
+          <label for="recall9c">c. That teachers will give them incomplete information.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r9" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r9"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 9 slide -->
+
+     <!-- Recall 10 slide -->
+  <div class="slide" id="target2_4">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall10a" type="radio" name="recall" value="a">
+          <label for="recall10a">a. Children cannot learn anything new from a teacher. </label>
+        </td>
+        <td valign="top">
+          <input id="recall10b" type="radio" name="recall" value="b">
+          <label for="recall10b">b. Children cannot learn new things without a teacher.</label>
+        </td>
+        <td valign="top">
+          <input id="recall10c" type="radio" name="recall" value="c">
+          <label for="recall10c">c. Children can learn new things quickly from a teacher.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r10" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r10"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 10 slide -->
+
+
+  <!-- Control recall 1 slide -->
+  <div class="slide" id="target2_5">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, how many words does English have dedicated to describing smells?
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control1a" type="radio" name="recall" value="a">
+          <label for="control1a">a. 3 </label>
+        </td>
+        <td valign="top">
+          <input id="control1b" type="radio" name="recall" value="b">
+          <label for="control1b">b. 13 </label>
+        </td>
+        <td valign="top">
+          <input id="control1c" type="radio" name="recall" value="c">
+          <label for="control1c">c. 33 </label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r11" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r11"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 1 slide -->
+
+  
+  <!-- Control recall 2 slide -->
+  <div class="slide" id="target2_6">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, which of the following is true:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control2a" type="radio" name="recall" value="a">
+          <label for="control2a">a. No languages have more than three words for smells, because most smells are impossible to describe.</label>
+        </td>
+        <td valign="top">
+          <input id="control2b" type="radio" name="recall" value="b">
+          <label for="control2b">b. English is the only language that has few words for smells.</label>
+        </td>
+        <td valign="top">
+          <input id="control2c" type="radio" name="recall" value="c">
+          <label for="control2c">c. Only a few languages have more than three words for smells.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r12" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r12"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 2 slide -->
+
+    <!-- Control recall 3 slide -->
+  <div class="slide" id="target3_1">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, what do the groups known for having many words for smells have in common?
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control3a" type="radio" name="recall" value="a">
+          <label for="control3a">a. They train their children to be able to tell the difference between smells.</label>
+        </td>
+        <td valign="top">
+          <input id="control3b" type="radio" name="recall" value="b">
+          <label for="control3b">b. They are hunter-gatherers.</label>
+        </td>
+        <td valign="top">
+          <input id="control3c" type="radio" name="recall" value="c">
+          <label for="control3c">c. They have unusually good hearing and vision.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r13" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r13"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 3 slide -->
+
+    <!-- Control recall 4 slide -->
+  <div class="slide" id="target3_2">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, when a researcher tested the Jahai of Malaysia using smell tests, she found that:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control4a" type="radio" name="recall" value="a">
+          <label for="control4a">a. Although they had many words for smells, different people used different words to describe the same smell.</label>
+        </td>
+        <td valign="top">
+          <input id="control4b" type="radio" name="recall" value="b">
+          <label for="control4b">b. Most people did not know the meaning of most of the smell words in their language.</label>
+        </td>
+        <td valign="top">
+          <input id="control4c" type="radio" name="recall" value="c">
+          <label for="control4c">c. People were highly consistent in their use of smell words- different people had the same words for the same smells.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r14" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r14"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 1 slide -->
+
+    <!-- Control recall 5 slide -->
+  <div class="slide" id="target3_3">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, before finding the Jahai and Maniq people, researchers previously believed:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control5a" type="radio" name="recall" value="a">
+          <label for="control5a">a. People were better at describing good smells than bad smells. </label>
+        </td>
+        <td valign="top">
+          <input id="control5b" type="radio" name="recall" value="b">
+          <label for="control5b">b. Humans were not capable of describing most smells with words.</label>
+        </td>
+        <td valign="top">
+          <input id="control5c" type="radio" name="recall" value="c">
+          <label for="control5c">c. People were better at describing bad smells than good smells.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r15" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r15"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End Control recall 5 slide -->
+
+      <!-- Control recall 5 slide -->
+  <div class="slide" id="target3_4">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, before finding the Jahai and Maniq people, researchers previously believed:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control5a" type="radio" name="recall" value="a">
+          <label for="control5a">a. People were better at describing good smells than bad smells. </label>
+        </td>
+        <td valign="top">
+          <input id="control5b" type="radio" name="recall" value="b">
+          <label for="control5b">b. Humans were not capable of describing most smells with words.</label>
+        </td>
+        <td valign="top">
+          <input id="control5c" type="radio" name="recall" value="c">
+          <label for="control5c">c. People were better at describing bad smells than good smells.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r16" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r16"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+    <!-- End Control recall 5 slide -->
+
+
+     <!-- Recall 9 slide -->
+  <div class="slide" id="target3_5">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>, children believe:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall9a" type="radio" name="recall" value="a">
+          <label for="recall9a">a. That teachers try to be informative. </label>
+        </td>
+        <td valign="top">
+          <input id="recall9b" type="radio" name="recall" value="b">
+          <label for="recall9b">b. That teachers don’t know everything.</label>
+        </td>
+        <td valign="top">
+          <input id="recall9c" type="radio" name="recall" value="c">
+          <label for="recall9c">c. That teachers will give them incomplete information.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r17" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r17"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 9 slide -->
+
+     <!-- Recall 10 slide -->
+  <div class="slide" id="target3_6">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Show sentence from attitudes scale -->
+    <div align="center">
+      <p>According to <strong>Article 1</strong>:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="recall10a" type="radio" name="recall" value="a">
+          <label for="recall10a">a. Children cannot learn anything new from a teacher. </label>
+        </td>
+        <td valign="top">
+          <input id="recall10b" type="radio" name="recall" value="b">
+          <label for="recall10b">b. Children cannot learn new things without a teacher.</label>
+        </td>
+        <td valign="top">
+          <input id="recall10c" type="radio" name="recall" value="c">
+          <label for="recall10c">c. Children can learn new things quickly from a teacher.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_r18" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_r18"> </div>
+          </td>,z>
+        </tr>
+    </table>
+  </div>
+
+  <!-- End recall 10 slide -->
+
+
+
+
+  <!-- End Control recall 5 slide -->
+
+      <!-- Control recall 5 slide -->
+  <div class="slide" id="target3_8">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Show recall question -->
+    <div align="center">
+      <p>According to <strong>Article 2</strong>, before finding the Jahai and Maniq people, researchers previously believed:
+      </p>
+    </div>
+
+    <br>
+
+    <!-- Likert radio buttons -->
+    <table align="center" class="likert">
+      <tr>
+        <td valign="top">
+          <input id="control5a" type="radio" name="recall" value="a">
+          <label for="control5a">a. People were better at describing good smells than bad smells. </label>
+        </td>
+        <td valign="top">
+          <input id="control5b" type="radio" name="recall" value="b">
+          <label for="control5b">b. Humans were not capable of describing most smells with words.</label>
+        </td>
+        <td valign="top">
+          <input id="control5c" type="radio" name="recall" value="c">
+          <label for="control5c">c. People were better at describing bad smells than good smells.</label>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Next button and "please make a response" message -->
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" id="nextButton_c5" onClick="experiment.log_response()"> next</button>
+        </td>
+        <tr>
+          <td align="center">
+            <div id="testMessage_c5"> </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+    <!-- End Control recall 5 slide -->
+
+
+  <!-- The debriefing slide. -->
+  <div class="slide" id="debriefing">
+    <form id="demographics" onsubmit="experiment.submitcomments()">
+
+      <table width="100%">
+        <col style="width:30%">
+          <col style="width:70%">
+            <tr>
+              <td><img src="images/ladder.png"></td>
+              <td>
+                <p><b>Think of this ladder as representing where people stand in the United states.</b></p>
+                <p>At the top of the ladder are the people who are the best off - those who have the most money, the most education, and the most respected jobs. At the bottom are the people who are the worst off - who have the least money, least education,
+                  and the least respected jobs or no job. The higher up you are on this ladder, the closer you are to the people at the very top; the lower you are, the closer you are to the people at the very bottom.
+                </p>
+                <p><b>Where would you place yourself on this ladder?</b></p>
+                <p>
+                  <select name="ladder" id="ladder" form="demographics">
+                    <option value="">Choose a rung</option>
+                    <option value="10">10 - Top</option>
+                    <option value="9">9</option>
+                    <option value="8">8</option>
+                    <option value="7">7</option>
+                    <option value="6">6</option>
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1 - Bottom</option>
+                  </select>
+                </p>
+              </td>
+            </tr>
+      </table>
+      <br>
+
+      <p><b>What is your age?</b></p>
+      <p>
+        <select name="age" id="age" form="demographics">
+          <option value="">Choose an age</option>
+          <option value="0-19">&nbsp;0-19</option>
+          <option value="20-29">20-29</option>
+          <option value="30-39">30-39</option>
+          <option value="40-49">40-49</option>
+          <option value="50-59">50-59</option>
+          <option value="60-69">60-69</option>
+          <option value="70-79">70-79</option>
+          <option value="80-89">80-89</option>
+          <option value="&gt;90">90+</option>
+        </select>
+      </p>
+
+      <p><b>How do you identify your gender?</b></p>
+      <p>
+        <select name="gender" id="gender" form="demographics">
+          <option value="">Choose a gender</option>
+          <option value="Man">Man</option>
+          <option value="Woman">Woman</option>
+          <option value="Trans">Trans*</option>
+          <option value="notDisclosed">Prefer not to disclose</option>
+      </p>
+
+      <p><b>What is your highest level of education completed?</b></p>
+      <p>
+        <select name="education" id="education" form="demographics">
+          <option value="">Choose a level</option>
+          <option value="gradeSchool">Grade school</option>
+          <option value="highSchool">High school</option>
+          <option value="someCollege">Some college</option>
+          <option value="4year">4-year college</option>
+          <option value="someGrad">Some graduate school</option>
+          <option value="Grad">Graduate degree</option>
+        </select>
+      </p>
+
+      <p><b>What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)?</b></p>
+      <p>
+        <input type="text" id="homelang" name="lg" style="width:40%" value="">
+        </textarea>
+      </p>
+
+      <p><b>What is your ethnicity?</b></p>
+      <p>
+
+        <select name="ethnicity" id="ethnicity" form="demographics">
+          <option value="">Choose an ethnicity</option>
+          <option value="Hispanic">Hispanic or Latino</option>
+          <option value="NonHispanic">Non-Hispanic or Latino</option>
+          <option value="NA">Prefer not to state</option>
+        </select>
+      </p>
+
+      <p><b>What is your race? Please check all that apply.</b></p>
+      <p>
+        <form>
+          <input type="checkbox" name="race" value="amInd"> American Indian or Alaskan Native
+          <br>
+          <input type="checkbox" name="race" value="asian"> Asian
+          <br>
+          <input type="checkbox" name="race" value="natHaw"> Native Hawaiian or US Pacific Islander
+          <br>
+          <input type="checkbox" name="race" value="black"> Black/African American
+          <br>
+          <input type="checkbox" name="race" value="white"> White
+          <br>
+          <input type="checkbox" name="race" value="other"> Other
+        </form>
+
+        <p><b>How many children do you have?</b></p>
+        <p>
+          <select name="children" id="children" form="demographics">
+            <option value="">Choose a number</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="morethan5">More than 5</option>
+          </select>
+        </p>
+
+        <p><b>If you have children, how old are they? Mark all that apply.</b></p>
+        <p>
+          <select name="childAge" id="childAge" form="demographics">
+            <input type="checkbox" name="child_age" value="0to6mo">0-6 months old</input>
+             <input type="checkbox" name="child_age" value="7to12mo">7-12 months old</input>
+             <input type="checkbox" name="child_age" value="1y">1 year old</input>
+             <input type="checkbox" name="child_age" value="2y">2 years old</input>
+             <input type="checkbox" name="child_age" value="3y">3 years old</input>
+             <input type="checkbox" name="child_age" value="4y">4 years old</input>
+             <input type="checkbox" name="child_age" value="5y">5 years old</input>
+             <input type="checkbox" name="child_age" value="6y">6 years old</input>
+             <input type="checkbox" name="child_age" value="7y">7 years old</input>
+             <input type="checkbox" name="child_age" value="8y">8 years old</input>
+             <input type="checkbox" name="child_age" value="9y">9 years old</input>
+             <input type="checkbox" name="child_age" value="10y">10 years old</input>
+             <input type="checkbox" name="child_age" value="olderthan10">More than 10 years old</input>
+          </select>
+
+
+            <p><b>What do you think this experiment was about?</b></p>
+            <p>
+              <textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
+            </p>
+
+            <p><b>Had you read any of the articles before this experiment? Check any that apply.</b></p>
+
+      <p>
+        <form>
+          <input type="checkbox" name="prior_exposure" value="article1"> Article 1 (children learning from free play)<br>
+          <input type="checkbox" name="prior_exposure" value="article2"> Article 2 (babies learning to reach)<br>
+          <input type="checkbox" name="prior_exposure" value="article3"> Article 3 (babies learning from surprising events)
+        </form>
+
+    </form>
+
+    <div>
+      <p>The articles used in this study were abbreviated versions of:<br>
+        <br>1. Gopnick, Alison, "Why Preschool Shouldn't Be Like School", Slate.com, March, 2011<br>
+        <br>2. Strauss, Elissa, "Is It Time to Start Reach-Training Your Baby?", Slate.com, March, 2016<br>
+        <br>2. Handwerk, Brian, "Like Tiny Scientists, Babies Learn Best By Focusing on Surprising Objects", Smithsonian.com, April, 2015<br>
+      </p>
+
+    <div align="center">
+      <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>
+    </div>
+  </div>
+
+  <!-- The finish slide. -->
+  <div class="slide" id="finished">
+    You're finished - thanks for participating! Submitting to Mechanical Turk...
+  </div>
+
+  <script src="uptake_e3.js"></script>
+
+</body>
+
+</html>
