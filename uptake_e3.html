@@ -109,12 +109,12 @@
 
     <br>
 
-    <p class="block-text">You will now be asked to read three short articles. Please read them <em>carefully</em> at your own pace. After you finish reading all three articles, we will ask you questions about them. 
+    <p class="block-text">We will now ask you to read <b>three</b> short articles. Please read them carefully at your own pace. <b>After you finish reading all three articles, we will ask you questions about them.</b>
 
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" onClick="this.blur(); experiment.next(); experiment.starttarget()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.starttarget1()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -131,12 +131,15 @@
     <br>
 
     <div align="center">
-      <h5>This is the <b>first</b> of three articles you'll be asked to read. Please read the text at your own pace. Once you have finished reading, click "Continue."</h5>
+      <h4>This is <b>Article 1</b>. Please read at your own pace. Once you have finished reading, click "Continue."</h4>
+      <img src="images/toy.png" width=200px>
       <br>
     </div>
 
     <!-- Show parenting article -->
     <div class="block-text">
+
+<p style="font-size:20px;line-height: 20px; width: 800px; text-align:left">
       <p id="article">
         Ours is an age of pedagogy. Anxious parents instruct their children more and more, at younger and younger ages, until they're reading books to babies in the womb. They pressure teachers to make kindergartens and nurseries more like schools. So does the law—the 2001 No Child Left Behind Act explicitly urged more direct instruction in federally funded preschools.
         <br>
@@ -168,7 +171,7 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttar()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttarget1(); experiment.starttarget2()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -185,7 +188,8 @@
     <br>
 
     <div align="center">
-      <h5>This is the <b>second</b> of the articles. Please read the following text at your own pace. Once you have finished reading, click "Continue."
+      <h4>This is <b>Article 2</b>. Please read at your own pace. Once you have finished reading, click "Continue."</h4>
+      <img src="images/mittens.png" width=200px>
     </h5>
       <br>
     </div>
@@ -212,7 +216,7 @@
     <table align="center">
       <tr>
         <td align="center">
-          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttarget2()"> Continue</button>
+          <button type="button" onClick="this.blur(); experiment.next(); experiment.getrttarget2(); experiment.starttarget3()"> Continue</button>
         </td>
         <tr>
           <td align="center">
@@ -230,8 +234,10 @@
     <br>
 
     <div align="center">
-      <h5>This is the <b>second</b> of the articles. Please read the following text at your own pace. Once you have finished reading, click "Continue."
+      <h4>This is <b>Article 3</b>. Please read at your own pace. Once you have finished reading, click "Continue."</h4>
+      <img src="images/ball.png" width=200px>
     </h5>
+      <br>
       <br>
     </div>
 
@@ -280,7 +286,7 @@
 
     <br>
 
-    <p class="block-text">You will now be asked to answer a few questions about the articles that you just read.</p>
+    <p class="block-text">We will now ask you to answer a few questions about the articles that you just read.</p>
 
     <table align="center">
       <tr>
@@ -289,7 +295,6 @@
         </td>
         <tr>
           <td align="center">
-
           </td>
         </tr>
 
@@ -301,42 +306,58 @@
   <div class="slide" id="target1_1">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 1
+      </h4>
+      <img src="images/toy.png" width=200px>
+    </div>
     <br>
     <br>
 
    <!-- Show recall question -->
     <div align="center">
-      <p>Based on Article 1, when children see a teacher demonstrate the function of a toy, they
+      <p class = "block-text">In Article 1, when an adult acted more like a teacher and showed children how to make a toy squeak, children:
       </p>
-    </div>
-
+   </div>
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+     <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall1a" type="radio" name="recall" value="a">
-          <label for="recall1a">a. Explore the toy less because they have become bored by the toy. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall1b" type="radio" name="recall" value="b">
-          <label for="recall1b">b. Explore the toy less because they assume the teacher has showed them everything there is to know about the toy.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Played with the toy <u>more</u> than if the adult acted <u>surprised</u> by the toy.</label>
         </td>
-        <td valign="top">
-          <input id="recall1c" type="radio" name="recall" value="c">
-          <label for="recall1c">c. Explore the toy more because they have become more interested in the toy.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
         </td>
-         <td valign="top">
-          <input id="recall1c" type="radio" name="recall" value="c">
-          <label for="recall1c">d. Explore the toy more because they assume the teacher has not showed them everything there is to know about the toy</label>
+        <td id="mult-answer">
+          <label for="recall2b">b. Played with the toy <u>less</u> than if the adult acted <u>surprised</u> by the toy.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Played with the toy <u>more</u> than when the adult acted <u>bored</u> by the toy.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Played with the toy <u>less</u> than when the adult acted <u>bored</u> by the toy.</label>
         </td>
       </tr>
     </table>
 
+
+       
     <!-- Next button and "please make a response" message -->
     <table align="center">
       <tr>
@@ -356,30 +377,51 @@
       <!-- Recall 2 slide -->
   <div class="slide" id="target1_2">
     <br>
-
+    <br>
+    <div align = "center">
+      <h4 align="center">Article 1
+      </h4>
+      <img src="images/toy.png" width=200px>
+    </div>
+    <br>
+    <br>
    <!-- Show recall question -->
     <div align="center">
-     <img src="images/register.png" width=200px>
-      <p>A teacher and child are playing with the toy cash register above. The teacher says she is an expert at this toy, and presses several different keys followed by the open key. The register opens! Based on <strong>Article 1</strong>, the child is more likely to:
+      <p class="block-text">In Article 1, children were more likely to find new and better ways to make a toy work when the adult:
       </p>
     </div>
-
     <br>
-
     <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+    <table class="block-text">
       <tr>
-        <td valign="top">
+        <td id="mult-choice">
           <input id="recall2a" type="radio" name="recall" value="a">
-          <label for="recall2a">a. Imitate the teacher by pressing the same set of keys to make the box open. </label>
         </td>
-        <td valign="top">
+        <td id="mult-answer">
+          <label for="recall2a">a. Pretended to be clueless about the toy.</label>
+        </td>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
           <input id="recall2b" type="radio" name="recall" value="b">
-          <label for="recall2b">b. Understand that only the final key made the box open, and press that key.</label>
         </td>
-        <td valign="top">
+        <td id="mult-answer">
+          <label for="recall2b">b. Pretended to be an expert on the toy.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
           <input id="recall2c" type="radio" name="recall" value="c">
-          <label for="recall2c">c. Try pressing a different set of keys to figure out how to make the box open.</label>
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Pretended not to care about the toy.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Didn’t mention the toy at all and ignored it.</label>
         </td>
       </tr>
     </table>
@@ -400,33 +442,58 @@
 
   <!-- End recall 2 slide -->
 
-  <!-- Recall 3 slide -->
+
+    <!-- Recall 3 slide -->
   <div class="slide" id="target1_3">
+    <br>
+    <br>
+    <div align = "center">
+      <h4 align="center">Article 1
+      </h4>
+      <img src="images/toy.png" width=200px>
+    </div>
+    <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <img src="images/toy.png" width=200px>
-      <p>Based on <strong>Article 1</strong>, when playing with the above toy with a child, is it better to:
+      <p class = "block-text">According to Article 1, children believe:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
-       <tr>
-        <td valign="top">
-          <input id="recall3a" type="radio" name="recall" value="a">
-          <label for="recall3a">a. Demonstrate for the child where each of the blocks fits into the box before allowing her to play freely. </label>
+     <!-- Likert radio buttons -->
+    <table class="block-text">
+      <tr>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall3b" type="radio" name="recall" value="b">
-          <label for="recall3b">b. Let the child play freely with the toy without instruction.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. That teachers don’t know everything.</label>
         </td>
-        <td valign="top">
-          <input id="recall3c" type="radio" name="recall" value="c">
-          <label for="recall3c">c. Quiz the child about shapes and colors.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. That teachers will give them incomplete information.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. That teachers try to be informative.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. That teachers should not be trusted.</label>
         </td>
       </tr>
     </table>
@@ -451,34 +518,53 @@
   <div class="slide" id="target1_4">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 1
+      </h4>
+      <img src="images/toy.png" width=200px>
+    </div>
     <br>
     <br>
 
    <!-- Show recall question -->
     <div align="center">
-      <p>Based on <strong>Article 1</strong>, preschool directors should plan to have:
+      <p class = "block-text">Based on Article 1, when children see a teacher demonstrate the function of a toy, they:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+     <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall4a" type="radio" name="recall" value="a">
-          <label for="recall4a">a. More time spent memorizing things that will be helpful later, such as the ABCs.</label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall4b" type="radio" name="recall" value="b">
-          <label for="recall4b">b. More structured time in which children are taught lessons and skills.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Explore the toy less because they have become bored by the toy.</label>
         </td>
-        <td valign="top">
-          <input id="recall4c" type="radio" name="recall" value="c">
-          <label for="recall4c">c. More time for children to play outside and with toys.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Explore the toy less because they assume the teacher has showed them everything there is to know about the toy.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Explore the toy more because they have become more interested in the toy.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Explore the toy more because they assume the teacher has not showed them everything there is to know about the toy.</label>
         </td>
       </tr>
     </table>
@@ -503,34 +589,53 @@
   <div class="slide" id="target1_5">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 1
+      </h4>
+      <img src="images/toy.png" width=200px>
+    </div>
     <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p>Based on <strong>Article 1</strong>, when playing with blocks with a toddler, you should:
+      <p class = "block-text">A teacher and child are playing with a toy cash register. The teacher says he is an expert at this toy, and presses several different keys followed by the open key, and the register opens. Based on Article 1, the child is more likely to:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+     <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall5a" type="radio" name="recall" value="a">
-          <label for="recall5a">a. Avoid saying anything about the blocks, to avoid interfering with the child’s learning. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall5b" type="radio" name="recall" value="b">
-          <label for="recall5b">b. Demonstrate for the child how to build a tower and then have her imitate you.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Imitate the teacher by pressing the same set of keys to make the box open.</label>
         </td>
-        <td valign="top">
-          <input id="recall5c" type="radio" name="recall" value="c">
-          <label for="recall5c">c. Encourage the child to play with the blocks however she wants.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Understand that only the final key made the box open, and press that key.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Try pressing a different set of keys to figure out how to make the box open.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Be uninterested in making the box open.</label>
         </td>
       </tr>
     </table>
@@ -555,31 +660,53 @@
   <div class="slide" id="target1_6">
     <br>
     <br>
+    <div align = "center">
+      <h4 align="center">Article 1
+      </h4>
+      <img src="images/toy.png" width=200px>
+    </div>
     <br>
     <br>
-    <br>
+
     <!-- Show sentence from attitudes scale -->
     <div align="center">
-      <p>According to <strong>Article 1</strong>, when an experimenter acted more like a teacher and showed children how to make a toy squeak, children:
+      <p class = "block-text">Based on Article 1, when playing with blocks with a toddler, you should:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+     <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall6a" type="radio" name="recall" value="a">
-          <label for="recall6a">a. Played with the toy more than if the experimenter acted surprised by the toy. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall6b" type="radio" name="recall" value="b">
-          <label for="recall6b">b. Played with the toy less than if the experimenter acted surprised by the toy.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Tell the child what to build but have her do the work.</label>
         </td>
-        <td valign="top">
-          <input id="recall6c" type="radio" name="recall" value="c">
-          <label for="recall6c">c. Played with the toy the same amount whether or not the experimenter acted surprised by the toy.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Demonstrate for the child how to build a tower and then have her imitate you.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Encourage the child to play with the blocks however she wants.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Help the child by putting blocks together yourself if she can’t do it right away.</label>
         </td>
       </tr>
     </table>
@@ -604,31 +731,53 @@
   <div class="slide" id="target2_1">
     <br>
     <br>
+    <div align = "center">
+      <h4 align="center">Article 2
+      </h4>
+      <img src="images/mittens.png" width=200px>
+    </div>
     <br>
     <br>
-    <br>
+
     <!-- Show sentence from attitudes scale -->
     <div align="center">
-      <p>According to <strong>Article 1</strong>, children explore and discover more when:
+      <p class = "block-text">In Article 2, when children wore velcro mittens, they:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+     <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall7a" type="radio" name="recall" value="a">
-          <label for="recall7a">a. Adults let them play freely without instruction. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall7b" type="radio" name="recall" value="b">
-          <label for="recall7b">b. Adults choose which items children play with.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Were more likely to make contact with toys.</label>
         </td>
-        <td valign="top">
-          <input id="recall7c" type="radio" name="recall" value="c">
-          <label for="recall7c">c. Adults show them exactly how something works.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Were less likely to make contact with toys.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Had more trouble making the toys work.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Had less trouble making the toys work.</label>
         </td>
       </tr>
     </table>
@@ -653,31 +802,53 @@
   <div class="slide" id="target2_2">
     <br>
     <br>
+    <div align = "center">
+      <h4 align="center">Article 2
+      </h4>
+      <img src="images/mittens.png" width=200px>
+    </div>
     <br>
     <br>
-    <br>
+
     <!-- Show sentence from attitudes scale -->
     <div align="center">
-      <p>According to <strong>Article 1</strong>, children were more likely to find new and better ways to make a toy work when the experimenter:
+      <p class = "block-text">In Article 2, when researchers invited the children back to the lab when they were older, they found that the children who had played with the velcro mittens:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall8a" type="radio" name="recall" value="a">
-          <label for="recall8a">a. Pretended to be clueless about how the toy worked when playing with it. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall8b" type="radio" name="recall" value="b">
-          <label for="recall8b">b. Pretended to be an expert about the toy when playing with it.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Still remembered how to use the toys that went with the velcro mittens.</label>
         </td>
-        <td valign="top">
-          <input id="recall8c" type="radio" name="recall" value="c">
-          <label for="recall8c">c. Pretended not to care about the toy.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Were better at using the velcro mittens than other children.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Had worse social interaction skills than other children.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Had better motor and attention skills than other children.</label>
         </td>
       </tr>
     </table>
@@ -702,31 +873,53 @@
   <div class="slide" id="target2_3">
     <br>
     <br>
+    <div align = "center">
+      <h4 align="center">Article 2
+      </h4>
+      <img src="images/mittens.png" width=200px>
+    </div>
     <br>
     <br>
-    <br>
+
     <!-- Show sentence from attitudes scale -->
     <div align="center">
-      <p>According to <strong>Article 1</strong>, children believe:
+      <p class = "block-text">Based on the results of the study in Article 2, researchers believe that:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall9a" type="radio" name="recall" value="a">
-          <label for="recall9a">a. That teachers try to be informative. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall9b" type="radio" name="recall" value="b">
-          <label for="recall9b">b. That teachers don’t know everything.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Playing with the velcro mittens taught babies to focus on the objects around them, even when they were no longer wearing the mittens.</label>
         </td>
-        <td valign="top">
-          <input id="recall9c" type="radio" name="recall" value="c">
-          <label for="recall9c">c. That teachers will give them incomplete information.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Babies discovered how to interact with the mittens, but concentrating on the mittens made them ignore the experimenter.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Babies’ memories of playing with the mittens made them prefer toys with velcro on them.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Babies learned that playing with the velcro mittens made it easier to play with toys.</label>
         </td>
       </tr>
     </table>
@@ -751,31 +944,53 @@
   <div class="slide" id="target2_4">
     <br>
     <br>
+    <div align = "center">
+      <h4 align="center">Article 2
+      </h4>
+      <img src="images/mittens.png" width=200px>
+    </div>
     <br>
     <br>
-    <br>
+
     <!-- Show sentence from attitudes scale -->
     <div align="center">
-      <p>According to <strong>Article 1</strong>:
+      <p class = "block-text">Based on Article 2, learning to reach with their hands is good for babies because::
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall10a" type="radio" name="recall" value="a">
-          <label for="recall10a">a. Children cannot learn anything new from a teacher. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall10b" type="radio" name="recall" value="b">
-          <label for="recall10b">b. Children cannot learn new things without a teacher.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. It helps them get motivated to crawl to get other objects.</label>
         </td>
-        <td valign="top">
-          <input id="recall10c" type="radio" name="recall" value="c">
-          <label for="recall10c">c. Children can learn new things quickly from a teacher.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. They will pay more attention to objects around them.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. It helps them learn to feed themselves more easily.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. It helps them learn self-control over their actions.</label>
         </td>
       </tr>
     </table>
@@ -797,38 +1012,57 @@
   <!-- End recall 10 slide -->
 
 
-  <!-- Control recall 1 slide -->
+  <!-- Recall 11 slide -->
   <div class="slide" id="target2_5">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 2
+      </h4>
+      <img src="images/mittens.png" width=200px>
+    </div>
     <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p>According to <strong>Article 2</strong>, how many words does English have dedicated to describing smells?
+      <p class = "block-text">Based on Article 2, if parents want their children to have better attention and motor skills, they should:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="control1a" type="radio" name="recall" value="a">
-          <label for="control1a">a. 3 </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="control1b" type="radio" name="recall" value="b">
-          <label for="control1b">b. 13 </label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Put a variety of different coverings on their babies’ hands during playtime so they can experience different textures.</label>
         </td>
-        <td valign="top">
-          <input id="control1c" type="radio" name="recall" value="c">
-          <label for="control1c">c. 33 </label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Encourage babies to pay attention to only one toy at a time so that they don’t spread their attention too thinly.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Let children explore whatever objects are around, even common objects like spoons or brushes.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Put things directly in babies’ hands if they can’t reach for objects yet.</label>
         </td>
       </tr>
     </table>
@@ -847,41 +1081,60 @@
     </table>
   </div>
 
-  <!-- End Control recall 1 slide -->
+  <!-- End recall 11 slide -->
 
   
-  <!-- Control recall 2 slide -->
+  <!-- recall 12 slide -->
   <div class="slide" id="target2_6">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 2
+      </h4>
+      <img src="images/mittens.png" width=200px>
+    </div>
     <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p>According to <strong>Article 2</strong>, which of the following is true:
+      <p class = "block-text">In Article 2, the researchers said that a “developmental cascade” had occurred due to children’s use of the velcro mittens. Which of the following describes a developmental cascade?
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="control2a" type="radio" name="recall" value="a">
-          <label for="control2a">a. No languages have more than three words for smells, because most smells are impossible to describe.</label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="control2b" type="radio" name="recall" value="b">
-          <label for="control2b">b. English is the only language that has few words for smells.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Children master new skills (e.g., crawling) especially quickly because they have received a lot of practice with that skill.</label>
         </td>
-        <td valign="top">
-          <input id="control2c" type="radio" name="recall" value="c">
-          <label for="control2c">c. Only a few languages have more than three words for smells.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Children master new skills (e.g., crawling) earlier than they are expected to because parents motivate them (e.g., by putting toys out of reach).</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Learning one skill (e.g., crawling) helps children learn other skills (e.g., learning about different parts of the house).</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Children master several different skills at once (e.g., crawling and babbling).</label>
         </td>
       </tr>
     </table>
@@ -900,40 +1153,59 @@
     </table>
   </div>
 
-  <!-- End Control recall 2 slide -->
+  <!-- End recall 12 slide -->
 
-    <!-- Control recall 3 slide -->
-  <div class="slide" id="target3_1">
+    <!-- recall 13 slide -->
+   <div class="slide" id="target3_1">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 3
+      </h4>
+      <img src="images/ball.png" width=200px>
+    </div>
     <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p>According to <strong>Article 2</strong>, what do the groups known for having many words for smells have in common?
+      <p class = "block-text">In Article 3, children saw unexpected events including:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="control3a" type="radio" name="recall" value="a">
-          <label for="control3a">a. They train their children to be able to tell the difference between smells.</label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="control3b" type="radio" name="recall" value="b">
-          <label for="control3b">b. They are hunter-gatherers.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. A toy car rolling through a solid wall.</label>
         </td>
-        <td valign="top">
-          <input id="control3c" type="radio" name="recall" value="c">
-          <label for="control3c">c. They have unusually good hearing and vision.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. A toy falling off the table.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. A toy animal speaking out loud.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. A balloon flying away.</label>
         </td>
       </tr>
     </table>
@@ -952,40 +1224,59 @@
     </table>
   </div>
 
-  <!-- End Control recall 3 slide -->
+  <!-- End recall 13 slide -->
 
-    <!-- Control recall 4 slide -->
+    <!-- recall 14 slide -->
   <div class="slide" id="target3_2">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 3
+      </h4>
+      <img src="images/ball.png" width=200px>
+    </div>
     <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p>According to <strong>Article 2</strong>, when a researcher tested the Jahai of Malaysia using smell tests, she found that:
+      <p class = "block-text">In Article 3, when given the choice to play with one of the toys they had seen, children were more likely to:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="control4a" type="radio" name="recall" value="a">
-          <label for="control4a">a. Although they had many words for smells, different people used different words to describe the same smell.</label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="control4b" type="radio" name="recall" value="b">
-          <label for="control4b">b. Most people did not know the meaning of most of the smell words in their language.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Play with the toy that behaved as expected.</label>
         </td>
-        <td valign="top">
-          <input id="control4c" type="radio" name="recall" value="c">
-          <label for="control4c">c. People were highly consistent in their use of smell words- different people had the same words for the same smells.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Play with the toy that did something unexpected.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Play with the toy they were <u>least</u> familiar with.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Play with the toy they were <u>most</u> familiar with.</label>
         </td>
       </tr>
     </table>
@@ -1004,40 +1295,59 @@
     </table>
   </div>
 
-  <!-- End Control recall 1 slide -->
+  <!-- End recall 14 slide -->
 
-    <!-- Control recall 5 slide -->
+    <!-- recall 15 slide -->
   <div class="slide" id="target3_3">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 3
+      </h4>
+      <img src="images/ball.png" width=200px>
+    </div>
     <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p>According to <strong>Article 2</strong>, before finding the Jahai and Maniq people, researchers previously believed:
+      <p class = "block-text">In Article 3, when playing with a toy they had seen go through a solid wall, children:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="control5a" type="radio" name="recall" value="a">
-          <label for="control5a">a. People were better at describing good smells than bad smells. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="control5b" type="radio" name="recall" value="b">
-          <label for="control5b">b. Humans were not capable of describing most smells with words.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Were hesitant to interact with the toy too much.</label>
         </td>
-        <td valign="top">
-          <input id="control5c" type="radio" name="recall" value="c">
-          <label for="control5c">c. People were better at describing bad smells than good smells.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Asked an adult for help using the toy.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Banged the toy to see if it was solid.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Dropped the toy to see if it fell.</label>
         </td>
       </tr>
     </table>
@@ -1056,40 +1366,59 @@
     </table>
   </div>
 
-  <!-- End Control recall 5 slide -->
+  <!-- End Control recall 15 slide -->
 
-      <!-- Control recall 5 slide -->
+      <!-- Control recall 16 slide -->
   <div class="slide" id="target3_4">
     <br>
     <br>
-    <br>
-    <br>
-    <br>
+    <div align = "center">
+      <h4 align="center">Article 3
+      </h4>
+      <img src="images/ball.png" width=200px>
+    </div>
     <br>
     <br>
 
     <!-- Show recall question -->
     <div align="center">
-      <p>According to <strong>Article 2</strong>, before finding the Jahai and Maniq people, researchers previously believed:
+      <p class = "block-text">Based on the results of this study in Article 3, researchers can conclude that:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="control5a" type="radio" name="recall" value="a">
-          <label for="control5a">a. People were better at describing good smells than bad smells. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="control5b" type="radio" name="recall" value="b">
-          <label for="control5b">b. Humans were not capable of describing most smells with words.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Babies learn by paying attention to surprising events.</label>
         </td>
-        <td valign="top">
-          <input id="control5c" type="radio" name="recall" value="c">
-          <label for="control5c">c. People were better at describing bad smells than good smells.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Babies have trouble processing surprising events and learn by paying attention to familiar, predictable events.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Babies quickly learn new rules about the physical world (e.g., cars can go through walls) if they see it happen once.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Babies do not know enough about the physical world to be surprised by a toy going through a wall.</label>
         </td>
       </tr>
     </table>
@@ -1108,38 +1437,60 @@
     </table>
   </div>
 
-    <!-- End Control recall 5 slide -->
+    <!-- End recall 16 slide -->
 
 
-     <!-- Recall 9 slide -->
+     <!-- Recall 17 slide -->
   <div class="slide" id="target3_5">
     <br>
     <br>
+    <div align = "center">
+      <h4 align="center">Article 3
+      </h4>
+      <img src="images/ball.png" width=200px>
+    </div>
     <br>
     <br>
-    <br>
+
     <!-- Show sentence from attitudes scale -->
     <div align="center">
-      <p>According to <strong>Article 1</strong>, children believe:
+      <p class = "block-text">Based on the results of the study in Article 3, a baby who sees a ball appear to hover in midair is likely to:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall9a" type="radio" name="recall" value="a">
-          <label for="recall9a">a. That teachers try to be informative. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall9b" type="radio" name="recall" value="b">
-          <label for="recall9b">b. That teachers don’t know everything.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Be afraid of the ball.</label>
         </td>
-        <td valign="top">
-          <input id="recall9c" type="radio" name="recall" value="c">
-          <label for="recall9c">c. That teachers will give them incomplete information.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Try picking up and dropping the ball.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Believe that objects can move around on their own.</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Play with the ball less than other toys.</label>
         </td>
       </tr>
     </table>
@@ -1158,37 +1509,59 @@
     </table>
   </div>
 
-  <!-- End recall 9 slide -->
+  <!-- End recall 17 slide -->
 
-     <!-- Recall 10 slide -->
+     <!-- Recall 18 slide -->
   <div class="slide" id="target3_6">
     <br>
     <br>
+    <div align = "center">
+      <h4 align="center">Article 3
+      </h4>
+      <img src="images/ball.png" width=200px>
+    </div>
     <br>
     <br>
-    <br>
+
     <!-- Show sentence from attitudes scale -->
     <div align="center">
-      <p>According to <strong>Article 1</strong>:
+      <p class = "block-text">Based on the results of the study in Article 3, we might assume that:
       </p>
     </div>
 
     <br>
 
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
+ <!-- Likert radio buttons -->
+    <table class="block-text">
       <tr>
-        <td valign="top">
-          <input id="recall10a" type="radio" name="recall" value="a">
-          <label for="recall10a">a. Children cannot learn anything new from a teacher. </label>
+        <td id="mult-choice">
+          <input id="recall2a" type="radio" name="recall" value="a">
         </td>
-        <td valign="top">
-          <input id="recall10b" type="radio" name="recall" value="b">
-          <label for="recall10b">b. Children cannot learn new things without a teacher.</label>
+        <td id="mult-answer">
+          <label for="recall2a">a. Babies’ vision is not good enough for them to realize something impossible has happened (e.g., that an object has moved through a solid wall)</label>
         </td>
-        <td valign="top">
-          <input id="recall10c" type="radio" name="recall" value="c">
-          <label for="recall10c">c. Children can learn new things quickly from a teacher.</label>
+      </tr>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2b" type="radio" name="recall" value="b">
+        </td>
+        <td id="mult-answer">
+          <label for="recall2b">b. Babies only realize that an event is surprising when they see someone else act surprised.</label>
+        </td>
+      <tr>
+        <td  id="mult-choice">
+          <input id="recall2c" type="radio" name="recall" value="c">
+        </td> 
+        <td id ="mult-answer">
+          <label for="recall2c">c. Babies cannot learn new things about the physics of their environment (e.g., that objects can move through solid walls).</label>
+        </td>
+      </tr>
+      <tr>
+        <td id ="mult-choice">
+          <input id="recall2d" type="radio" name="recall" value="c">
+        </td> 
+        <td  id ="mult-answer">
+          <label for="recall2d">d. Babies have expectations about the physics of their environment (e.g., that unsupported things fall down and objects cannot move through walls)</label>
         </td>
       </tr>
     </table>
@@ -1202,69 +1575,15 @@
         <tr>
           <td align="center">
             <div id="testMessage_r18"> </div>
-          </td>,z>
-        </tr>
-    </table>
-  </div>
-
-  <!-- End recall 10 slide -->
-
-
-
-
-  <!-- End Control recall 5 slide -->
-
-      <!-- Control recall 5 slide -->
-  <div class="slide" id="target3_8">
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <!-- Show recall question -->
-    <div align="center">
-      <p>According to <strong>Article 2</strong>, before finding the Jahai and Maniq people, researchers previously believed:
-      </p>
-    </div>
-
-    <br>
-
-    <!-- Likert radio buttons -->
-    <table align="center" class="likert">
-      <tr>
-        <td valign="top">
-          <input id="control5a" type="radio" name="recall" value="a">
-          <label for="control5a">a. People were better at describing good smells than bad smells. </label>
-        </td>
-        <td valign="top">
-          <input id="control5b" type="radio" name="recall" value="b">
-          <label for="control5b">b. Humans were not capable of describing most smells with words.</label>
-        </td>
-        <td valign="top">
-          <input id="control5c" type="radio" name="recall" value="c">
-          <label for="control5c">c. People were better at describing bad smells than good smells.</label>
-        </td>
-      </tr>
-    </table>
-
-    <!-- Next button and "please make a response" message -->
-    <table align="center">
-      <tr>
-        <td align="center">
-          <button type="button" id="nextButton_c5" onClick="experiment.log_response()"> next</button>
-        </td>
-        <tr>
-          <td align="center">
-            <div id="testMessage_c5"> </div>
           </td>
         </tr>
     </table>
   </div>
 
-    <!-- End Control recall 5 slide -->
+  <!-- End recall 18 slide -->
+
+
+      
 
 
   <!-- The debriefing slide. -->
@@ -1326,6 +1645,7 @@
           <option value="Woman">Woman</option>
           <option value="Trans">Trans*</option>
           <option value="notDisclosed">Prefer not to disclose</option>
+           </select>
       </p>
 
       <p><b>What is your highest level of education completed?</b></p>
@@ -1390,45 +1710,37 @@
 
         <p><b>If you have children, how old are they? Mark all that apply.</b></p>
         <p>
-          <select name="childAge" id="childAge" form="demographics">
-            <input type="checkbox" name="child_age" value="0to6mo">0-6 months old</input>
-             <input type="checkbox" name="child_age" value="7to12mo">7-12 months old</input>
-             <input type="checkbox" name="child_age" value="1y">1 year old</input>
-             <input type="checkbox" name="child_age" value="2y">2 years old</input>
-             <input type="checkbox" name="child_age" value="3y">3 years old</input>
-             <input type="checkbox" name="child_age" value="4y">4 years old</input>
-             <input type="checkbox" name="child_age" value="5y">5 years old</input>
-             <input type="checkbox" name="child_age" value="6y">6 years old</input>
-             <input type="checkbox" name="child_age" value="7y">7 years old</input>
-             <input type="checkbox" name="child_age" value="8y">8 years old</input>
-             <input type="checkbox" name="child_age" value="9y">9 years old</input>
-             <input type="checkbox" name="child_age" value="10y">10 years old</input>
-             <input type="checkbox" name="child_age" value="olderthan10">More than 10 years old</input>
+            <input type="checkbox" name="child_age" value="0to6mo">0-6 months old</input><br>
+             <input type="checkbox" name="child_age" value="7to12mo">7-12 months old</input><br>
+             <input type="checkbox" name="child_age" value="1y">1 year old</input><br>
+             <input type="checkbox" name="child_age" value="2y">2 years old</input><br>
+             <input type="checkbox" name="child_age" value="3y">3 years old</input><br>
+             <input type="checkbox" name="child_age" value="4y">4 years old</input><br>
+             <input type="checkbox" name="child_age" value="5y">5 years old</input><br>
+             <input type="checkbox" name="child_age" value="6y">6 years old</input><br>
+             <input type="checkbox" name="child_age" value="7y">7 years old</input><br>
+             <input type="checkbox" name="child_age" value="8y">8 years old</input><br>
+             <input type="checkbox" name="child_age" value="9y">9 years old</input><br>
+             <input type="checkbox" name="child_age" value="10y">10 years old</input><br>
+             <input type="checkbox" name="child_age" value="olderthan10">More than 10 years old</input><br>
           </select>
 
-
-            <p><b>What do you think this experiment was about?</b></p>
-            <p>
-              <textarea type="text" id="expthoughts" style="width:100%" name="expaim"></textarea>
-            </p>
+    <div>
+      <p><b>The articles used in this study were abbreviated versions of:</b><br>
+        <br>Article 1. Gopnick, Alison, "Why Preschool Shouldn't Be Like School", Slate.com, March, 2011<br>
+        <br>Article 2. Strauss, Elissa, "Is It Time to Start Reach-Training Your Baby?", Slate.com, March, 2016<br>
+        <br>Article 3. Handwerk, Brian, "Like Tiny Scientists, Babies Learn Best By Focusing on Surprising Objects", Smithsonian.com, April, 2015<br>
+      </p>
 
             <p><b>Had you read any of the articles before this experiment? Check any that apply.</b></p>
-
       <p>
         <form>
-          <input type="checkbox" name="prior_exposure" value="article1"> Article 1 (children learning from free play)<br>
-          <input type="checkbox" name="prior_exposure" value="article2"> Article 2 (babies learning to reach)<br>
-          <input type="checkbox" name="prior_exposure" value="article3"> Article 3 (babies learning from surprising events)
+          <input type="checkbox" name="prior_exposure" value="article1"> Article 1 <br>
+          <input type="checkbox" name="prior_exposure" value="article2"> Article 2 <br>
+          <input type="checkbox" name="prior_exposure" value="article3"> Article 3 
         </form>
 
-    </form>
-
-    <div>
-      <p>The articles used in this study were abbreviated versions of:<br>
-        <br>1. Gopnick, Alison, "Why Preschool Shouldn't Be Like School", Slate.com, March, 2011<br>
-        <br>2. Strauss, Elissa, "Is It Time to Start Reach-Training Your Baby?", Slate.com, March, 2016<br>
-        <br>2. Handwerk, Brian, "Like Tiny Scientists, Babies Learn Best By Focusing on Surprising Objects", Smithsonian.com, April, 2015<br>
-      </p>
+      </form>
 
     <div align="center">
       <button type="button" id="debriefsubmit" onClick="experiment.submit_comments()">Submit</button>

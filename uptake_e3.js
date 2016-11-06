@@ -84,6 +84,7 @@ var numTrialsExperiment = totalTrialsAtt + totalTrialsUptake;
 var trials = [];
 
 
+
 for (i = 0; i < totalTrialsAtt; i++) {
 	trial = {
 		sentence: atts[i],
@@ -134,7 +135,6 @@ var experiment = {
 		race: [],
 		children:[],
 		childAge:[],
-		expt_aim: [],
 		prior_exposure: [],
 		questionnaire_rt: [],
 		target1_rt: [],
@@ -155,21 +155,23 @@ var experiment = {
 			experiment.data.questionnaire_rt = (starttarget2-starttime)/1000;
 	},
 	starttarget3:function(){
-			starttarget1 = Date.now();
-			experiment.data.questionnaire_rt = (starttarget1-starttime)/1000;
+			starttarget3 = Date.now();
+			experiment.data.questionnaire_rt = (starttarget3-starttime)/1000;
 	},
-	getrttar1:function(){
+	getrttarget1:function(){
 			endtarget1 = Date.now();
 			experiment.data.target1_rt = (endtarget1-starttarget1)/1000;
 	},
-	getrttar2:function(){
+	getrttarget2:function(){
 			endtarget2 = Date.now();
 			experiment.data.target2_rt = (endtarget2-starttarget2)/1000;
 	},
-	getrttar3:function(){
+	getrttarget3:function(){
 			endtarget3 = Date.now();
 			experiment.data.target3_rt = (endtarget3-starttarget3)/1000;
 	},
+
+
 
 	// end the experiment
 	end: function() {
@@ -453,6 +455,16 @@ var experiment = {
 				experiment.data.race.push(races[i].value);
 			}
 		}
+
+			var child_age = document.getElementsByName("child_age");
+
+		// Loop through race buttons
+		for (i = 0; i < child_age.length; i++) {
+			if (child_age[i].checked) {
+				experiment.data.child_age.push(child_age[i].value);
+			}
+		}
+
 		experiment.data.ladder.push(document.getElementById("ladder").value);
 		experiment.data.age.push(document.getElementById("age").value);
 		experiment.data.gender.push(document.getElementById("gender").value);
@@ -461,7 +473,6 @@ var experiment = {
 		experiment.data.ethnicity.push(document.getElementById("ethnicity").value);
 		experiment.data.children.push(document.getElementById("children").value);
 		experiment.data.childAge.push(document.getElementById("child_age").value);
-		experiment.data.expt_aim.push(document.getElementById("expthoughts").value);
 		experiment.data.prior_exposure.push(document.getElementById("prior_exposure").value);
 		experiment.end();
 	}

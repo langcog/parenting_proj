@@ -74,6 +74,27 @@ button[disabled] {
 #instructions {
   text-align: center;
 }
+#mult-choice {
+  width:20%;
+  text-align: right;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
+#mult-answer {
+  width: 500px;
+  text-align: left;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
+#image {
+ width: 200px;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
+
 #odd-key, #even-key {
   background-color: #e3e3e3;
   padding: 2px;
@@ -89,8 +110,9 @@ button[disabled] {
   margin-bottom: 1em;
 }
 .likert {
-	width: 500px;
+	width: 900px;
 	table-layout: fixed;
+  text-align: left;
 }
 #legal {
   margin: 0 auto;
@@ -107,6 +129,7 @@ button[disabled] {
 td {
   text-align: center;
   width: 60px;
+  padding: 3px;
 }
 #sent_question {
   font-size: 16px;
