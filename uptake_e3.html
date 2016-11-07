@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Learning from Science Articles</title>
+  <title>Child Development Survey</title>
   <script src="jquery-1.11.2.min.js"></script>
   <script src="mmturkey-0.6.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -19,7 +19,7 @@
     <br>
     <img src="images/stanford.png" alt="Stanford University">
     <p id='logo-text'>Stanford Language and Cognition Lab</p>
-    <p class="block-text">In this experiment, you will first answer a few questions about your beliefs about parenting and child development, and then you will read two brief articles about science topics, and answer some questions about the articles. If you've already been in a hit of this type ("Child Development Survey" or "Learning from Science Articles"), please don't accept this one.</p>
+    <p class="block-text">In this experiment, you will first answer a few questions about your beliefs about parenting and child development, and then you will read three brief articles about parenting and answer some questions about the articles. If you've already been in a hit of this type ("Child Development Survey" or "Learning from Science Articles"), please don't accept this one.</p>
 
     <button type="button" onclick="this.blur(); experiment.next(), experiment.starttime()">Start</button>
 
@@ -203,7 +203,7 @@
         Researchers at the University of Pittsburgh were interested in the effects of different types of reach-training on infants’ development. They instructed 25 mothers of three-month-olds to engage with their children on reach-related activities for ten minutes a day over the course of two weeks. Some of the mothers were given Velcro mittens for the babies to wear, as well as Velcroed toys for them to grab. The remaining mothers were also given mittens and toys, but without the Velcro. The children who wore the Velcro mittens were more likely to establish contact, whether accidentally or on purpose, with the toys. This, the researchers hypothesized, created an incentive for them to continue reaching.  
         <br>
         <br>
-        When the children reached 15 months, the researchers recorded them playing with a bead-maze toy and used a frame-by-frame coding software to track the children’s visual and physical engagement with it. They also had parents filled out a survey in which they rated their child’s temperament. They discovered that the babies who had done the reach-training with the Velcro mittens and toys had more advanced motor skills and longer attention spans than those who did not, after researchers accounted for any differences in grasping abilities before the training. 
+        When the children reached 15 months, the researchers recorded them playing with a bead-maze toy and used a frame-by-frame coding software to track the children’s visual and physical engagement with it. They also had parents fill out a survey in which they rated their child’s temperament. They discovered that the babies who had done the reach-training with the Velcro mittens and toys had more advanced motor skills and longer attention spans than those who did not, after researchers accounted for any differences in grasping abilities before the training. 
         <br>
         <br>
         Psychologists call these types of results a “developmental cascade,” meaning that the early adoption of one skill can lead to the learning of a number of other skills and therefore affect the child’s overall long-term development. In this case, the act of reaching teaches children to focus and interact with world around her or him. That interaction can lead to more verbal attention from her or his parents, which is crucial for language development.
@@ -541,7 +541,7 @@
           <input id="recall2a" type="radio" name="recall" value="a">
         </td>
         <td id="mult-answer">
-          <label for="recall2a">a. Explore the toy less because they have become bored by the toy.</label>
+          <label for="recall2a">a. Explore the toy <u>less</u> because they have become bored by the toy.</label>
         </td>
       </tr>
       <tr>
@@ -549,14 +549,14 @@
           <input id="recall2b" type="radio" name="recall" value="b">
         </td>
         <td id="mult-answer">
-          <label for="recall2b">b. Explore the toy less because they assume the teacher has showed them everything there is to know about the toy.</label>
+          <label for="recall2b">b. Explore the toy <u>less</u> because they assume the teacher has showed them everything there is to know about the toy.</label>
         </td>
       <tr>
         <td  id="mult-choice">
           <input id="recall2c" type="radio" name="recall" value="c">
         </td> 
         <td id ="mult-answer">
-          <label for="recall2c">c. Explore the toy more because they have become more interested in the toy.</label>
+          <label for="recall2c">c. Explore the toy <u>more</u> because they have become more interested in the toy.</label>
         </td>
       </tr>
       <tr>
@@ -564,7 +564,7 @@
           <input id="recall2d" type="radio" name="recall" value="c">
         </td> 
         <td  id ="mult-answer">
-          <label for="recall2d">d. Explore the toy more because they assume the teacher has not showed them everything there is to know about the toy.</label>
+          <label for="recall2d">d. Explore the toy <u>more</u> because they assume the teacher has not showed them everything there is to know about the toy.</label>
         </td>
       </tr>
     </table>
@@ -612,7 +612,7 @@
           <input id="recall2a" type="radio" name="recall" value="a">
         </td>
         <td id="mult-answer">
-          <label for="recall2a">a. Imitate the teacher by pressing the same set of keys to make the box open.</label>
+          <label for="recall2a">a. Be uninterested in making the box open.</label>
         </td>
       </tr>
       <tr>
@@ -635,7 +635,7 @@
           <input id="recall2d" type="radio" name="recall" value="c">
         </td> 
         <td  id ="mult-answer">
-          <label for="recall2d">d. Be uninterested in making the box open.</label>
+          <label for="recall2d">d. Imitate the teacher by pressing the same set of keys to make the box open.</label>
         </td>
       </tr>
     </table>
@@ -1253,7 +1253,7 @@
           <input id="recall2a" type="radio" name="recall" value="a">
         </td>
         <td id="mult-answer">
-          <label for="recall2a">a. Play with the toy that behaved as expected.</label>
+          <label for="recall2a">a. Play with the toy they were <u>least</u> familiar with.</label>
         </td>
       </tr>
       <tr>
@@ -1261,14 +1261,14 @@
           <input id="recall2b" type="radio" name="recall" value="b">
         </td>
         <td id="mult-answer">
-          <label for="recall2b">b. Play with the toy that did something unexpected.</label>
+          <label for="recall2b">b. Play with the toy they were <u>most</u> familiar with.</label>
         </td>
       <tr>
         <td  id="mult-choice">
           <input id="recall2c" type="radio" name="recall" value="c">
         </td> 
         <td id ="mult-answer">
-          <label for="recall2c">c. Play with the toy they were <u>least</u> familiar with.</label>
+          <label for="recall2c">c. Play with the toy that behaved as expected.</label>
         </td>
       </tr>
       <tr>
@@ -1276,7 +1276,7 @@
           <input id="recall2d" type="radio" name="recall" value="c">
         </td> 
         <td  id ="mult-answer">
-          <label for="recall2d">d. Play with the toy they were <u>most</u> familiar with.</label>
+          <label for="recall2d">d. Play with the toy that did something unexpected.</label>
         </td>
       </tr>
     </table>
@@ -1311,7 +1311,7 @@
 
     <!-- Show recall question -->
     <div align="center">
-      <p class = "block-text">In Article 3, when playing with a toy they had seen go through a solid wall, children:
+      <p class = "block-text">In Article 3, when playing with a toy they had seen go through a wall, children:
       </p>
     </div>
 
@@ -1538,7 +1538,7 @@
           <input id="recall2a" type="radio" name="recall" value="a">
         </td>
         <td id="mult-answer">
-          <label for="recall2a">a. Babies’ vision is not good enough for them to realize something impossible has happened (e.g., that an object has moved through a solid wall)</label>
+          <label for="recall2a">a. Babies’ vision is not good enough for them to realize something impossible has happened (e.g., that an object has moved through a solid wall).</label>
         </td>
       </tr>
       <tr>
@@ -1561,7 +1561,7 @@
           <input id="recall2d" type="radio" name="recall" value="c">
         </td> 
         <td  id ="mult-answer">
-          <label for="recall2d">d. Babies have expectations about the physics of their environment (e.g., that unsupported things fall down and objects cannot move through walls)</label>
+          <label for="recall2d">d. Babies have expectations about the physics of their environment (e.g., that unsupported things fall down and objects cannot move through walls).</label>
         </td>
       </tr>
     </table>
@@ -1708,23 +1708,6 @@
           </select>
         </p>
 
-        <p><b>If you have children, how old are they? Mark all that apply.</b></p>
-        <p>
-            <input type="checkbox" name="child_age" value="0to6mo">0-6 months old</input><br>
-             <input type="checkbox" name="child_age" value="7to12mo">7-12 months old</input><br>
-             <input type="checkbox" name="child_age" value="1y">1 year old</input><br>
-             <input type="checkbox" name="child_age" value="2y">2 years old</input><br>
-             <input type="checkbox" name="child_age" value="3y">3 years old</input><br>
-             <input type="checkbox" name="child_age" value="4y">4 years old</input><br>
-             <input type="checkbox" name="child_age" value="5y">5 years old</input><br>
-             <input type="checkbox" name="child_age" value="6y">6 years old</input><br>
-             <input type="checkbox" name="child_age" value="7y">7 years old</input><br>
-             <input type="checkbox" name="child_age" value="8y">8 years old</input><br>
-             <input type="checkbox" name="child_age" value="9y">9 years old</input><br>
-             <input type="checkbox" name="child_age" value="10y">10 years old</input><br>
-             <input type="checkbox" name="child_age" value="olderthan10">More than 10 years old</input><br>
-          </select>
-
     <div>
       <p><b>The articles used in this study were abbreviated versions of:</b><br>
         <br>Article 1. Gopnick, Alison, "Why Preschool Shouldn't Be Like School", Slate.com, March, 2011<br>
@@ -1735,9 +1718,9 @@
             <p><b>Had you read any of the articles before this experiment? Check any that apply.</b></p>
       <p>
         <form>
-          <input type="checkbox" name="prior_exposure" value="article1"> Article 1 <br>
-          <input type="checkbox" name="prior_exposure" value="article2"> Article 2 <br>
-          <input type="checkbox" name="prior_exposure" value="article3"> Article 3 
+          <input type="checkbox" id="prior_exposure" value="article1"> Article 1 <br>
+          <input type="checkbox" id="prior_exposure" value="article2"> Article 2 <br>
+          <input type="checkbox" id="prior_exposure" value="article3"> Article 3 
         </form>
 
       </form>

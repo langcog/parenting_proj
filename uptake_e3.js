@@ -134,7 +134,6 @@ var experiment = {
 		ethnicity:[],
 		race: [],
 		children:[],
-		childAge:[],
 		prior_exposure: [],
 		questionnaire_rt: [],
 		target1_rt: [],
@@ -444,7 +443,7 @@ var experiment = {
 		showSlide("debriefing");
 	},
 
-	// submitcomments function
+// submitcomments function
 	submit_comments: function() {
 
 		var races = document.getElementsByName("race");
@@ -455,16 +454,6 @@ var experiment = {
 				experiment.data.race.push(races[i].value);
 			}
 		}
-
-			var child_age = document.getElementsByName("child_age");
-
-		// Loop through race buttons
-		for (i = 0; i < child_age.length; i++) {
-			if (child_age[i].checked) {
-				experiment.data.child_age.push(child_age[i].value);
-			}
-		}
-
 		experiment.data.ladder.push(document.getElementById("ladder").value);
 		experiment.data.age.push(document.getElementById("age").value);
 		experiment.data.gender.push(document.getElementById("gender").value);
@@ -472,7 +461,6 @@ var experiment = {
 		experiment.data.homelang.push(document.getElementById("homelang").value);
 		experiment.data.ethnicity.push(document.getElementById("ethnicity").value);
 		experiment.data.children.push(document.getElementById("children").value);
-		experiment.data.childAge.push(document.getElementById("child_age").value);
 		experiment.data.prior_exposure.push(document.getElementById("prior_exposure").value);
 		experiment.end();
 	}
