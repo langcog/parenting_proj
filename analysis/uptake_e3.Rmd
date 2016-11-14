@@ -1,0 +1,287 @@
+---
+title: "Parenting Project Attitudes Questionnaire Uptake with Control Group"
+author: "Emily & Mike"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+<style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code {
+  font-size: 11px;
+}
+pre {
+  font-size: 11px;
+}
+</style>
+
+Data analysis of basic parenting values/attitudes survey.
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+
+rm(list=ls())
+
+setwd("~/Desktop/parenting_proj/analysis")
+
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
+library(langcog)
+library(dplyr)
+library(ggplot2)
+library(rjson)
+library(stringr)
+library(tidyr)
+library(psych)
+library(nFactors)
+library(lme4)
+# library(nFactors)
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_bw())
+```
+
+Read in files and consolidate to the same directory. 
+
+```{r}
+files <- dir("../production-results/uptake_e3_sb/")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/uptake_e3_sb/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  # get trial type
+  trial_type <- jd$answers$data$trial_type
+  
+  #uptake responses
+  answers <- data.frame(
+     trial= jd$answers$data$trial_number_block[trial_type == "uptake"],
+     answer= jd$answers$data$answer,
+     workerid = jd$WorkerId)
+  
+  #questionnaire and demo
+  id <- data.frame(workerid = jd$WorkerId, 
+                   sent = jd$answers$data$sentence[trial_type == "attitudes"],
+                   rating = as.numeric(jd$answers$data$rating[trial_type == "attitudes"]) ,
+                   children = jd$answers$data$children,
+                   language = jd$answers$data$homelang,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   race <- as.character(jd$answers$data$race[1]),
+                   reading_time_1 = jd$answers$data$target1_rt,
+                   reading_time_2 = jd$answers$data$target2_rt,
+                   reading_time_3 = jd$answers$data$target3_rt,
+                   time_questionnaire = jd$answers$data$questionnaire_rt,
+                   prior_exposure_1 = jd$answers$data$prior_exposure_1,
+                   prior_exposure_2 = jd$answers$data$prior_exposure_2,
+                   prior_exposure_3 = jd$answers$data$prior_exposure_3)
+  d.raw <- bind_rows(d.raw, id)
+}
+```
+
+```{r}
+labels <- read.csv("sent_forms_e7.csv")
+labels$sent <- as.character(labels$sent)
+
+answer_key <- read.csv("uptake_key_e3.csv")
+```
+
+Clean up labels.
+
+```{r}
+d.raw$sent <- as.character(d.raw$sent)
+d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "’", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
+d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
+```
+
+Merge. Recode uptake answers by accuracy.  
+
+```{r}
+d <- d.raw %>%
+  left_join(answers) %>%
+  left_join(labels) %>%
+  left_join(answer_key) %>%
+  mutate(answer = as.character(answer))%>%
+  mutate(answer_cor = as.character(answer_cor))%>%
+  mutate(acc = (answer == answer_cor))
+
+d$acc[d$acc == "TRUE"] <- "1"
+d$acc[d$acc == "FALSE"] <- "0"
+
+d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
+```
+
+Plot demographic info.
+
+```{r}
+subinfo <- d %>%
+  group_by(workerid) %>%
+  select(workerid, age, ses, gender, ethnicity, education, children, language, reading_time_1, reading_time_2, reading_time_3) %>%
+  distinct 
+```
+
+
+```{r}
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+```
+
+```{r}
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(language, data=subinfo)
+qplot(ethnicity, data=subinfo)
+```
+
+# Basic analyses
+
+Now look at mean ratings across sentences.
+
+```{r}
+ms <- d %>%
+  group_by(category, instrument, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(instrument, category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+```
+
+Plot attitude.
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = filter(ms, instrument == "attitudes")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+Plot mean subscale scores.
+
+```{r}
+mc <- d %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+ggplot(mc, aes(x = category, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+# Information Uptake Analyses
+
+Create a data frame that has subscale scores. 
+
+Standardize ratings within participant.
+```{r}
+d$rating_centered <- scale(d$rating, center = TRUE, scale = FALSE)
+
+ss <- d %>%
+  group_by(workerid, category, acc) %>%
+  summarize(rating_centered = mean(rating_centered)) %>%
+  spread(category, rating_centered) %>% 
+  left_join(subinfo)
+
+ss.long <- ss %>%
+  gather(subscale, rating, early_learning, affection_attachment, rules_respect) 
+
+```
+
+## Plots
+
+```{r}
+qplot(x = q_type, y = acc, data = d, geom = "bar")
+```
+
+
+```{r}
+ggplot(ss.long, aes(x = rating, y = correct, col = subscale)) +
+  geom_jitter() + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~trial_type)
+```
+
+Setting up exclusion based on reading time.
+
+```{r}
+exclude <- subinfo$workerid[subinfo$reading_time_1 < 30 | subinfo$reading_time_2 < 30 | subinfo$reading_time_3 < 30 ]
+length(exclude)
+qplot(subinfo$reading_time_1, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$reading_time_2, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$reading_time_3, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+```
+
+Both groups with exclusions.
+
+```{r}
+ggplot(filter(ss.long, !workerid %in% exclude), 
+       aes(x = rating, y = correct, colour = subscale)) +
+  geom_jitter() + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_grid(trial_type ~ group)
+```
+
+## Stats 
+
+```{r}
+subscales <- ds %>%
+  group_by(workerid, category) %>%
+  summarize(rating = mean(rating)) %>%
+  spread(category, rating) 
+
+ratings <- d %>% 
+  select(workerid, starts_with("target"), starts_with("control"), group) %>%
+  gather(question, correct, starts_with("target"), starts_with("control")) %>%
+  separate(question, c("passage","trial_type","q_num"), sep = "_") %>%
+  mutate(correct = as.numeric(correct),  
+         q_num = as.numeric(q_num) + 
+           as.numeric(factor(passage)) * 10 + 
+           as.numeric(factor(trial_type)) * 100)
+
+d.reg <- left_join(ratings, subscales) %>%
+  unite(question_type, passage, trial_type)
+```
+
+```{r}
+summary(glmer(correct ~ question_type * rules_respect + 
+                question_type * early_learning + 
+                question_type * group * early_learning +
+                question_type * group * rules_respect +
+                (1|workerid) + 
+                (1|q_num), 
+              data = filter(d.reg, !workerid %in% exclude), 
+              family = "binomial"))
+```
+
