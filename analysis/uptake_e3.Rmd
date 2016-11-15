@@ -55,21 +55,23 @@ theme_set(theme_bw())
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("../production-results/uptake_e3_sb/")
+files <- dir("../production-results/uptake_e3/")
 d.raw <- data.frame()
+answers <- data.frame()
 
 for (f in files) {
-  jf <- paste("../production-results/uptake_e3_sb/",f,sep="")
+  jf <- paste("../production-results/uptake_e3/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   
   # get trial type
   trial_type <- jd$answers$data$trial_type
   
   #uptake responses
-  answers <- data.frame(
+  answers_id <- data.frame(
      trial= jd$answers$data$trial_number_block[trial_type == "uptake"],
      answer= jd$answers$data$answer,
      workerid = jd$WorkerId)
+  answers <- bind_rows(answers, answers_id)
   
   #questionnaire and demo
   id <- data.frame(workerid = jd$WorkerId, 
@@ -82,7 +84,7 @@ for (f in files) {
                    age = jd$answers$data$age,
                    education = jd$answers$data$education,
                    ethnicity = jd$answers$data$ethnicity,
-                   race <- as.character(jd$answers$data$race[1]),
+                   race = as.character(jd$answers$data$race[1]),
                    reading_time_1 = jd$answers$data$target1_rt,
                    reading_time_2 = jd$answers$data$target2_rt,
                    reading_time_3 = jd$answers$data$target3_rt,
@@ -199,35 +201,52 @@ ggplot(mc, aes(x = category, y = mean)) +
 
 # Information Uptake Analyses
 
-Create a data frame that has subscale scores. 
-
 Standardize ratings within participant.
 ```{r}
 d$rating_centered <- scale(d$rating, center = TRUE, scale = FALSE)
+```
 
-ss <- d %>%
-  group_by(workerid, category, acc) %>%
-  summarize(rating_centered = mean(rating_centered)) %>%
-  spread(category, rating_centered) %>% 
-  left_join(subinfo)
+Plot mean recall and generalization scores.
+```{r}
+d$acc <- as.numeric(d$acc)
+ms <- d %>%
+  group_by(q_type) %>%
+  multi_boot_standard(col = "acc")
 
-ss.long <- ss %>%
-  gather(subscale, rating, early_learning, affection_attachment, rules_respect) 
+ggplot(ms, aes(x = q_type, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+
+Create a data frame that has individuals' subscale scores and accuracy by question type. 
+
+```{r}
+ms <- d %>%
+  group_by(workerid, q_type) %>%
+  multi_boot_standard(col = "acc")
+
+ss_rating <- d%>%
+  group_by(workerid, category) %>%
+  summarize(rating = mean(rating)) 
+
+ss_acc <- d%>%
+  group_by(workerid, q_type) %>%
+  summarize(acc = mean(acc)) 
+
+ss <- ss_rating %>%
+  left_join(ss_acc)
 
 ```
 
 ## Plots
 
 ```{r}
-qplot(x = q_type, y = acc, data = d, geom = "bar")
-```
-
-
-```{r}
-ggplot(ss.long, aes(x = rating, y = correct, col = subscale)) +
+ggplot(ss, aes(x = rating, y = acc, col = category)) +
   geom_jitter() + 
   geom_smooth(method="lm", se=FALSE) + 
-  facet_wrap(~trial_type)
+  facet_wrap(~q_type)
 ```
 
 Setting up exclusion based on reading time.
@@ -243,42 +262,31 @@ qplot(subinfo$reading_time_3, binwidth = 15) +
   geom_vline(xintercept =15, lty =2, col="red")
 ```
 
-Both groups with exclusions.
+Exclusions.
 
 ```{r}
-ggplot(filter(ss.long, !workerid %in% exclude), 
-       aes(x = rating, y = correct, colour = subscale)) +
-  geom_jitter() + 
+ggplot(filter(ss, !workerid %in% exclude), 
+       aes(x = rating, y = acc, colour = category)) +
+  geom_jitter() +  
   geom_smooth(method="lm", se=FALSE) + 
-  facet_grid(trial_type ~ group)
+  facet_grid(~q_type)
 ```
+
+```{r}
+d.reg <- d %>%
+  select(workerid, acc, q_type, trial, category, rating)%>%
+  unique %>%
+  spread(category, rating)
+```
+
 
 ## Stats 
 
-```{r}
-subscales <- ds %>%
-  group_by(workerid, category) %>%
-  summarize(rating = mean(rating)) %>%
-  spread(category, rating) 
-
-ratings <- d %>% 
-  select(workerid, starts_with("target"), starts_with("control"), group) %>%
-  gather(question, correct, starts_with("target"), starts_with("control")) %>%
-  separate(question, c("passage","trial_type","q_num"), sep = "_") %>%
-  mutate(correct = as.numeric(correct),  
-         q_num = as.numeric(q_num) + 
-           as.numeric(factor(passage)) * 10 + 
-           as.numeric(factor(trial_type)) * 100)
-
-d.reg <- left_join(ratings, subscales) %>%
-  unite(question_type, passage, trial_type)
-```
 
 ```{r}
-summary(glmer(correct ~ question_type * rules_respect + 
-                question_type * early_learning + 
-                question_type * group * early_learning +
-                question_type * group * rules_respect +
+summary(glmer(correct ~ q_type * rules_respect + 
+                q_type * early_learning +
+                q_type * affection +
                 (1|workerid) + 
                 (1|q_num), 
               data = filter(d.reg, !workerid %in% exclude), 
