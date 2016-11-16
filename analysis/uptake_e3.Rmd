@@ -274,8 +274,8 @@ ggplot(filter(ss, !workerid %in% exclude),
 
 ```{r}
 d.reg <- d %>%
-  select(workerid, acc, q_type, trial, category, rating)%>%
-  unique %>%
+  group_by(workerid, category, acc, q_type, trial)%>%
+  summarize(rating = mean(rating))%>%
   spread(category, rating)
 ```
 
@@ -284,11 +284,11 @@ d.reg <- d %>%
 
 
 ```{r}
-summary(glmer(correct ~ q_type * rules_respect + 
-                q_type * early_learning +
+summary(glmer(acc ~ q_type * rules_respect + 
+                q_type * active_learning +
                 q_type * affection +
                 (1|workerid) + 
-                (1|q_num), 
+                (1|trial), 
               data = filter(d.reg, !workerid %in% exclude), 
               family = "binomial"))
 ```
