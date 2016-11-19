@@ -67,8 +67,7 @@ for (f in files) {
   trial_type <- jd$answers$data$trial_type
   
   #uptake responses
-  answers_id <- data.frame(
-     trial= jd$answers$data$trial_number_block[trial_type == "uptake"],
+  answers_id <- data.frame(trial= jd$answers$data$trial_number_block[trial_type == "uptake"],
      answer= jd$answers$data$answer,
      workerid = jd$WorkerId)
   answers <- bind_rows(answers, answers_id)
@@ -118,29 +117,36 @@ d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
 Merge. Recode uptake answers by accuracy.  
 
 ```{r}
-d <- d.raw %>%
-  left_join(answers) %>%
-  left_join(labels) %>%
+dq <- d.raw %>%
+  left_join(labels)%>%
+  group_by(workerid, category) 
+  
+dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+
+dq <- dq %>%
+  summarize(rating = mean(rating)) 
+
+subinfo <- d.raw %>%
+  select(workerid, age, ses, gender, ethnicity, education, children, language, reading_time_1, reading_time_2, reading_time_3)%>%
+  distinct
+
+du <- answers %>%
   left_join(answer_key) %>%
   mutate(answer = as.character(answer))%>%
   mutate(answer_cor = as.character(answer_cor))%>%
-  mutate(acc = (answer == answer_cor))
+  mutate(acc = (answer == answer_cor))%>%
+  group_by(workerid, q_type, exclude) %>%
+  summarize(acc = mean(acc))
 
-d$acc[d$acc == "TRUE"] <- "1"
-d$acc[d$acc == "FALSE"] <- "0"
-
-d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
+dui <- answers %>%
+  left_join(answer_key) %>%
+  mutate(answer = as.character(answer))%>%
+  mutate(answer_cor = as.character(answer_cor))%>%
+  mutate(acc = (answer == answer_cor))%>%
+  select(-answer_cor, -answer)
 ```
 
 Plot demographic info.
-
-```{r}
-subinfo <- d %>%
-  group_by(workerid) %>%
-  select(workerid, age, ses, gender, ethnicity, education, children, language, reading_time_1, reading_time_2, reading_time_3) %>%
-  distinct 
-```
-
 
 ```{r}
 subinfo$education <- factor(subinfo$education, 
@@ -162,10 +168,15 @@ qplot(ethnicity, data=subinfo)
 Now look at mean ratings across sentences.
 
 ```{r}
-ms <- d %>%
-  group_by(category, instrument, short_sent, reverse_code) %>%
+dqi <- d.raw %>%
+  select(workerid, rating, sent)%>%
+  left_join(labels) 
+dqi$rating[dqi$reverse_code == 1] <- 6 - dqi$rating[dqi$reverse_code == 1]
+
+ms <- dqi %>%
+  group_by(category, short_sent, reverse_code) %>%
   multi_boot_standard(col = "rating") %>%
-  arrange(instrument, category, desc(mean)) 
+  arrange(category, desc(mean)) 
 
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
@@ -177,7 +188,7 @@ Plot attitude.
 qplot(short_sent_ord, mean, col = category,
       ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
       geom = "pointrange",
-      data = filter(ms, instrument == "attitudes")) +
+      data = ms) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("") + 
   ylab("Mean Rating") + 
@@ -185,10 +196,10 @@ qplot(short_sent_ord, mean, col = category,
   scale_colour_solarized()
 ```
 
-Plot mean subscale scores.
+Plot mean subscale scores across participants.
 
 ```{r}
-mc <- d %>%
+mc <- dqi %>%
   group_by(category) %>%
   multi_boot_standard(col = "rating") %>%
   arrange(category, desc(mean)) 
@@ -199,52 +210,43 @@ ggplot(mc, aes(x = category, y = mean)) +
              position = position_dodge(width = .9))
 ```
 
+
 # Information Uptake Analyses
 
-Standardize ratings within participant.
-```{r}
-d$rating_centered <- scale(d$rating, center = TRUE, scale = FALSE)
-```
 
 Plot mean recall and generalization scores.
 ```{r}
-d$acc <- as.numeric(d$acc)
-ms <- d %>%
-  group_by(q_type) %>%
+du$acc <- as.numeric(du$acc)
+ms <- du %>%
+  group_by(q_type, exclude) %>%
   multi_boot_standard(col = "acc")
 
-ggplot(ms, aes(x = q_type, y = mean)) + 
+ggplot(filter(ms, exclude != 1), aes(x = q_type, y = mean)) + 
   geom_bar(stat="identity") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9))
 ```
 
+Item analysis.
+
+```{r}
+items <- dui %>%
+  group_by(trial) %>%
+  multi_boot_standard(col = "acc")
+```
 
 Create a data frame that has individuals' subscale scores and accuracy by question type. 
 
 ```{r}
-ms <- d %>%
-  group_by(workerid, q_type) %>%
-  multi_boot_standard(col = "acc")
-
-ss_rating <- d%>%
-  group_by(workerid, category) %>%
-  summarize(rating = mean(rating)) 
-
-ss_acc <- d%>%
-  group_by(workerid, q_type) %>%
-  summarize(acc = mean(acc)) 
-
-ss <- ss_rating %>%
-  left_join(ss_acc)
-
+d <- dq %>%
+  left_join(du) 
 ```
 
 ## Plots
 
 ```{r}
-ggplot(ss, aes(x = rating, y = acc, col = category)) +
-  geom_jitter() + 
+ggplot(d, aes(x = rating, y = acc, col = category)) +
+  geom_jitter(height = .02, width = 0, alpha= .3) + 
   geom_smooth(method="lm", se=FALSE) + 
   facet_wrap(~q_type)
 ```
@@ -265,31 +267,32 @@ qplot(subinfo$reading_time_3, binwidth = 15) +
 Exclusions.
 
 ```{r}
-ggplot(filter(ss, !workerid %in% exclude), 
+ggplot(filter(filter(d, exclude != 1), !workerid %in% exclude), 
        aes(x = rating, y = acc, colour = category)) +
-  geom_jitter() +  
+ geom_jitter(height = .02, width = 0, alpha= .3) + 
   geom_smooth(method="lm", se=FALSE) + 
-  facet_grid(~q_type)
+  facet_wrap(~q_type) + 
+  ylim(0,1)
 ```
 
 ```{r}
-d.reg <- d %>%
-  group_by(workerid, category, acc, q_type, trial)%>%
+d.reg <- dq %>%
+  left_join(dui)%>%
+  group_by(workerid, category, acc, q_type, trial, exclude)%>%
   summarize(rating = mean(rating))%>%
   spread(category, rating)
+
+d.reg$acc <- as.numeric(d.reg$acc)
+
 ```
 
-
 ## Stats 
-
 
 ```{r}
 summary(glmer(acc ~ q_type * rules_respect + 
                 q_type * active_learning +
-                q_type * affection +
                 (1|workerid) + 
                 (1|trial), 
-              data = filter(d.reg, !workerid %in% exclude), 
+              data = filter(d.reg, !workerid %in% exclude, exclude != 1), 
               family = "binomial"))
 ```
-
