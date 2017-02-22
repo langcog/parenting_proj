@@ -82,13 +82,27 @@ uptake_exp2 = shuffle(uptake_exp2);
 uptake_con1 = shuffle(uptake_con1);
 uptake_con2 = shuffle(uptake_con2);
 
-var uptake = ['uptake_exp1', 'uptake_exp2', 'uptake_con1', 'uptake_con2'];
 
-var totalTrialsAtt = atts.length;
-var totalTrialsReading = reading.length;
-var totalTrialsUptake = uptake_exp1.length + uptake_exp2.length + uptake_con1.length + uptake_con2.length;
+var uptake = [];
 
-var numTrialsExperiment = totalTrialsAtt + totalTrialsReading + totalTrialsUptake;
+for (i = 0; i < uptake_exp1.length; i++) {
+	item = uptake_exp1[i]
+	uptake.push(item);
+}
+for (i = 0; i < uptake_exp2.length; i++) {
+	item = uptake_exp2[i]
+	uptake.push(item);
+}
+for (i = 0; i < uptake_con1.length; i++) {
+	item = uptake_con1[i]
+	uptake.push(item);
+}
+for (i = 0; i < uptake_con2.length; i++) {
+	item = uptake_con2[i]
+	uptake.push(item);
+}
+
+var numTrialsExperiment = atts.length + reading.length + uptake.length;
 
 
 //set up uptake experiment slides.
@@ -96,7 +110,7 @@ var numTrialsExperiment = totalTrialsAtt + totalTrialsReading + totalTrialsUptak
 var trials = [];
 
 
-for (i = 0; i < totalTrialsAtt; i++) {
+for (i = 0; i < atts.length; i++) {
 	trial = {
 		sentence: atts[i],
 		trial_number_block: i +1,
@@ -108,7 +122,7 @@ for (i = 0; i < totalTrialsAtt; i++) {
 	trials.push(trial);
 }
 
-for (i = 0; i < totalTrialsReading; i++) {
+for (i = 0; i < reading.length; i++) {
 	trial = {
 		sentence: "",
 		trial_number_block: i +1,
@@ -121,7 +135,7 @@ for (i = 0; i < totalTrialsReading; i++) {
 }
 
 
-for (i = 0; i < totalTrialsUptake; i++) {
+for (i = 0; i < uptake.length; i++) {
 
 	 trial = {
 		sentence: "",
@@ -241,6 +255,12 @@ var experiment = {
 			nextButton_r16.blur();
 			nextButton_r17.blur();
 			nextButton_r18.blur();
+			nextButton_r19.blur();
+			nextButton_r20.blur();
+			nextButton_r21.blur();
+			nextButton_r22.blur();
+			nextButton_r23.blur();
+			nextButton_r24.blur();
 
 
 			//  uncheck radio buttons
@@ -303,6 +323,24 @@ var experiment = {
 			'Please make a response!' +
 			'</font>');
 			$("#testMessage_r18").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r19").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r20").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r21").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r22").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r23").html('<font color="red">' +
+			'Please make a response!' +
+			'</font>');
+			$("#testMessage_r24").html('<font color="red">' +
 			'Please make a response!' +
 			'</font>');
 		}
@@ -405,59 +443,77 @@ var experiment = {
 			if (trial_info.slide == "recall_instructions") {
 				showSlide("recall_instructions");              //display slide
 			}
-			if (trial_info.slide == "target1_1") {
-				showSlide("target1_1");              //display slide
+			if (trial_info.slide == "exp1_1") {
+				showSlide("exp1_1");              //display slide
 			}
-			if (trial_info.slide == "target1_2") {
-				showSlide("target1_2");              //display slide
+			if (trial_info.slide == "exp1_2") {
+				showSlide("exp1_2");              //display slide
 			}
-			if (trial_info.slide == "target1_3") {
-				showSlide("target1_3");              //display slide
+			if (trial_info.slide == "exp1_3") {
+				showSlide("exp1_3");              //display slide
 			}
-			if (trial_info.slide == "target1_4") {
-				showSlide("target1_4");              //display slide
+			if (trial_info.slide == "exp1_4") {
+				showSlide("exp1_4");              //display slide
 			}
-			if (trial_info.slide == "target1_5") {
-				showSlide("target1_5");              //display slide
+			if (trial_info.slide == "exp1_5") {
+				showSlide("exp1_5");              //display slide
 			}
-			if (trial_info.slide == "target1_6") {
-				showSlide("target1_6");              //display slide
+			if (trial_info.slide == "exp1_6") {
+				showSlide("exp1_6");              //display slide
 			}
-			if (trial_info.slide == "target2_1") {
-				showSlide("target2_1");              //display slide
+			if (trial_info.slide == "exp2_1") {
+				showSlide("exp2_1");              //display slide
 			}
-			if (trial_info.slide == "target2_2") {
-				showSlide("target2_2");              //display slide
+			if (trial_info.slide == "exp2_2") {
+				showSlide("exp2_2");              //display slide
 			}
-			if (trial_info.slide == "target2_3") {
-				showSlide("target2_3");              //display slide
+			if (trial_info.slide == "exp2_3") {
+				showSlide("exp2_3");              //display slide
 			}
-			if (trial_info.slide == "target2_4") {
-				showSlide("target2_4");              //display slide
+			if (trial_info.slide == "exp2_4") {
+				showSlide("exp2_4");              //display slide
 			}
-			if (trial_info.slide == "target2_5") {
-				showSlide("target2_5");              //display slide
+			if (trial_info.slide == "exp2_5") {
+				showSlide("exp2_5");              //display slide
 			}
-			if (trial_info.slide == "target2_6") {
-				showSlide("target2_6");              //display slide
+			if (trial_info.slide == "exp2_6") {
+				showSlide("exp2_6");              //display slide
 			}
-			if (trial_info.slide == "target3_1") {
-				showSlide("target3_1");              //display slide
+			if (trial_info.slide == "con1_1") {
+				showSlide("con1_1");              //display slide
 			}
-			if (trial_info.slide == "target3_2") {
-				showSlide("target3_2");              //display slide
+			if (trial_info.slide == "con1_2") {
+				showSlide("con1_2");              //display slide
 			}
-			if (trial_info.slide == "target3_3") {
-				showSlide("target3_3");              //display slide
+			if (trial_info.slide == "con1_3") {
+				showSlide("con1_3");              //display slide
 			}
-			if (trial_info.slide == "target3_4") {
-				showSlide("target3_4");              //display slide
+			if (trial_info.slide == "con1_4") {
+				showSlide("con1_4");              //display slide
 			}
-			if (trial_info.slide == "target3_5") {
-				showSlide("target3_5");              //display slide
+			if (trial_info.slide == "con1_5") {
+				showSlide("con1_5");              //display slide
 			}
-			if (trial_info.slide == "target3_6") {
-				showSlide("target3_6");              //display slide
+			if (trial_info.slide == "con1_6") {
+				showSlide("con1_6");              //display slide
+			}
+			if (trial_info.slide == "con2_1") {
+				showSlide("con2_1");              //display slide
+			}
+			if (trial_info.slide == "con2_2") {
+				showSlide("con2_2");              //display slide
+			}
+			if (trial_info.slide == "con2_3") {
+				showSlide("con2_3");              //display slide
+			}
+			if (trial_info.slide == "con2_4") {
+				showSlide("con2_4");              //display slide
+			}
+			if (trial_info.slide == "con2_5") {
+				showSlide("con2_5");              //display slide
+			}
+			if (trial_info.slide == "con2_6") {
+				showSlide("con2_6");              //display slide
 			}
 
 
