@@ -67,11 +67,13 @@ var atts = ['It is very important that children learn to respect adults, such as
 
 atts = shuffle(atts); 
 
-var articles = ['reading_exp_1', 'reading_exp_2', 'reading_con_1', 'reading_con_2'];
+// set up order of articles
+var articles = ['uptake_exp1', 'uptake_exp2', 'uptake_con1', 'uptake_con2'];
 articles = shuffle(articles);
 
 var reading = ['reading_instructions', articles[0], articles[1], articles[2], articles[3],'recall_instructions'];
 
+//set up order of recall items within article groups.
 var uptake_exp1 = ['exp1_1','exp1_2','exp1_3','exp1_4','exp1_5','exp1_6'];
 var uptake_exp2 = ['exp2_1','exp2_2','exp2_3','exp2_4','exp2_5','exp2_6'];
 var uptake_con1 = ['con1_1','con1_2','con1_3','con1_4','con1_5','con1_6'];
@@ -82,25 +84,121 @@ uptake_exp2 = shuffle(uptake_exp2);
 uptake_con1 = shuffle(uptake_con1);
 uptake_con2 = shuffle(uptake_con2);
 
-
 var uptake = [];
 
-for (i = 0; i < uptake_exp1.length; i++) {
+//create recall array such that recall blocks (by article) show up in the same order as the articles.
+if (reading[1] == "uptake_exp1") {
+	for (i = 0; i < uptake_exp1.length; i++) {
 	item = uptake_exp1[i]
 	uptake.push(item);
-}
-for (i = 0; i < uptake_exp2.length; i++) {
+											}
+								}
+
+if (reading[1] == "uptake_exp2") {
+	for (i = 0; i < uptake_exp2.length; i++) {
 	item = uptake_exp2[i]
 	uptake.push(item);
-}
-for (i = 0; i < uptake_con1.length; i++) {
+											}
+								}
+
+if (reading[1] == "uptake_con1") {
+	for (i = 0; i < uptake_con1.length; i++) {
 	item = uptake_con1[i]
 	uptake.push(item);
-}
-for (i = 0; i < uptake_con2.length; i++) {
+											}
+								}
+
+if (reading[1] == "uptake_con2") {
+	for (i = 0; i < uptake_con2.length; i++) {
 	item = uptake_con2[i]
 	uptake.push(item);
-}
+											}
+								}
+
+if (reading[2] == "uptake_exp1") {
+	for (i = 0; i < uptake_exp1.length; i++) {
+	item = uptake_exp1[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[2] == "uptake_exp2") {
+	for (i = 0; i < uptake_exp2.length; i++) {
+	item = uptake_exp2[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[2] == "uptake_con1") {
+	for (i = 0; i < uptake_con1.length; i++) {
+	item = uptake_con1[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[2] == "uptake_con2") {
+	for (i = 0; i < uptake_con2.length; i++) {
+	item = uptake_con2[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[3] == "uptake_exp1") {
+	for (i = 0; i < uptake_exp1.length; i++) {
+	item = uptake_exp1[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[3] == "uptake_exp2") {
+	for (i = 0; i < uptake_exp2.length; i++) {
+	item = uptake_exp2[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[3] == "uptake_con1") {
+	for (i = 0; i < uptake_con1.length; i++) {
+	item = uptake_con1[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[3] == "uptake_con2") {
+	for (i = 0; i < uptake_con2.length; i++) {
+	item = uptake_con2[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[4] == "uptake_exp1") {
+	for (i = 0; i < uptake_exp1.length; i++) {
+	item = uptake_exp1[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[4] == "uptake_exp2") {
+	for (i = 0; i < uptake_exp2.length; i++) {
+	item = uptake_exp2[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[4] == "uptake_con1") {
+	for (i = 0; i < uptake_con1.length; i++) {
+	item = uptake_con1[i]
+	uptake.push(item);
+											}
+								}
+
+if (reading[4] == "uptake_con2") {
+	for (i = 0; i < uptake_con2.length; i++) {
+	item = uptake_con2[i]
+	uptake.push(item);
+											}
+								}
+
 
 var numTrialsExperiment = atts.length + reading.length + uptake.length;
 
@@ -147,6 +245,11 @@ for (i = 0; i < uptake.length; i++) {
 
 	trials.push(trial);
 }
+
+
+//set up recall multiple choice options so that they can be randomized.
+
+
 
 
 // Show the instructions slide -- this is what we want subjects to see first.
@@ -428,17 +531,17 @@ var experiment = {
 	    	if (trial_info.slide == "reading_instructions") {
 				showSlide("reading_instructions");              //display slide
 			}           
-			if (trial_info.slide == "reading_exp_1") {
-				showSlide("reading_exp_1");              //display slide
+			if (trial_info.slide == "uptake_exp1") {
+				showSlide("uptake_exp1");              //display slide
 			}
-			if (trial_info.slide == "reading_exp_2") {
-				showSlide("reading_exp_2");              //display slide
+			if (trial_info.slide == "uptake_exp2") {
+				showSlide("uptake_exp2");              //display slide
 			}
-			if (trial_info.slide == "reading_con_1") {
-				showSlide("reading_con_1");              //display slide
+			if (trial_info.slide == "uptake_con1") {
+				showSlide("uptake_con1");              //display slide
 			}
-			if (trial_info.slide == "reading_con_2") {
-				showSlide("reading_con_2");              //display slide
+			if (trial_info.slide == "uptake_con2") {
+				showSlide("uptake_con2");              //display slide
 			}
 			if (trial_info.slide == "recall_instructions") {
 				showSlide("recall_instructions");              //display slide
