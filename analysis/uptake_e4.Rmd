@@ -5,20 +5,9 @@ date: "`r Sys.Date()`"
 output: 
   html_document:
     toc: true
+    toc_float: true
     number_sections: true
 ---
-
-<style type="text/css">
-body, td {
-   font-size: 14px;
-}
-code {
-  font-size: 11px;
-}
-pre {
-  font-size: 11px;
-}
-</style>
 
 Data analysis of uptake experiment for parenting attitudes questionnaire. Do scores on the PAQ subscales predict uptake of experimental content compared to control content?
 
@@ -27,29 +16,24 @@ Data analysis of uptake experiment for parenting attitudes questionnaire. Do sco
 Preliminaries.
 
 ```{r echo=FALSE}
-
-rm(list=ls())
-
-setwd("~/Desktop/parenting_proj/analysis")
-
 knitr::opts_chunk$set(fig.width=8, fig.height=5, 
-                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=FALSE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(psych)
 library(langcog)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
+library(ggthemes)
 library(rjson)
 library(stringr)
-library(tidyr)
-library(psych)
-library(nFactors)
+# library(psych)
+# library(nFactors)
 library(lme4)
+library(forcats)
 # library(nFactors)
 
 select <- dplyr::select # masked by MASS
 
-theme_set(theme_bw())
+theme_set(theme_few())
 ```
 
 Read in participant data.
@@ -108,20 +92,15 @@ answer_key <- read.csv("uptake_key_e4.csv")
 Clean up labels.
 
 ```{r}
-attitudes$sent <- as.character(attitudes$sent)
-attitudes$sent <- str_replace_all(attitudes$sent, "'", "")
-attitudes$sent <- str_replace_all(attitudes$sent, "’", "")
-attitudes$sent <- str_replace_all(attitudes$sent, "“", "")
-attitudes$sent <- str_replace_all(attitudes$sent, "”", "")
-attitudes$sent <- str_replace_all(attitudes$sent, "‘", "")
-attitudes$sent <- str_replace_all(attitudes$sent, "â", "")
+attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
 ```
 
 Plot demographic info.
 
 ```{r}
 subinfo$education <- factor(subinfo$education, 
-                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+                            levels = c("highSchool","someCollege",
+                                       "4year","someGrad","Grad"))
 
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
@@ -132,9 +111,12 @@ qplot(language, data=subinfo)
 qplot(ethnicity, data=subinfo)
 ```
 
-# Questionnaire
 
-Look at mean ratings across sentences.
+# Data Frames and Exclusions
+
+## Make data frames. 
+
+Questionnaire attitude means.
 
 ```{r}
 dq <- attitudes %>%
@@ -142,6 +124,49 @@ dq <- attitudes %>%
 
 dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
 
+atts <- dq %>%
+  group_by(workerid, category) %>% 
+  summarise(rating = mean(rating))
+```
+
+Uptake questions. 
+
+```{r}
+
+
+```
+
+## Exclusions
+
+Setting up exclusion based on reading time.
+
+```{r}
+exclusions <- as_tibble(subinfo) %>%
+  select(workerid, starts_with("rt")) %>%
+  gather(article, rt, rt_exp1, rt_exp2, rt_con1, rt_con2) %>%
+  mutate(article = str_replace(str_replace(str_replace(article,"rt_", ""), 
+                                           "exp", "e"), "con","c"))
+
+ggplot(exclusions, aes(x = rt)) + 
+  geom_histogram() + 
+  facet_wrap(~article) +
+  geom_vline(xintercept = 15, lty = 2, col="red")
+```
+Exclude for less than 15s. 
+
+```{r}
+exclusions$exclude <- exclusions$rt < 15
+```
+
+This constitutes `r signif(mean(exclusions$exclude), digits = 2)` of the data.
+
+
+
+# Questionnaire
+
+Look at mean ratings across sentences.
+
+```{r}
 ms <- dq %>%
   group_by(category, short_sent, reverse_code) %>%
   multi_boot_standard(col = "rating") %>%
@@ -173,10 +198,6 @@ atts_m <- dq %>%
   multi_boot_standard(col = "rating") %>%
   arrange(category, desc(mean)) 
 
-atts <- dq %>%
-  group_by(workerid, category) %>% 
-  summarise(rating = mean(rating))
-
 ggplot(atts_m, aes(x = category, y = mean)) + 
   geom_bar(stat="identity") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
@@ -193,14 +214,16 @@ answer_key$answer_cor <- as.character(answer_key$answer_cor)
 
 uptake <- answers %>%
   left_join(answer_key) %>%
-  mutate(acc = (answer == answer_cor))%>%
-  select(workerid, item, acc, q_type, article)
+  mutate(acc = (answer == answer_cor)) %>%
+  select(workerid, item, acc, q_type, article) %>%
+  left_join(exclusions) %>%
+  filter(!exclude)
 
-mss<- uptake%>%
+mss <- uptake %>%
   group_by(workerid, q_type) %>% 
   summarise(acc = mean(acc))
 
-ms <- uptake %>%
+ms <- mss %>%
   group_by(q_type) %>%
   multi_boot_standard(col = "acc")
 ```
@@ -211,86 +234,183 @@ Plot mean uptake accuracy for control and experimental articles. Is one question
 ggplot(ms, aes(x = q_type, y = mean)) + 
   geom_bar(stat="identity") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))
-
-t.test(mss$acc[mss$q_type == 'con'],mss$acc[mss$q_type == 'exp'],paired=TRUE)
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2)
 ```
 
-##Plots
-
-Create a data frame that has individuals' subscale scores and accuracy by question type. 
+Test for differences
 
 ```{r}
-d <- atts %>%
-  left_join(mss) 
+mss_wide <- spread(mss, q_type, acc) %>%
+  filter(!is.na(con) & !is.na(exp))
+
+t.test(mss_wide$con, mss_wide$exp, paired=TRUE)
 ```
 
+Items.
+
 ```{r}
-ggplot(d, aes(x = rating, y = acc, col = category)) +
-  geom_jitter(height = .02, width = 0, alpha= .3) + 
-  geom_smooth(method="lm", se=FALSE) + 
-  facet_wrap(~q_type)
+ms <- uptake %>%
+  group_by(item, article, q_type) %>% 
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = fct_reorder(item, mean), y = mean, col = article)) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  facet_wrap(~article, scales = "free_x") + 
+  ylim(c(0,1)) + 
+  geom_hline(yintercept = .25, lty = 2) + 
+  ylab("Accuracy") + xlab("Item") + 
+  theme_few()
 ```
 
-Exclusions.
+## Demographic predictors of uptake
+
+Add demographics. 
 
 ```{r}
-ggplot(d, aes(x = rating, y = acc, colour = category)) +
+mss <- mss %>%
+  left_join(subinfo)
+```
+
+By gender. 
+
+```{r}
+ms <- mss %>%
+  filter(gender %in% c("Man","Woman")) %>%
+  group_by(q_type, gender) %>%
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = q_type, y = mean, fill = gender)) + 
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2) + 
+  scale_fill_solarized()
+```
+
+By education.
+
+```{r}
+ms <- mss %>%
+  filter(!education == "") %>%
+  group_by(q_type, education) %>%
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = q_type, y = mean, fill = education)) + 
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2) + 
+  scale_fill_solarized()
+```
+
+By race.
+
+```{r}
+ms <- mss %>%
+  # filter(!education == "") %>%
+  group_by(q_type, race) %>%
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = q_type, y = mean, fill = race)) + 
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2) + 
+  scale_fill_solarized()
+```
+
+
+# Plots
+
+# Main plot
+
+```{r}
+d <- mss %>%
+  left_join(atts) %>%
+  left_join(subinfo) %>%
+  mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"), 
+         category = fct_recode(category, "Affection/Attachment" = "AA", 
+                               "Early Learning" = "EL", 
+                               "Rules/Respect" = "RR"))
+
+ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
+ geom_jitter(height = .02, width = 0, alpha= .3) +
+  # geom_point(alpha = .3) + 
+  geom_smooth(method="lm") + 
+  facet_grid(.~category) + 
+  ylim(0,1) + 
+  ylab("Accuracy") +
+  xlab("Subscale Rating") + 
+  scale_color_solarized(name="Condition") +
+  theme(legend.position = "bottom")
+```
+
+## Subgroup plots
+
+Gender.
+
+```{r}
+ggplot(filter(d, gender %in% c("Man","Woman")),  
+       aes(x = rating, y = acc, colour = category)) +
  geom_jitter(height = .02, width = 0, alpha= .3) + 
   geom_smooth(method="lm", se=FALSE) + 
-  facet_wrap(~q_type) + 
-  ylim(0,1)
+  facet_grid(gender~ q_type) + 
+  ylim(0,1) + 
+  ylab("Accuracy") +
+  xlab("Subscale Rating") 
 ```
 
-## Stats 
 
-Setting up exclusion based on reading time.
-
-```{r}
-
-qplot(subinfo$rt_exp1, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-qplot(subinfo$rt_exp2, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-qplot(subinfo$rt_con1, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-qplot(subinfo$rt_con2, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-
-subinfo$exclude_e1 <- subinfo$rt_exp1 < 15
-                          
-subinfo$exclude_e2 <- subinfo$rt_exp2 < 15
-
-subinfo$exclude_c1 <- subinfo$rt_con1 < 15
-  
-subinfo$exclude_c2 <- subinfo$rt_con2 < 15
-
-exclude <- subinfo %>%
-  select(workerid, exclude_e1, exclude_e2, exclude_c1, exclude_c2)
-```
+# Stats 
 
 Set up a dataframe for analysis with exclusions.
 
-
 ```{r}
-d.reg <- atts %>%
+d_reg <- atts %>%
   left_join(uptake)%>%
   group_by(workerid, category, acc, q_type, item, article)%>%
   summarise(rating = mean(rating))%>%
   spread(category, rating)
 
-d_an <- d.reg %>%
-  left_join(exclude) %>%
-  filter(!(article == "e1" && exclude_e1))%>%
-  filter(!(article == "e2" && exclude_e2))%>%
-  filter(!(article == "c1" && exclude_c1))%>%
-  filter(!(article == "c2" && exclude_c2))
+d_reg_excl <- d_reg %>%
+  left_join(exclusions) %>%
+  filter(!exclude)
 ```
 
+Model with affection and attachment. 
+
 ```{r eval = FALSE}
-summary(glmer(acc ~ q_type * AA +  q_type * RR +
-                (1|workerid) +
-                (1|item), 
-              data = d_an, 
-              family = "binomial"))
+mod <- glmer(acc ~ q_type * scale(AA) +  
+                q_type * scale(RR) + 
+                q_type * scale(EL) +
+                (q_type | workerid) +
+                (1 | item), 
+              data = d_reg_excl,  
+              family = "binomial")
+
+summary(mod)
+
+# run optimizer for longer
+ss <- getME(mod,c("theta","fixef"))
+mod2 <- update(mod,start=ss,control=glmerControl(optCtrl=list(maxfun=2e4)))
+
+knitr::kable(summary(mod2)$coefficients, digits = 3)
+```
+
+Model with no AA scores. 
+
+```{r eval = FALSE}
+mod <- glmer(acc ~ q_type * scale(RR) + 
+                q_type * scale(EL) +
+                (q_type | workerid) +
+                (1 | item), 
+              data = d_reg_excl,  
+              family = "binomial")
+
+knitr::kable(summary(mod)$coefficients, digits = 3)
 ```
