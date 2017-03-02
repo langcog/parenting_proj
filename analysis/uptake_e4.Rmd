@@ -20,7 +20,7 @@ pre {
 }
 </style>
 
-Data analysis of uptake experiment for parenting attitudes questionnaire. This is a pilot sample of 50 participants to check whether accuracy differs between control and experimental uptake questions.
+Data analysis of uptake experiment for parenting attitudes questionnaire. Do scores on the PAQ subscales predict uptake of experimental content compared to control content?
 
 # Data preprocessing
 
@@ -66,15 +66,9 @@ for (f in files) {
 
   #uptake responses
   answers_id <- data.frame(
-    trial= jd$answers$data$trial_number_block,
     answer= jd$answers$data$answer,
-    item = jd$answers$data$item,
-    workerid = jd$WorkerId,
-    type = jd$answers$data$trial_type)
-  
-  answers_id <- answers_id %>%
-    filter(type == "uptake") %>%
-    select(workerid, item, answer)
+    item = jd$answers$data$item[jd$answers$data$trial_type =="uptake"],
+    workerid = jd$WorkerId)
   
   answers <- bind_rows(answers, answers_id)
   
@@ -105,7 +99,7 @@ for (f in files) {
 Read in trial info and questionnaire labels.
 
 ```{r}
-labels <- read.csv("sent_forms_e7.csv")
+labels <- read.csv("sent_forms_uptake_e4.csv")
 labels$sent <- as.character(labels$sent)
 
 answer_key <- read.csv("uptake_key_e4.csv")
@@ -145,6 +139,7 @@ Look at mean ratings across sentences.
 ```{r}
 dq <- attitudes %>%
   left_join(labels) 
+
 dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
 
 ms <- dq %>%
@@ -193,10 +188,13 @@ ggplot(atts_m, aes(x = category, y = mean)) +
 Get accuracy data. 
 
 ```{r}
+answers$answer <- as.character(answers$answer)
+answer_key$answer_cor <- as.character(answer_key$answer_cor)
+
 uptake <- answers %>%
   left_join(answer_key) %>%
   mutate(acc = (answer == answer_cor))%>%
-  select(workerid, item, acc, q_type)
+  select(workerid, item, acc, q_type, article)
 
 mss<- uptake%>%
   group_by(workerid, q_type) %>% 
@@ -218,34 +216,6 @@ ggplot(ms, aes(x = q_type, y = mean)) +
 t.test(mss$acc[mss$q_type == 'con'],mss$acc[mss$q_type == 'exp'],paired=TRUE)
 ```
 
-Yes, people performed significantly worse on control items.
-
-Item analysis. Are there any problematic items?
-
-```{r}
-items <- uptake %>%
-  group_by(item) %>%
-  multi_boot_standard(col = "acc")
-```
-
-One question in particular has a particularly low accuracy rate (.45). What is the distribution of responses for this item?
-
-```{r}
-c1_4 <- answers%>%
-  filter(item == "c1_4")
-  
-qplot(answer, data=c1_4)
-
-#means without bad item?
-ms <- uptake %>%
-  filter(!item == "c1_4")%>%
-  group_by(q_type) %>%
-  multi_boot_standard(col = "acc")
-ms
-```
-
-Participants frequently selected D as the answer; correct answer was C. This item does seem confusing when I review it. Re-word it for experiment. 
-
 ##Plots
 
 Create a data frame that has individuals' subscale scores and accuracy by question type. 
@@ -262,51 +232,55 @@ ggplot(d, aes(x = rating, y = acc, col = category)) +
   facet_wrap(~q_type)
 ```
 
-Setting up exclusion based on reading time.
-
-```{r}
-exclude <- subinfo$workerid[subinfo$rt_exp1 < 30 | subinfo$rt_exp2 < 30 | subinfo$rt_con1 < 30 | subinfo$rt_con2 < 30]
-length(exclude)
-
-qplot(subinfo$rt_exp1, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-qplot(subinfo$rt_exp2, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-qplot(subinfo$rt_con1, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-qplot(subinfo$rt_con2, binwidth = 15) + 
-  geom_vline(xintercept =15, lty =2, col="red")
-```
-
 Exclusions.
 
 ```{r}
-ggplot(filter(d, !workerid %in% exclude), 
-       aes(x = rating, y = acc, colour = category)) +
+ggplot(d, aes(x = rating, y = acc, colour = category)) +
  geom_jitter(height = .02, width = 0, alpha= .3) + 
   geom_smooth(method="lm", se=FALSE) + 
   facet_wrap(~q_type) + 
   ylim(0,1)
 ```
 
+## Stats 
+
+Setting up exclusion based on reading time.
+
+```{r}
+subinfo$exclude_e1 <- subinfo$rt_exp1 < 20
+                          
+subinfo$exclude_e2 <- subinfo$rt_exp2 < 20 
+
+subinfo$exclude_c1 <- subinfo$rt_con1 < 20
+  
+subinfo$exclude_c2 <- subinfo$rt_con2 < 20
+
+exclude <- subinfo %>%
+  select(workerid, exclude_e1, exclude_e2, exclude_c1, exclude_c2)
+```
+
+Set up a dataframe for analysis with exclusions.
+
 
 ```{r}
 d.reg <- atts %>%
   left_join(uptake)%>%
-  group_by(workerid, category, acc, q_type, item)%>%
+  group_by(workerid, category, acc, q_type, item, article)%>%
   summarise(rating = mean(rating))%>%
   spread(category, rating)
 
 d_an <- d.reg %>%
-  filter(!workerid %in% exclude)
+  left_join(exclude) %>%
+  filter(!(article == "e1" && exclude_e1))%>%
+  filter(!(article == "e2" && exclude_e2))%>%
+  filter(!(article == "c1" && exclude_c1))%>%
+  filter(!(article == "c2" && exclude_c2))
 ```
 
-## Stats 
-
 ```{r eval = FALSE}
-summary(glmer(acc ~ q_type * rules_respect + q_type * active_learning +
-                (q_type * rules_respect + q_type * active_learning|workerid) +
-                (q_type * rules_respect + q_type * active_learning|item), 
+summary(glmer(acc ~ q_type * rules_respect + q_type * early_learning +
+                (1|workerid) +
+                (1|item), 
               data = d_an, 
               family = "binomial"))
 ```
