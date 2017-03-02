@@ -247,13 +247,23 @@ ggplot(d, aes(x = rating, y = acc, colour = category)) +
 Setting up exclusion based on reading time.
 
 ```{r}
-subinfo$exclude_e1 <- subinfo$rt_exp1 < 20
-                          
-subinfo$exclude_e2 <- subinfo$rt_exp2 < 20 
 
-subinfo$exclude_c1 <- subinfo$rt_con1 < 20
+qplot(subinfo$rt_exp1, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$rt_exp2, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$rt_con1, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$rt_con2, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+
+subinfo$exclude_e1 <- subinfo$rt_exp1 < 15
+                          
+subinfo$exclude_e2 <- subinfo$rt_exp2 < 15
+
+subinfo$exclude_c1 <- subinfo$rt_con1 < 15
   
-subinfo$exclude_c2 <- subinfo$rt_con2 < 20
+subinfo$exclude_c2 <- subinfo$rt_con2 < 15
 
 exclude <- subinfo %>%
   select(workerid, exclude_e1, exclude_e2, exclude_c1, exclude_c2)
@@ -278,7 +288,7 @@ d_an <- d.reg %>%
 ```
 
 ```{r eval = FALSE}
-summary(glmer(acc ~ q_type * rules_respect + q_type * early_learning +
+summary(glmer(acc ~ q_type * AA +  q_type * RR +
                 (1|workerid) +
                 (1|item), 
               data = d_an, 
