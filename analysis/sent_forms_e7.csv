@@ -5,15 +5,15 @@ Children should be taught to be grateful to their parents.,be grateful to parent
 Children should not be punished for breaking small rules.,not punished for breaking small rules*,rules_respect,1,attitudes
 Parents should follow their childrens lead rather than imposing structure in the form of rules.,parents should follow children's lead*,rules_respect,1,attitudes
 "Young children should be allowed to make their own decisions, such as what to eat for dinner.",allowed to make decisions*,rules_respect,1,attitudes
-Parents need to provide safe and loving environments for their children.,provide a safe and loving environment,affection,0,attitudes
-Holding and cradling babies is important for forming strong bonds between parent and child.,holding and cradling babies important ,affection,0,attitudes
-Children should be given comfort and understanding when they are scared or unhappy.,children should be given comfort ,affection,0,attitudes
-Parents do not need to talk to their child about his or her emotions.,do not need to talk about emotions*,affection,1,attitudes
-Children become spoiled if they receive too much attention from parents.,become spoiled with too much attention *,affection,1,attitudes
-Too much affection can make a child weak.,too much affection can make a child weak*,affection,1,attitudes
-Children can learn about things like good and bad behavior from a very early age.,can learn about  good and bad behavior,active_learning,0,attitudes
-Young children can teach themselves things by exploring and playing.,can teach themselves by playing,active_learning,0,attitudes
-Babies repetitive behaviors (e.g. banging a cup on the table) are a way for them to explore cause and effect.,repetetive behaviors to explore cause and effect,active_learning,0,attitudes
-It is not helpful for adults to explain the reasons for rules to young children because they wont understand.,not helpful to explain reasons for rules*,active_learning,1,attitudes
-Children dont need to learn about numbers and math until they go to school.,don't need to learn math before school*,active_learning,1,attitudes
-Reading books to children is not helpful if they have not yet learned to speak.,reading not helpful before they can speak*,active_learning,1,attitudes
+Parents need to provide safe and loving environments for their children.,provide a safe and loving environment,affection_attachment,0,attitudes
+Holding and cradling babies is important for forming strong bonds between parent and child.,holding and cradling babies important ,affection_attachment,0,attitudes
+Children should be given comfort and understanding when they are scared or unhappy.,children should be given comfort ,affection_attachment,0,attitudes
+Parents do not need to talk to their child about his or her emotions.,do not need to talk about emotions*,affection_attachment,1,attitudes
+Children become spoiled if they receive too much attention from parents.,become spoiled with too much attention *,affection_attachment,1,attitudes
+Too much affection can make a child weak.,too much affection can make a child weak*,affection_attachment,1,attitudes
+Children can learn about things like good and bad behavior from a very early age.,can learn about  good and bad behavior,early_learning,0,attitudes
+Young children can teach themselves things by exploring and playing.,can teach themselves by playing,early_learning,0,attitudes
+Babies repetitive behaviors (e.g. banging a cup on the table) are a way for them to explore cause and effect.,repetetive behaviors to explore cause and effect,early_learning,0,attitudes
+It is not helpful for adults to explain the reasons for rules to young children because they wont understand.,not helpful to explain reasons for rules*,early_learning,1,attitudes
+Children dont need to learn about numbers and math until they go to school.,don't need to learn math before school*,early_learning,1,attitudes
+Reading books to children is not helpful if they have not yet learned to speak.,reading not helpful before they can speak*,early_learning,1,attitudes

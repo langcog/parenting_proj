@@ -171,7 +171,6 @@ qplot(language, data=subinfo)
 qplot(ethnicity, data=subinfo)
 qplot(childAgeYoung, data=subinfo)
 qplot(childAgeOld, data=subinfo)
-
 ```
 
 # Basic analyses

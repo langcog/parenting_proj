@@ -1,12 +1,12 @@
 {
-    "title":               "Child Development Survey",
-    "description":         "A survey about perceptions of children's development. DO ONLY ONE CHILD DEVELOPMENT SURVEY HIT. IF YOU DO MULTIPLE HITS OF THIS TYPE, YOU WILL NOT BE PAID! ",
-    "keywords":            "child development, learning",
-    "url":                 "https://langcog.stanford.edu/expts/parenting_proj/parenting_proj_e9.html",
+    "title":               "SCIENCE ARTICLES",
+    "description":         "Complete readings and questions about science. DO ONLY ONE SCIENCE ARTICLES HIT. IF YOU DO MULTIPLE HITS OF THIS TYPE, YOU WILL NOT BE PAID! ",
+    "keywords":            "science, learning",
+    "url":                 "https://langcog.stanford.edu/expts/parenting_proj/uptake_e4.html",
     "frame_height":         450,
-    "assignment_duration":  "30 minutes",
+    "assignment_duration":  "1 hour",
     "auto_approval_delay":  "5 minutes",
-    "reward":               0.50,
+    "reward":               3.0,
     "experimenter":         "Emily Hembacher",
     "server_log_path":      "https://langcog.stanford.edu/cgi-bin/cosub/log_submission.php",
     "qualifications": {

@@ -202,24 +202,23 @@ turk = turk || {};
     // If there's no turk info
     if (!assignmentId || !turkSubmitTo) {
       // Emit the debug output and stop
-      var div = document.createElement('div');
-      div.style.fontFamily = '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", sans-serif';
-      div.style.fontSize = "14px";
-      div.style.cssFloat = "right";
-      div.style.padding = "1em";
-      div.style.backgroundColor = "#dfdfdf";
-      div.innerHTML = "Thank you!" 
+      var div = document.createElement('div'),
+          style = div.style;
+      style.fontFamily = '"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", sans-serif';
+      style.fontSize = "14px";
+      style.cssFloat = "right";
+      style.padding = "1em";
+      style.backgroundColor = "#dfdfdf";
+      div.innerHTML = "<p><b>Debug mode</b></p>Here is the data that would have been submitted to Turk: <ul>" + htmlify(rawData) + "</ul>";
+      div.className = "mmturkey-debug";
       document.body.appendChild(div);
-
-      $.post("https://langcog.stanford.edu/cgi-bin/parenting_proj/parenting_proj.php",{expHTML: JSON.stringify(rawData)});
-
       return;
     }
 
     // Otherwise, submit the form
-    // form.action = turk.turkSubmitTo + "/mturk/externalSubmit";
-    // form.method = "POST";
-    // form.submit();
+    form.action = turk.turkSubmitTo + "/mturk/externalSubmit";
+    form.method = "POST";
+    form.submit();
   }
   
   // simulate $(document).ready() to show the preview warning

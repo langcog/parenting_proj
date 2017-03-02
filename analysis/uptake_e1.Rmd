@@ -90,7 +90,6 @@ for (f in files) {
   reading_time_control = jd$answers$data$control_rt[1]
   time_questionnaire = jd$answers$data$questionnaire_rt[1]
   
-  
   #demographics
   race <- as.character(jd$answers$data$race[1])
   

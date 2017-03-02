@@ -74,6 +74,11 @@ button[disabled] {
   text-align: center;
 }
 
+#recall {
+  text-align: left;
+  margin-left: 2cm
+}
+
 #odd-key, #even-key {
   background-color: #e3e3e3;
   padding: 2px;

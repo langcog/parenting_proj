@@ -1,5 +1,5 @@
 ---
-title: "Parenting Project Attitudes Questionnaire Uptake with Control Group"
+title: "Parenting Project Attitudes Questionnaire Uptake"
 author: "Emily & Mike"
 date: "`r Sys.Date()`"
 output: 
@@ -45,6 +45,7 @@ library(tidyr)
 library(psych)
 library(nFactors)
 library(lme4)
+library(pbkrtest)
 # library(nFactors)
 
 select <- dplyr::select # masked by MASS
@@ -124,7 +125,7 @@ dq <- d.raw %>%
 dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
 
 dq <- dq %>%
-  summarize(rating = mean(rating)) 
+  summarise(rating = mean(rating)) 
 
 subinfo <- d.raw %>%
   select(workerid, age, ses, gender, ethnicity, education, children, language, reading_time_1, reading_time_2, reading_time_3)%>%
@@ -135,8 +136,8 @@ du <- answers %>%
   mutate(answer = as.character(answer))%>%
   mutate(answer_cor = as.character(answer_cor))%>%
   mutate(acc = (answer == answer_cor))%>%
-  group_by(workerid, q_type, exclude) %>%
-  summarize(acc = mean(acc))
+  group_by(workerid, q_type, exclude) %>% 
+  summarise(acc = mean(acc))
 
 dui <- answers %>%
   left_join(answer_key) %>%
@@ -214,7 +215,7 @@ ggplot(mc, aes(x = category, y = mean)) +
 # Information Uptake Analyses
 
 
-Plot mean recall and generalization scores.
+Plot mean recall and generalization scores. EXCLUDES QUESTIONS THAT WERE CODED WRONG FOR PILOT.
 ```{r}
 du$acc <- as.numeric(du$acc)
 ms <- du %>%
@@ -279,20 +280,24 @@ ggplot(filter(filter(d, exclude != 1), !workerid %in% exclude),
 d.reg <- dq %>%
   left_join(dui)%>%
   group_by(workerid, category, acc, q_type, trial, exclude)%>%
-  summarize(rating = mean(rating))%>%
+  summarise(rating = mean(rating))%>%
   spread(category, rating)
 
 d.reg$acc <- as.numeric(d.reg$acc)
-
 ```
 
 ## Stats 
 
 ```{r}
-summary(glmer(acc ~ q_type * rules_respect + 
+model <- summary(glmer(acc ~ q_type * rules_respect + 
                 q_type * active_learning +
                 (1|workerid) + 
                 (1|trial), 
               data = filter(d.reg, !workerid %in% exclude, exclude != 1), 
               family = "binomial"))
+
+# model <- lmer(y ~ condition + (1|participant) + (condition|stim), data=myData)
+summary(model)
+restrictedModel <- update(model, . ~ . -q_type)
+KRmodcomp(model, restrictedModel)
 ```

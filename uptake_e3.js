@@ -67,16 +67,19 @@ var atts = ['It is very important that children learn to respect adults, such as
 
 atts = shuffle(atts); 
 
-var slides = ['reading_instructions','reading1','reading2','reading3','recall_instructions', 
-'target1_1','target1_2','target1_3','target1_4','target1_5','target1_6',
+var reading = ['reading_instructions','reading1','reading2','reading3','recall_instructions'];
+
+var uptake = ['target1_1','target1_2','target1_3','target1_4','target1_5','target1_6',
 'target2_1','target2_2','target2_3','target2_4','target2_5','target2_6',
-'target3_1','target3_2','target3_3','target3_4','target3_5','target3_6'
-];
+'target3_1','target3_2','target3_3','target3_4','target3_5','target3_6'];
+
+
 
 var totalTrialsAtt = atts.length;
-var totalTrialsUptake = slides.length;
+var totalTrialsReading = reading.length;
+var totalTrialsUptake = uptake.length;
 
-var numTrialsExperiment = totalTrialsAtt + totalTrialsUptake;
+var numTrialsExperiment = totalTrialsAtt + totalTrialsReading + totalTrialsUptake;
 
 
 //set up uptake experiment slides.
@@ -97,13 +100,26 @@ for (i = 0; i < totalTrialsAtt; i++) {
 	trials.push(trial);
 }
 
-for (i = 0; i < slides.length; i++) {
+for (i = 0; i < totalTrialsReading; i++) {
+	trial = {
+		sentence: "",
+		trial_number_block: i +1,
+		trial_type: "reading",
+		slide: reading[i],
+		trial_number: i+1,
+	}
+
+	trials.push(trial);
+}
+
+
+for (i = 0; i < totalTrialsUptake; i++) {
 
 	 trial = {
 		sentence: "",
-		trial_number_block: "",
+		trial_number_block: i+1,
 		trial_type:"uptake",
-		slide: slides[i],
+		slide: uptake[i],
 		trial_number: i+1,
 	}
 
@@ -134,12 +150,15 @@ var experiment = {
 		ethnicity:[],
 		race: [],
 		children:[],
-		prior_exposure: [],
+		prior_exposure_1: [],
+		prior_exposure_2: [],
+		prior_exposure_3: [],
 		questionnaire_rt: [],
 		target1_rt: [],
 		target2_rt: [],
 		target3_rt: [],
 	},
+
 
 
 	starttime:function(){
@@ -454,6 +473,7 @@ var experiment = {
 				experiment.data.race.push(races[i].value);
 			}
 		}
+
 		experiment.data.ladder.push(document.getElementById("ladder").value);
 		experiment.data.age.push(document.getElementById("age").value);
 		experiment.data.gender.push(document.getElementById("gender").value);
@@ -461,7 +481,9 @@ var experiment = {
 		experiment.data.homelang.push(document.getElementById("homelang").value);
 		experiment.data.ethnicity.push(document.getElementById("ethnicity").value);
 		experiment.data.children.push(document.getElementById("children").value);
-		experiment.data.prior_exposure.push(document.getElementById("prior_exposure").value);
+		experiment.data.prior_exposure_1.push(document.getElementById("prior1").value);
+		experiment.data.prior_exposure_2.push(document.getElementById("prior2").value);
+		experiment.data.prior_exposure_3.push(document.getElementById("prior3").value);
 		experiment.end();
 	}
 }
