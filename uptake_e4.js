@@ -81,23 +81,29 @@ function shuffle_mult() {
 
 
 var atts = ['It is very important that children learn to respect adults, such as parents and teachers.',
-'It is important for young children to learn to control their impulses (e.g., waiting when told to wait).',
-'Children should be taught to be grateful to their parents.',
-'Children should not be punished for breaking small rules.',
-'Parents should follow their children’s lead rather than imposing structure in the form of rules.',
-'Young children should be allowed to make their own decisions, such as what to eat for dinner.',
-'Parents need to provide safe and loving environments for their children.',
-'Holding and cradling babies is important for forming strong bonds between parent and child.',
-'Children should be given comfort and understanding when they are scared or unhappy.',
-'Parents do not need to talk to their child about his or her emotions.',
-'Children become spoiled if they receive too much attention from parents.',
-'Too much affection can make a child weak.',
-'Children can learn about things like good and bad behavior from a very early age.',
-'Young children can teach themselves things by exploring and playing.',
-'Babies’ repetitive behaviors (e.g. banging a cup on the table) are a way for them to explore cause and effect.',
-'It is not helpful for adults to explain the reasons for rules to young children because they won’t understand.',
+'It is very important for young children to do as they are told, for example, waiting when they are told to wait.',
+'Children should be grateful to their parents.',
+'It is very important that there are consequences when a child breaks a rule, big or small.',
+'It is okay if young children boss around their caregivers.',
+'It is okay if children see adults as equals rather than viewing them with respect.',
+'Young children should be allowed to make their own decisions, like what to play with and when to eat.',
+'Parents do not need to worry if their child misbehaves a lot.',
+'Children should be comforted when they are scared or unhappy.',
+'It’s important for parents to help children learn to deal with their emotions.',
+'Parents should pay attention to what their child likes and dislikes.',
+'A child who has close bonds with his or her parents will have better relationships later on in life.',
+'Children who receive too much attention from their parents become spoiled.',
+'Too much affection, such as hugging and kissing, can make a child weak.',
+'Children and parents do not need to feel emotionally close as long as children are kept safe.',
+'Parents should not try to calm a child who is upset, it is better to let children calm themselves.',
+'It is good to let children explore and experiment.',
+'Parents can help babies learn language by talking to them.',
+'Parents can prepare young children to succeed in school by teaching them things, such as shapes and numbers.',
+'Babies can learn a lot just by playing.',
+'It is not helpful to explain the reasons for rules to young children because they won’t understand.',
 'Children don’t need to learn about numbers and math until they go to school.',
-'Reading books to children is not helpful if they have not yet learned to speak.']; 
+'Reading books to children is not helpful if they have not yet learned to speak.',
+'Babies can’t learn about the world until they learn to speak.']; 
 
 atts = shuffle(atts); 
 
@@ -319,7 +325,7 @@ function add_e1 ()
 function add_e2 () 
 { 
 	for (i = 0; i < 6; i++) {
-		title= 'Learning about Toys',
+		title= 'Babies and Surprising Events',
 		question = uptake_question_exp2[i];
 		answer_a = uptake_answer_a_exp2[i];
 		answer_b = uptake_answer_b_exp2[i];
@@ -337,7 +343,7 @@ function add_e2 ()
 function add_c1 () 
 { 
 	for (i = 0; i < 6; i++) {
-		title= 'Learning about Toys',
+		title= 'The Island Rule',
 		question = uptake_question_con1[i];
 		answer_a = uptake_answer_a_con1[i];
 		answer_b = uptake_answer_b_con1[i];
@@ -355,7 +361,7 @@ function add_c1 ()
 function add_c2 () 
 { 
 	for (i = 0; i < 6; i++) {
-		title= 'Learning about Toys',
+		title= 'The Peacock Begonia',
 		question = uptake_question_con2[i];
 		answer_a = uptake_answer_a_con2[i];
 		answer_b = uptake_answer_b_con2[i];
