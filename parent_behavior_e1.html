@@ -231,6 +231,92 @@
     </table>
 </div>
 
+
+
+<!-- Children slide -->
+  <div class="slide" id="children_qs" align="center">
+
+  <br>
+
+    <p class="block-text">We want to make sure we have accurate data. Please answer the following questions truthfully- you will receive credit regardless of your answer!</p>
+
+
+ <p><b>How many children do you have? (Note that you will receive credit regardless of your answer)</b></p>
+        <p>
+          <select name="children" id="children" form="demographics">
+            <option value="">Choose a number</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="morethan5">More than 5</option>
+          </select>
+        </p>
+
+        <p><b>How old is your <em>youngest</em> child? (Note that you will receive credit regardless of your answer)</b></p>
+           <p>
+            <select name="youngest" id="youngestAge" form="demographics">
+                      <option value="">Choose an age</option>
+                      <option value="0to6mo">0-6 months old</option>
+                      <option value="7to12mo">7-12 months old</option>
+                      <option value="1y">1 year old</option>
+                      <option value="2y">2 years old</option>
+                      <option value="3y">3 years old</option>
+                      <option value="4y">4 years old</option>
+                      <option value="5y">5 years old</option>
+                      <option value="6y">6 years old</option>
+                      <option value="7y">7 years old</option>
+                      <option value="8y">8 years old</option>
+                      <option value="9y">9 years old</option>
+                      <option value="10y">10 years old</option>
+                      <option value="olderthan10">More than 10 years old</option>
+                    </select>
+
+                <p><b>How old is your <em>oldest</em> child? (Note that you will receive credit regardless of your answer)</b></p>
+           <p>
+            <select name="oldest" id="oldestAge" form="demographics">
+                      <option value="">Choose an age</option>
+                      <option value="0to6mo">0-6 months old</option>
+                      <option value="7to12mo">7-12 months old</option>
+                      <option value="1y">1 year old</option>
+                      <option value="2y">2 years old</option>
+                      <option value="3y">3 years old</option>
+                      <option value="4y">4 years old</option>
+                      <option value="5y">5 years old</option>
+                      <option value="6y">6 years old</option>
+                      <option value="7y">7 years old</option>
+                      <option value="8y">8 years old</option>
+                      <option value="9y">9 years old</option>
+                      <option value="10y">10 years old</option>
+                      <option value="olderthan10">More than 10 years old</option>
+                    </select>           
+
+
+      <p><b>Do you have any comments about this survey?</b></p>
+      <p>
+        <input type="text" id="comments" name="comments" style="width:40%" value="">
+        </textarea>
+      </p> 
+
+
+    <table align="center">
+      <tr>
+        <td align="center">
+          <button type="button" onClick="this.blur(); experiment.next()"> Continue</button>
+        </td>
+        <tr>
+          <td align="center">
+
+          </td>
+        </tr>
+
+    </table>
+  </div>
+  <!-- End reading instructions slide -->
+
+
   <!-- The debriefing slide. -->
   <div class="slide" id="debriefing">
     <form id="demographics" onsubmit="experiment.submitcomments()">
@@ -306,12 +392,6 @@
         </select>
       </p>
 
-      <p><b>What is your native/first language (i.e., the language that was primarily spoken at home when you were a child)?</b></p>
-      <p>
-        <input type="text" id="homelang" name="homelang" style="width:40%" value="">
-        </textarea>
-      </p>
-
       <p><b>What is your ethnicity?</b></p>
       <p>
 
@@ -338,39 +418,6 @@
           <br>
           <input type="checkbox" name="race" value="other"> Other
         </form>
-
-        <p><b>How many children do you have? (Note that you will receive credit regardless of your answer).</b></p>
-        <p>
-          <select name="children" id="children" form="demographics">
-            <option value="">Choose a number</option>
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="morethan5">More than 5</option>
-          </select>
-        </p>
-
-        <p><b>How old is your <em>oldest</em> child?</b></p>
-           <p>
-            <select name="oldest" id="oldestAge" form="demographics">
-                      <option value="">Choose an age</option>
-                      <option value="0to6mo">0-6 months old</option>
-                      <option value="7to12mo">7-12 months old</option>
-                      <option value="1y">1 year old</option>
-                      <option value="2y">2 years old</option>
-                      <option value="3y">3 years old</option>
-                      <option value="4y">4 years old</option>
-                      <option value="5y">5 years old</option>
-                      <option value="6y">6 years old</option>
-                      <option value="7y">7 years old</option>
-                      <option value="8y">8 years old</option>
-                      <option value="9y">9 years old</option>
-                      <option value="10y">10 years old</option>
-                      <option value="olderthan10">More than 10 years old</option>
-                    </select>
 
     <div>
 

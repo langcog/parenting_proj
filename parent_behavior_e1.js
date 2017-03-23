@@ -125,6 +125,7 @@ shuffle_mult(behave, behave_ord);
 
 var atts_instruct = ['paq_instruct'];
 var behave_instruct = ['behave_instruct'];
+var chidlren_qs = ['children_qs'];
 
 var numTrialsExperiment = atts_instruct.length + atts.length + behave_instruct.length + behave.length;
 
@@ -156,7 +157,6 @@ for (i = 0; i < atts.length; i++) {
     trials.push(trial);
 }
 
-
 for (i = 0; i < behave_instruct.length; i++) {
     trial = {
         sentence: "",
@@ -172,6 +172,17 @@ for (i = 0; i < behave.length; i++) {
     trial = {
         sentence: behave[i],
         slide: "behave",
+        behavior: behave_ord[i],
+        trial_number: i+1,
+    }
+
+    trials.push(trial);
+}
+
+for (i = 0; i < chidlren_qs.length; i++) {
+    trial = {
+        sentence: children_qs[i],
+        slide: "children_qs",
         behavior: behave_ord[i],
         trial_number: i+1,
     }
@@ -195,7 +206,7 @@ var experiment = {
 		age: [],
 		gender: [],
 		education: [],
-		homelang: [],
+		comments: [],
 		ethnicity:[],
 		race: [],
 		children:[],
@@ -289,6 +300,9 @@ var experiment = {
             $("#behave").html(trial_info.sentence);  
                 showSlide("behave_slide"); 
                 }
+            if (trial_info.slide == "children_qs") {
+                showSlide("children_qs"); 
+                }
 
 		experiment.data.sentence.push(trial_info.sentence);
 		experiment.data.trial_type.push(trial_info.slide);
@@ -316,9 +330,10 @@ var experiment = {
 		experiment.data.age.push(document.getElementById("age").value);
 		experiment.data.gender.push(document.getElementById("gender").value);
 		experiment.data.education.push(document.getElementById("education").value);
-		experiment.data.homelang.push(document.getElementById("homelang").value);
+		experiment.data.comments.push(document.getElementById("comments").value);
 		experiment.data.ethnicity.push(document.getElementById("ethnicity").value);
 		experiment.data.children.push(document.getElementById("children").value);
+        experiment.data.childAgeYoung.push(document.getElementById("youngestAge").value);
         experiment.data.childAgeOld.push(document.getElementById("oldestAge").value);
         experiment.data.behaveAge.push(document.getElementById("b_age").value);
 		experiment.end();
