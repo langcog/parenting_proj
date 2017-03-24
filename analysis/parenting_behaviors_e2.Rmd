@@ -1,0 +1,287 @@
+---
+title: "Parenting behaviors"
+author: "Emily"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=FALSE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
+library(langcog)
+library(tidyverse)
+library(ggthemes)
+library(rjson)
+library(stringr)
+library(forcats)
+library(tibble)
+library(lme4)
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_few())
+```
+
+Read in participant data.
+
+```{r}
+files <- dir("../production-results/parenting_behaviors_e2/")
+attitudes <- data.frame()
+behaviors <- data.frame()
+subinfo <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/parenting_behaviors_e2/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  #paq answers
+  attitudes_id <- data.frame(sid = jd$WorkerId, 
+               sent = jd$answers$data$sentence[1:24],
+               rating = as.numeric(jd$answers$data$rating[1:24]))
+                   
+  attitudes <- bind_rows(attitudes, attitudes_id)
+  
+  #behaviors
+  behaviors_id <- data.frame(sid = jd$WorkerId,
+                sent = jd$answers$data$sentence[25:36],
+                rating = as.numeric(jd$answers$data$rating[25:36]))
+                          
+  behaviors <- bind_rows(behaviors, behaviors_id)
+  
+  #demographics
+  subinfo_id <- data.frame(sid = jd$WorkerId,
+                   behave_age = jd$answers$data$behaveAge,    
+                   children = jd$answers$data$children,
+                   youngest = jd$answers$data$childAgeYoung,
+                   oldest = jd$answers$data$childAgeOld,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   race = as.character(jd$answers$data$race[1]),
+                   comments = jd$answers$data$comments)
+  subinfo <- bind_rows(subinfo, subinfo_id)
+}
+```
+
+Read in trial info and questionnaire labels.
+
+```{r}
+labels <- read.csv("sent_forms.csv")
+labels$sent <- as.character(labels$sent)
+behave <- read.csv("behaviors_e2.csv")
+```
+
+Clean up labels.
+
+```{r}
+attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
+behaviors$sent <- str_replace_all(as.character(behaviors$sent), "[â‘”“’']", "")
+```
+
+#Demographics
+
+```{r}
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(race, data=subinfo)
+qplot(ethnicity, data=subinfo)
+```
+
+# Data Frames and Exclusions
+
+I included a "Comments" box as a way to catch if parents found any part of the survey difficult or weird- nothing like this came up.
+
+```{r eval = FALSE}
+none <- c("no", "none", "No", "None", "", "n/a", "N/A")
+
+comments <- subinfo %>%
+  select(comments)%>%
+  filter(!comments %in% none)
+
+comments
+``` 
+
+## Make data frames. 
+
+Questionnaire attitude means.
+
+```{r}
+dq <- attitudes %>%
+  left_join(labels)%>%
+  mutate(category_paq = category)%>%
+  select(-category)
+
+db <- behaviors%>%
+  left_join(behave)%>%
+  mutate(category_bev = category)%>%
+  select(-category)
+
+db$rating[db$rating == 0] <- NA
+
+
+dq$rating <- as.numeric(dq$rating)
+dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+
+atts <- dq %>%
+  group_by(sid, category_paq) %>% 
+  summarise(rating_paq = mean(rating))
+
+bevs <- db %>%
+  group_by(sid, category_bev) %>% 
+  summarise(rating_bev = mean(rating))
+
+bevs$rating_bev <- as.numeric(bevs$rating_bev)
+atts$rating_paq <- as.numeric(atts$rating_paq)
+
+all <- atts %>%
+  left_join(bevs)%>%
+  left_join(subinfo)%>%
+  filter(!children == "0")
+
+all$sid <- as.factor(all$sid)
+```
+
+#Plot behaviors and attitudes
+
+```{r}
+ggplot(all, aes(x= rating_bev, y = rating_paq)) +
+  facet_grid(category_bev ~category_paq) + 
+  geom_jitter(aes(color = category_paq)) +
+  xlab("Frequency of behavior") + 
+  ylab("PAQ score") + 
+  scale_colour_solarized()+
+  geom_smooth(method="lm", se=FALSE) 
+```
+
+# Questionnaire
+
+Look at mean ratings across sentences.
+
+```{r}
+ms <- dq %>%
+  group_by(category_paq, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) %>%
+  arrange(category_paq, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+```
+
+Plot responses to individual questionnaire items.
+
+```{r}
+qplot(short_sent_ord, mean, col = category_paq,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = ms) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+Plot mean subscale scores.
+
+```{r}
+atts_m <- dq %>%
+  group_by(category_paq) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) %>%
+  arrange(category_paq, desc(mean)) 
+
+ggplot(atts_m, aes(x = category_paq, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))+ 
+  ylim(c(0,6)) 
+```
+
+Look at mean ratings for behaviors.
+
+```{r}
+ms_b <- db %>%
+  group_by(category_bev, short_sent) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) %>%
+  arrange(category_bev, desc(mean)) 
+
+ms_b$short_sent_ord <- factor(ms_b$short_sent, 
+                             levels = ms_b$short_sent)
+```
+
+Plot responses to individual behavior items.
+
+```{r}
+qplot(short_sent_ord, mean, col = category_bev,
+      ymin = ci_lower, ymax = ci_upper,
+      geom = "pointrange",
+      data = ms_b) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Frequency of Behavior") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+
+```{r}
+bev <- behaviors %>%
+  left_join(behave)%>%
+  group_by(category)
+
+bev$rating[bev$rating=="0"] <- "My child is too young"
+bev$rating[bev$rating=="1"] <- "Never"
+bev$rating[bev$rating=="2"] <- "Almost never"
+bev$rating[bev$rating=="3"] <- "Occasionally"
+bev$rating[bev$rating=="4"] <- "Once or twice per week"
+bev$rating[bev$rating=="5"] <- "Most days"
+bev$rating[bev$rating=="6"] <- "Multiple times ever day"
+
+bev$rating <- factor(bev$rating, levels = c("My child is too young", "Never", "Almost never","Occasionally","Once or twice per week","Most days","Multiple times ever day"))
+
+bev$short_sent <- factor(bev$short_sent, levels = c("read","practice numbers and letters","make observations", "educational programming","talk about feelings","spend time cuddling","sleep in the same bed","hug and kiss","talk sternly","give time out or punishments","talk about setting limits","help with chores"))
+
+subinfo$behave_age[subinfo$behave_age == "0-6"] <- "0-6 months"
+subinfo$behave_age[subinfo$behave_age == "7-12"] <- "7-12 months"
+
+subinfo$behave_age <- factor(subinfo$behave_age, levels = c("0-6 months", "7-12 months", "1-1.5","1.5-2","2-2.5","2.5-3","3-3.5","3.5-4", "4-4.5","4.5-5", "older"))
+
+qplot(behave_age, data=subinfo)
+
+ggplot(bev, aes(short_sent, fill = rating, shape = category)) + 
+  geom_bar(position = "fill")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("Behavior") + 
+  ylab("Proportion responding") 
+```
+
+```{r}
+#for AA behaviors 
+model <- summary(lmer(frequency ~ AA + RR + El + behave_age +
+                (1|workerid) + 
+                (1|item), 
+              data = data, 
+              family = "binomial"))
+
+#for EL behaviors 
+
+#for RR behaviors 
+```
+
+
