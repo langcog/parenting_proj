@@ -26,6 +26,7 @@ library(stringr)
 library(forcats)
 library(tibble)
 library(lme4)
+library(lmerTest)
 
 select <- dplyr::select # masked by MASS
 
@@ -90,24 +91,7 @@ attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’
 behaviors$sent <- str_replace_all(as.character(behaviors$sent), "[â‘”“’']", "")
 ```
 
-#Demographics
-
-```{r}
-subinfo$education <- factor(subinfo$education, 
-                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
-
-qplot(ses, data=subinfo)
-qplot(children, data=subinfo)
-qplot(gender, data=subinfo)
-qplot(education, data=subinfo)
-qplot(age, data=subinfo)
-qplot(race, data=subinfo)
-qplot(ethnicity, data=subinfo)
-```
-
-# Data Frames and Exclusions
-
-## Make data frames. 
+Make data frames. 
 
 ```{r}
 dq <- attitudes %>%
@@ -126,6 +110,38 @@ db$rating[db$rating == 0] <- NA
 #rescore reverse coded items
 dq$rating <- as.numeric(dq$rating)
 dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+```
+
+Get means by category.
+
+```{r}
+atts <- dq %>%
+  group_by(sid, category_paq) %>% 
+  summarise(rating_paq = mean(rating))
+
+bevs <- db %>%
+  group_by(sid, category_bev) %>% 
+  summarise(rating_bev = mean(rating))
+
+all <- atts %>%
+  left_join(bevs)%>%
+  left_join(subinfo)%>%
+  filter(!children == "0")
+```
+
+#Demographics
+
+```{r}
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(race, data=subinfo)
+qplot(ethnicity, data=subinfo)
 ```
 
 # PAQ
@@ -238,7 +254,10 @@ ggplot(bev, aes(short_sent, fill = rating, shape = category)) +
   ylab("Proportion responding") 
 ```
 
-Do behaviors within categories hang together? This is only important if we use mean scores within these categories for subsequent analyses.
+
+##Reliability
+
+Are behaviors within a category correlated with each other? This is relevant if we choose to use mean scores within these categories for subsequent analyses.
 
 Rules and Respect
 ```{r}
@@ -270,38 +289,10 @@ alpha.el <- as.matrix(select(wide.bev, -sid))
 psych::alpha(x = alpha.el)
 ```
 
-Conclusions- Early Learning and Rules and Respect items hang together pretty well (alphas = .70) but Affection and Attachment items are not as great (alpha = .55). Dropping "sleep in the same bed" would help. Also, "hug and kiss" is close to ceiling with most people reporting "multiple times every day."
+Early Learning and Rules and Respect items hang together pretty well (alphas = .70) but Affection and Attachment items are not as great (alpha = .55). Dropping "sleep in the same bed" would help. Also, "hug and kiss" is close to ceiling with most people reporting "multiple times every day."
 
-#Do parenting attitudes predict parenting behaviors?
 
-```{r}
-#get means by category
-atts <- dq %>%
-  group_by(sid, category_paq) %>% 
-  summarise(rating_paq = mean(rating))
-
-bevs <- db %>%
-  group_by(sid, category_bev) %>% 
-  summarise(rating_bev = mean(rating))
-
-all <- atts %>%
-  left_join(bevs)%>%
-  left_join(subinfo)%>%
-  filter(!children == "0")
-
-```
-
-```{r}
-ggplot(all, aes(x= rating_bev, y = rating_paq)) +
-  facet_grid(category_bev ~category_paq) + 
-  geom_jitter(aes(color = category_paq)) +
-  xlab("Frequency of behavior") + 
-  ylab("PAQ score") + 
-  scale_colour_solarized()+
-  geom_smooth(method="lm", se=FALSE) 
-```
-
-Do demographic variables predict different mean frequencies of individual behaviors?
+##Demographic predictors of behaviors
 
 Education
 ```{r}
@@ -378,8 +369,23 @@ ggplot(mf, aes(category_bev, mean, fill=ses)) +
              position = position_dodge(width = .9)) 
 ```
 
-#Stats
+#Attitudes and Behaviors
 
+This might not be the best plot- I'd rather see the individual behaviors, but not sure the best way to present this without overwhelming.
+
+```{r}
+ggplot(all, aes(x= rating_bev, y = rating_paq)) +
+  facet_grid(category_bev ~category_paq) + 
+  geom_jitter(aes(color = category_paq)) +
+  xlab("Frequency of behavior") + 
+  ylab("PAQ score") + 
+  scale_colour_solarized()+
+  geom_smooth(method="lm", se=FALSE) 
+```
+
+##Stats
+
+Set up dataframes for analyses.
 ```{r}
 d <- db %>%
   left_join(atts)%>%
@@ -398,27 +404,41 @@ d_el <- d%>%
 d_rr <- d%>%
   filter(category_bev == "RR")%>%
   filter(!is.na(rating))
+```
 
-#for AA behaviors 
+Separate models for each category of behavior. Do PAQ subscale scores predict the frequency of parenting behaviors?
+
+##Affection and Attachment 
+```{r}
 model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
                 (1|sid) + 
-                (1|short_sent), 
+                (1|short_sent), #behavior item
               data = d_aa))
-summary(model)
+lm <- summary(model)
+lm
+```
 
+##Early Learning 
+```{r}
 #for EL behaviors 
 model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
                 (1|sid) + 
-                (1|short_sent), 
+                (1|short_sent), #behavior item
               data = d_el))
-summary(model)
-
-#for RR behaviors 
-model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
-                (1|sid) + 
-                (1|short_sent), 
-              data = d_rr))
-summary(model)
+lm <- summary(model)
+lm
 ```
 
+##Rules and Respect 
+```{r}
+model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
+                (1|sid) + 
+                (1|short_sent), #behavior item
+              data = d_rr))
+lm <- summary(model)
+lm
+```
 
+#Conclusions
+
+PAQ scores predict Early Learning and Affection and attachment behaviors in the way we predicted- higher PAQ scores within a subscale predict more frequent parenting behaviors within the same category (i.e., frequency of Affection and Attachment behaviors are predicted by AA PAQ scores but not EL or RR PAQ scores)
