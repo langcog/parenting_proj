@@ -1,16 +1,17 @@
 {
-    "title":               "SCIENCE ARTICLES",
-    "description":         "Complete readings and questions about science. DO ONLY ONE SCIENCE ARTICLES HIT. IF YOU DO MULTIPLE HITS OF THIS TYPE, YOU WILL NOT BE PAID! ",
-    "keywords":            "science, learning",
-    "url":                 "https://langcog.stanford.edu/expts/parenting_proj/uptake_e4.html",
+    "title":               "Survey for Parents of Young Children",
+    "description":         "PARENTS WITH CHILDREN AGES 0-5 YEARS, we are interested in your perceptions of parenting and child development!",
+    "keywords":            "parenting, children",
+    "url":                 "https://langcog.stanford.edu/expts/parenting_proj/parent_behavior_e1.html",
     "frame_height":         450,
     "assignment_duration":  "1 hour",
     "auto_approval_delay":  "5 minutes",
-    "reward":               3.0,
+    "reward":               1.00,
     "experimenter":         "Emily Hembacher",
     "server_log_path":      "https://langcog.stanford.edu/cgi-bin/cosub/log_submission.php",
     "qualifications": {
         "location": "US",
-        "approval_percentage": 85
+        "approval_percentage": 85,
+        "parenthood_status": 1
     }
 }

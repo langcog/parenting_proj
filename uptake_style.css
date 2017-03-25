@@ -126,10 +126,17 @@ button[disabled] {
   text-align: center;
   width: 100px;
 }
+#behave_likert {
+  text-align: left;
+  width: 200px;
+}
+#behave {
+  font-weight: bold;
+}
 td {
   text-align: center;
   width: 60px;
-  padding: 3px;
+  padding: 0px;
 }
 #sent_question {
   font-size: 16px;

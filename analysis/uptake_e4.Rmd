@@ -25,11 +25,9 @@ library(tidyverse)
 library(ggthemes)
 library(rjson)
 library(stringr)
-# library(psych)
-# library(nFactors)
 library(lme4)
 library(forcats)
-# library(nFactors)
+library(tibble)
 
 select <- dplyr::select # masked by MASS
 

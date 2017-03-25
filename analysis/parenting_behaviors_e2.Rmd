@@ -45,21 +45,21 @@ for (f in files) {
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   
   #paq answers
-  attitudes_id <- data.frame(sid = jd$WorkerId, 
+  attitudes_id <- data.frame(sid = as.factor(jd$WorkerId), 
                sent = jd$answers$data$sentence[1:24],
                rating = as.numeric(jd$answers$data$rating[1:24]))
                    
   attitudes <- bind_rows(attitudes, attitudes_id)
   
   #behaviors
-  behaviors_id <- data.frame(sid = jd$WorkerId,
+  behaviors_id <- data.frame(sid = as.factor(jd$WorkerId),
                 sent = jd$answers$data$sentence[25:36],
                 rating = as.numeric(jd$answers$data$rating[25:36]))
                           
   behaviors <- bind_rows(behaviors, behaviors_id)
   
   #demographics
-  subinfo_id <- data.frame(sid = jd$WorkerId,
+  subinfo_id <- data.frame(sid = as.factor(jd$WorkerId),
                    behave_age = jd$answers$data$behaveAge,    
                    children = jd$answers$data$children,
                    youngest = jd$answers$data$childAgeYoung,
@@ -93,11 +93,12 @@ behaviors$sent <- str_replace_all(as.character(behaviors$sent), "[â‘”“’
 #Demographics
 
 ```{r}
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+
 qplot(ses, data=subinfo)
 qplot(children, data=subinfo)
 qplot(gender, data=subinfo)
-subinfo$education <- factor(subinfo$education, 
-                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 qplot(education, data=subinfo)
 qplot(age, data=subinfo)
 qplot(race, data=subinfo)
@@ -106,21 +107,7 @@ qplot(ethnicity, data=subinfo)
 
 # Data Frames and Exclusions
 
-I included a "Comments" box as a way to catch if parents found any part of the survey difficult or weird- nothing like this came up.
-
-```{r eval = FALSE}
-none <- c("no", "none", "No", "None", "", "n/a", "N/A")
-
-comments <- subinfo %>%
-  select(comments)%>%
-  filter(!comments %in% none)
-
-comments
-``` 
-
 ## Make data frames. 
-
-Questionnaire attitude means.
 
 ```{r}
 dq <- attitudes %>%
@@ -133,46 +120,17 @@ db <- behaviors%>%
   mutate(category_bev = category)%>%
   select(-category)
 
+#remove items that parents marked as "my child is too young"
 db$rating[db$rating == 0] <- NA
 
-
+#rescore reverse coded items
 dq$rating <- as.numeric(dq$rating)
 dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
-
-atts <- dq %>%
-  group_by(sid, category_paq) %>% 
-  summarise(rating_paq = mean(rating))
-
-bevs <- db %>%
-  group_by(sid, category_bev) %>% 
-  summarise(rating_bev = mean(rating))
-
-bevs$rating_bev <- as.numeric(bevs$rating_bev)
-atts$rating_paq <- as.numeric(atts$rating_paq)
-
-all <- atts %>%
-  left_join(bevs)%>%
-  left_join(subinfo)%>%
-  filter(!children == "0")
-
-all$sid <- as.factor(all$sid)
 ```
 
-#Plot behaviors and attitudes
+# PAQ
 
-```{r}
-ggplot(all, aes(x= rating_bev, y = rating_paq)) +
-  facet_grid(category_bev ~category_paq) + 
-  geom_jitter(aes(color = category_paq)) +
-  xlab("Frequency of behavior") + 
-  ylab("PAQ score") + 
-  scale_colour_solarized()+
-  geom_smooth(method="lm", se=FALSE) 
-```
-
-# Questionnaire
-
-Look at mean ratings across sentences.
+Get mean ratings for sentences.
 
 ```{r}
 ms <- dq %>%
@@ -213,7 +171,9 @@ ggplot(atts_m, aes(x = category_paq, y = mean)) +
   ylim(c(0,6)) 
 ```
 
-Look at mean ratings for behaviors.
+# Behaviors
+
+Get mean ratings for behaviors.
 
 ```{r}
 ms_b <- db %>%
@@ -225,21 +185,7 @@ ms_b$short_sent_ord <- factor(ms_b$short_sent,
                              levels = ms_b$short_sent)
 ```
 
-Plot responses to individual behavior items.
-
-```{r}
-qplot(short_sent_ord, mean, col = category_bev,
-      ymin = ci_lower, ymax = ci_upper,
-      geom = "pointrange",
-      data = ms_b) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
-  xlab("") + 
-  ylab("Frequency of Behavior") + 
-  ylim(c(0,6)) + 
-  scale_colour_solarized()
-```
-
-
+Recode variables for plotting.
 ```{r}
 bev <- behaviors %>%
   left_join(behave)%>%
@@ -261,9 +207,30 @@ subinfo$behave_age[subinfo$behave_age == "0-6"] <- "0-6 months"
 subinfo$behave_age[subinfo$behave_age == "7-12"] <- "7-12 months"
 
 subinfo$behave_age <- factor(subinfo$behave_age, levels = c("0-6 months", "7-12 months", "1-1.5","1.5-2","2-2.5","2.5-3","3-3.5","3.5-4", "4-4.5","4.5-5", "older"))
+```
 
+Plot mean frequency of individual behavior items. This treats frequency as a continuous variable which it really isn't- is there a better way or does this seem okay?
+
+Parents were asked to answer questions about their youngest child. How old is their youngest child?
+```{r}
 qplot(behave_age, data=subinfo)
+```
 
+How frequent were individual behaviors?
+```{r}
+qplot(short_sent_ord, mean, col = category_bev,
+      ymin = ci_lower, ymax = ci_upper,
+      geom = "pointrange",
+      data = ms_b) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Frequency of Behavior") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+What do the means look like?
+```{r}
 ggplot(bev, aes(short_sent, fill = rating, shape = category)) + 
   geom_bar(position = "fill")+
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
@@ -271,17 +238,187 @@ ggplot(bev, aes(short_sent, fill = rating, shape = category)) +
   ylab("Proportion responding") 
 ```
 
+Do behaviors within categories hang together? This is only important if we use mean scores within these categories for subsequent analyses.
+
+Rules and Respect
 ```{r}
+wide.bev <- db %>% 
+  filter(category_bev == "RR") %>%
+  select(sid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.rr <- as.matrix(select(wide.bev, -sid))
+psych::alpha(x = alpha.rr)
+```
+
+Affection and Attachment
+```{r}
+wide.bev <- db %>% 
+  filter(category_bev == "AA") %>%
+  select(sid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.aa <- as.matrix(select(wide.bev, -sid))
+psych::alpha(x = alpha.aa)
+```
+
+Early Learning
+```{r}
+wide.bev <- db %>% 
+  filter(category_bev == "EL") %>%
+  select(sid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.el <- as.matrix(select(wide.bev, -sid))
+psych::alpha(x = alpha.el)
+```
+
+Conclusions- Early Learning and Rules and Respect items hang together pretty well (alphas = .70) but Affection and Attachment items are not as great (alpha = .55). Dropping "sleep in the same bed" would help. Also, "hug and kiss" is close to ceiling with most people reporting "multiple times every day."
+
+#Do parenting attitudes predict parenting behaviors?
+
+```{r}
+#get means by category
+atts <- dq %>%
+  group_by(sid, category_paq) %>% 
+  summarise(rating_paq = mean(rating))
+
+bevs <- db %>%
+  group_by(sid, category_bev) %>% 
+  summarise(rating_bev = mean(rating))
+
+all <- atts %>%
+  left_join(bevs)%>%
+  left_join(subinfo)%>%
+  filter(!children == "0")
+
+```
+
+```{r}
+ggplot(all, aes(x= rating_bev, y = rating_paq)) +
+  facet_grid(category_bev ~category_paq) + 
+  geom_jitter(aes(color = category_paq)) +
+  xlab("Frequency of behavior") + 
+  ylab("PAQ score") + 
+  scale_colour_solarized()+
+  geom_smooth(method="lm", se=FALSE) 
+```
+
+Do demographic variables predict different mean frequencies of individual behaviors?
+
+Education
+```{r}
+mf <- bevs %>% 
+  left_join(subinfo)%>%
+  filter(education != "") %>%
+  group_by(education, category_bev) %>%
+  multi_boot_standard(col = "rating_bev", na.rm = TRUE) 
+
+ggplot(mf, aes(category_bev, mean, fill=education)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+Gender
+```{r}
+mf <- bevs %>% 
+  left_join(subinfo)%>%
+  filter(gender == "Man" || gender == "Woman") %>%
+  group_by(gender, category_bev) %>%
+  multi_boot_standard(col = "rating_bev", na.rm = TRUE) 
+
+ggplot(mf, aes(category_bev, mean, fill=gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+Moms are engaging with their children more overall.
+
+Age of child
+```{r}
+mf <- bevs %>% 
+  left_join(subinfo)%>%
+  filter(behave_age != "") %>%
+  group_by(behave_age, category_bev) %>%
+  multi_boot_standard(col = "rating_bev", na.rm = TRUE) 
+
+ggplot(mf, aes(category_bev, mean, fill=behave_age)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) 
+```
+More behaviors are possible as kids get older.
+
+Race
+```{r}
+mf <- bevs %>% 
+  left_join(subinfo)%>%
+  filter(race != "NULL") %>%
+  group_by(race, category_bev) %>%
+  multi_boot_standard(col = "rating_bev", na.rm = TRUE) 
+
+ggplot(mf, aes(category_bev, mean, fill=race)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+```
+
+SES
+```{r}
+mf <- bevs %>% 
+  left_join(subinfo)%>%
+  filter(ses != "") %>%
+  group_by(ses, category_bev) %>%
+  multi_boot_standard(col = "rating_bev", na.rm = TRUE) 
+
+ggplot(mf, aes(category_bev, mean, fill=ses)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) 
+```
+
+#Stats
+
+```{r}
+d <- db %>%
+  left_join(atts)%>%
+  left_join(subinfo)%>%
+  select(sid, short_sent, rating, category_paq, category_bev, rating_paq, behave_age)%>%
+  spread(category_paq, rating_paq)
+
+d_aa <- d%>%
+  filter(category_bev == "AA")%>%
+  filter(!is.na(rating))
+
+d_el <- d%>%
+  filter(category_bev == "EL")%>%
+  filter(!is.na(rating))
+
+d_rr <- d%>%
+  filter(category_bev == "RR")%>%
+  filter(!is.na(rating))
+
 #for AA behaviors 
-model <- summary(lmer(frequency ~ AA + RR + El + behave_age +
-                (1|workerid) + 
-                (1|item), 
-              data = data, 
-              family = "binomial"))
+model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
+                (1|sid) + 
+                (1|short_sent), 
+              data = d_aa))
+summary(model)
 
 #for EL behaviors 
+model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
+                (1|sid) + 
+                (1|short_sent), 
+              data = d_el))
+summary(model)
 
 #for RR behaviors 
+model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
+                (1|sid) + 
+                (1|short_sent), 
+              data = d_rr))
+summary(model)
 ```
 
 

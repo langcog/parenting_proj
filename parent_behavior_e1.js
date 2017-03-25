@@ -107,13 +107,13 @@ atts = shuffle(atts);
 
 var behave = ['In the last month, how often did you read to your child?',
 'In the last month, how often did you practice numbers or letters with your child?',
-'In the last month, how often did you share facts or observations about the world when you are doing other tasks (e.g., “did you know butter comes from cows?” when you are shopping at the grocery store)?',
+'In the last month, how often did you share facts or observations about the world when you were doing other tasks (e.g., “did you know butter comes from cows?” while shopping at the grocery store)?',
 'In the last month, how often did your child watch educational programming (e.g., shows like Sesame Street) or play with educational apps (e.g., apps designed to teach numbers, colors, shapes, etc.) on a tablet or mobile device?',
-'In the last month, how often did you and your child talk about feelings (e.g., when he/she is sad/angry)?',
+'In the last month, how often did you and your child talk about feelings (e.g., when he/she was sad/angry)?',
 'In the last month, how often did you and your child spend time cuddling?',
 'In the last month, how often did your child sleep in the same bed as you?',
 'In the last month, how often did you hug or kiss your child?',
-'In the last month, how often did you talk sternly to your child when he/she does something you don’t want?',
+'In the last month, how often did you talk sternly to your child when he/she did something you don’t want?',
 'In the last month, how often did you give your child “time out” or other punishments for acting out?',
 'In the last month, how often did you talk about setting limits with your child (e.g., “only 10 minutes of screen time” or “no hitting”)?',
 'In the last month, how often did your child help or try to help with chores or tasks (including cleaning up his/her toys)?'
@@ -181,9 +181,9 @@ for (i = 0; i < behave.length; i++) {
 
 for (i = 0; i < chidlren_qs.length; i++) {
     trial = {
-        sentence: children_qs[i],
+        sentence: "",
         slide: "children_qs",
-        behavior: behave_ord[i],
+        behavior: "",
         trial_number: i+1,
     }
 
@@ -210,7 +210,6 @@ var experiment = {
 		ethnicity:[],
 		race: [],
 		children:[],
-		item: [],
         childAgeYoung:[],
         childAgeOld:[],
         behaveAge: []
@@ -292,6 +291,7 @@ var experiment = {
 			if (trial_info.slide == "attitudes") {
 	    	$("#attitudes").html(trial_info.sentence);  //add sentence to html 
                 showSlide("attitudes_slide"); //display slide
+                experiment.data.sentence.push(trial_info.sentence);
 	    	    }
             if (trial_info.slide == "behave_instruct") {
                 showSlide("behave_instruct");   
@@ -299,12 +299,11 @@ var experiment = {
             if (trial_info.slide == "behave") {
             $("#behave").html(trial_info.sentence);  
                 showSlide("behave_slide"); 
+                experiment.data.sentence.push(trial_info.sentence);
                 }
             if (trial_info.slide == "children_qs") {
                 showSlide("children_qs"); 
                 }
-
-		experiment.data.sentence.push(trial_info.sentence);
 		experiment.data.trial_type.push(trial_info.slide);
 		}
 	},
