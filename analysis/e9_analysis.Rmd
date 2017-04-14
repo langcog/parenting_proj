@@ -189,6 +189,9 @@ ms <- d %>%
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
 
+#for comparison with CDM data
+e9 <- ms
+save(e9, file = "e9.RData")
 ```
 
 Plot attitude.

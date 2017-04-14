@@ -101,6 +101,8 @@ dq <- attitudes %>%
 
 db <- behaviors%>%
   left_join(behave)%>%
+  left_join(subinfo)%>%
+  filter(behave_age != "older")%>%
   mutate(category_bev = category)%>%
   select(-category)
 
@@ -156,6 +158,11 @@ ms <- dq %>%
 
 ms$short_sent_ord <- factor(ms$short_sent, 
                              levels = ms$short_sent)
+
+
+#for comparison with CDM data
+beh <- ms
+save(beh, file = "beh.RData")
 ```
 
 Plot responses to individual questionnaire items.
@@ -205,9 +212,9 @@ Recode variables for plotting.
 ```{r}
 bev <- behaviors %>%
   left_join(behave)%>%
+  filter(rating != 0)%>%
   group_by(category)
 
-bev$rating[bev$rating=="0"] <- "My child is too young"
 bev$rating[bev$rating=="1"] <- "Never"
 bev$rating[bev$rating=="2"] <- "Almost never"
 bev$rating[bev$rating=="3"] <- "Occasionally"
@@ -374,13 +381,43 @@ ggplot(mf, aes(category_bev, mean, fill=ses)) +
 This might not be the best plot- I'd rather see the individual behaviors, but not sure the best way to present this without overwhelming.
 
 ```{r}
-ggplot(all, aes(x= rating_bev, y = rating_paq)) +
+ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq)) +
   facet_grid(category_bev ~category_paq) + 
-  geom_jitter(aes(color = category_paq)) +
+  geom_(aes(color = category_paq)) +
   xlab("Frequency of behavior") + 
   ylab("PAQ score") + 
   scale_colour_solarized()+
   geom_smooth(method="lm", se=FALSE) 
+
+mplot_q <- dq %>% 
+  mutate(rating_paq = rating, paq_item = short_sent)%>%
+  select(sid, paq_item, category_paq, rating_paq)
+  
+mplot_b <- db %>% 
+  mutate(rating_bev = rating)%>%
+  select(sid, short_sent, category_bev, rating_bev)
+
+mplot_b$bev_bin[mplot_b$rating_bev %in% 1:4] <- "low"
+mplot_b$bev_bin[mplot_b$rating_bev %in% 5:6] <- "high"
+
+mplot_b <- mplot_b %>%
+  select(sid, short_sent, bev_bin)
+
+mplot_q$rating_paq <- as.numeric(mplot_q$rating_paq)
+
+mplot <- mplot_q %>%
+  left_join(mplot_b)%>%
+  filter(!is.na(bev_bin))%>%
+  group_by(short_sent, bev_bin, category_paq)%>%
+  multi_boot_standard(col = "rating_paq", na.rm = TRUE) 
+
+ggplot(mplot, aes(short_sent, mean, fill=bev_bin)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()+
+  theme(axis.text.x = element_text(angle = 90, hjust = .5, vjust = .5))+ 
+  facet_grid(~ category_paq) 
 ```
 
 ##Stats
@@ -390,55 +427,88 @@ Set up dataframes for analyses.
 d <- db %>%
   left_join(atts)%>%
   left_join(subinfo)%>%
+  filter(!is.na(rating))%>%
+  filter(children != 0)%>%
+  filter(behave_age != "older")%>%
+  filter(behave_age != "")%>%
   select(sid, short_sent, rating, category_paq, category_bev, rating_paq, behave_age)%>%
   spread(category_paq, rating_paq)
 
+d$behave_age <- as.character(d$behave_age)
+
+d$behave_age[d$behave_age == "0-6 months"] <- 1
+d$behave_age[d$behave_age == "7-12 months"] <- 7
+d$behave_age[d$behave_age == "1-1.5"] <- 13
+d$behave_age[d$behave_age == "1.5-2"] <- 19 
+d$behave_age[d$behave_age == "2-2.5"] <- 25
+d$behave_age[d$behave_age == "2.5-3"] <- 31
+d$behave_age[d$behave_age == "3-3.5"] <- 37
+d$behave_age[d$behave_age == "3.5-4"] <- 43
+d$behave_age[d$behave_age == "4-4.5"] <- 49
+d$behave_age[d$behave_age == "4.5-5"] <- 55
+
+d$behave_age <- as.numeric(d$behave_age)
+
+d<- d%>%
+  mutate(child_age = behave_age)%>%
+  select(-behave_age)%>%
+  mutate(rating_bin = rating)
+
+d$rating_bin[d$rating %in% 1:4] <- "low"
+d$rating_bin[d$rating %in% 5:6] <- "high"
+
 d_aa <- d%>%
   filter(category_bev == "AA")%>%
-  filter(!is.na(rating))
+  filter(!is.na(rating), !is.na(rating_bin))
 
 d_el <- d%>%
   filter(category_bev == "EL")%>%
-  filter(!is.na(rating))
+  filter(!is.na(rating),!is.na(rating_bin))
 
 d_rr <- d%>%
   filter(category_bev == "RR")%>%
-  filter(!is.na(rating))
+  filter(!is.na(rating),!is.na(rating_bin))
+
+d_aa$rating_bin <- as.factor(d_aa$rating_bin)
+d_el$rating_bin <- as.factor(d_el$rating_bin)
+d_rr$rating_bin <- as.factor(d_rr$rating_bin)
+
+
 ```
 
 Separate models for each category of behavior. Do PAQ subscale scores predict the frequency of parenting behaviors?
 
-##Affection and Attachment 
+###Affection and Attachment 
 ```{r}
-model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
+model <- summary(glmer(rating_bin ~ AA + RR + EL + child_age + 
                 (1|sid) + 
                 (1|short_sent), #behavior item
-              data = d_aa))
-lm <- summary(model)
-lm
+              data = d_aa, 
+              family = "binomial"))
+model
 ```
 
-##Early Learning 
-```{r}
+###Early Learning 
+```{r eval = FALSE}
 #for EL behaviors 
-model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
+model <- summary(glmer(rating_bin ~ AA + RR + EL + child_age + 
                 (1|sid) + 
                 (1|short_sent), #behavior item
-              data = d_el))
-lm <- summary(model)
-lm
+              data = d_el, 
+              family = "binomial"))
+model
 ```
 
-##Rules and Respect 
+###Rules and Respect 
 ```{r}
-model <- summary(lmer(rating ~ AA + RR + EL + behave_age + 
+model <- summary(glmer(rating_bin ~ AA + RR + EL + child_age + 
                 (1|sid) + 
                 (1|short_sent), #behavior item
-              data = d_rr))
-lm <- summary(model)
-lm
+              data = d_rr, 
+              family = "binomial"))
+model
 ```
 
 #Conclusions
 
-PAQ scores predict Early Learning and Affection and attachment behaviors in the way we predicted- higher PAQ scores within a subscale predict more frequent parenting behaviors within the same category (i.e., frequency of Affection and Attachment behaviors are predicted by AA PAQ scores but not EL or RR PAQ scores)
+PAQ scores predict Early Learning and Affection and attachment behaviors in the way we predicted- higher PAQ scores within a subscale predict more frequent parenting behaviors within the same category (i.e., frequency of Affection and Attachment behaviors are predicted by AA PAQ scores but not EL or RR PAQ scores). Additionally, Early Learning and Rules and Respect but not Affection and Attachment behaviors increase with child age.
