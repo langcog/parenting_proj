@@ -34,13 +34,10 @@ knitr::opts_chunk$set(fig.width=8, fig.height=5,
                       echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(langcog)
-library(ggplot2)
+library(tidyverse)
 library(rjson)
-library(stringr)
-library(tidyr)
 library(psych)
 library(nFactors)
-library(dplyr)
 library(lme4)
 library(xtable)
 
@@ -54,6 +51,7 @@ Read in files and consolidate to the same directory.
 ```{r}
 files <- dir("../production-results/e9/")
 d.raw <- data.frame()
+
 
 for (f in files) {
   jf <- paste("../production-results/e9/",f,sep="")
@@ -89,9 +87,6 @@ for (f in files) {
                    race = race)
   d.raw <- bind_rows(d.raw, id)
 }
-
-d.raw <- distinct(d.raw, workerid, sent)
-
 ```
 
 
@@ -128,7 +123,6 @@ subinfo <- d %>%
   group_by(workerid) %>%
   select(workerid, age, gender, children, ses, education, language, 
          ethnicity, childAgeYoung, childAgeOld) %>%
-  distinct%>%
   summarise(age = age[1],
             gender = gender[1],
             children = children[1],
@@ -137,8 +131,7 @@ subinfo <- d %>%
             language = language[1], 
             ethnicity = ethnicity[1],
             childAgeYoung = childAgeYoung[1],
-            childAgeOld = childAgeOld[1]
-            )
+            childAgeOld = childAgeOld[1])
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 
