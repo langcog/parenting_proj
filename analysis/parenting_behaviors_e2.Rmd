@@ -129,6 +129,14 @@ all <- atts %>%
   left_join(bevs)%>%
   left_join(subinfo)%>%
   filter(!children == "0")
+
+all$category_paq <- str_replace(all$category_paq, "AA", "AA_paq")
+all$category_paq <- str_replace(all$category_paq, "EL", "EL_paq")
+all$category_paq <- str_replace(all$category_paq, "RR", "RR_paq")
+
+all$category_bev <- str_replace(all$category_bev, "AA", "AA_behave")
+all$category_bev <- str_replace(all$category_bev, "EL", "EL_behave")
+all$category_bev <- str_replace(all$category_bev, "RR", "RR_behave")
 ```
 
 #Demographics
@@ -383,41 +391,11 @@ This might not be the best plot- I'd rather see the individual behaviors, but no
 ```{r}
 ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq)) +
   facet_grid(category_bev ~category_paq) + 
-  geom_(aes(color = category_paq)) +
+  geom_point(aes(color = category_paq)) +
   xlab("Frequency of behavior") + 
   ylab("PAQ score") + 
   scale_colour_solarized()+
   geom_smooth(method="lm", se=FALSE) 
-
-mplot_q <- dq %>% 
-  mutate(rating_paq = rating, paq_item = short_sent)%>%
-  select(sid, paq_item, category_paq, rating_paq)
-  
-mplot_b <- db %>% 
-  mutate(rating_bev = rating)%>%
-  select(sid, short_sent, category_bev, rating_bev)
-
-mplot_b$bev_bin[mplot_b$rating_bev %in% 1:4] <- "low"
-mplot_b$bev_bin[mplot_b$rating_bev %in% 5:6] <- "high"
-
-mplot_b <- mplot_b %>%
-  select(sid, short_sent, bev_bin)
-
-mplot_q$rating_paq <- as.numeric(mplot_q$rating_paq)
-
-mplot <- mplot_q %>%
-  left_join(mplot_b)%>%
-  filter(!is.na(bev_bin))%>%
-  group_by(short_sent, bev_bin, category_paq)%>%
-  multi_boot_standard(col = "rating_paq", na.rm = TRUE) 
-
-ggplot(mplot, aes(short_sent, mean, fill=bev_bin)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  scale_fill_solarized()+
-  theme(axis.text.x = element_text(angle = 90, hjust = .5, vjust = .5))+ 
-  facet_grid(~ category_paq) 
 ```
 
 ##Stats
@@ -472,8 +450,40 @@ d_rr <- d%>%
 d_aa$rating_bin <- as.factor(d_aa$rating_bin)
 d_el$rating_bin <- as.factor(d_el$rating_bin)
 d_rr$rating_bin <- as.factor(d_rr$rating_bin)
+```
 
+Plot
 
+```{r}
+d_plot_aa <- d_aa%>%
+  gather("subscale", "rating_paq", AA:RR)%>%
+  group_by(subscale, rating_bin) %>%
+  multi_boot_standard(col = "rating_paq", na.rm = TRUE) 
+
+ggplot(d_plot_aa, aes(subscale, mean, fill=rating_bin)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) 
+
+d_plot_el <- d_el%>%
+  gather("subscale", "rating_paq", AA:RR)%>%
+  group_by(subscale, rating_bin) %>%
+  multi_boot_standard(col = "rating_paq", na.rm = TRUE) 
+
+ggplot(d_plot_el, aes(subscale, mean, fill=rating_bin)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) 
+
+d_plot_rr <- d_rr%>%
+  gather("subscale", "rating_paq", AA:RR)%>%
+  group_by(subscale, rating_bin) %>%
+  multi_boot_standard(col = "rating_paq", na.rm = TRUE) 
+
+ggplot(d_plot_rr, aes(subscale, mean, fill=rating_bin)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) 
 ```
 
 Separate models for each category of behavior. Do PAQ subscale scores predict the frequency of parenting behaviors?

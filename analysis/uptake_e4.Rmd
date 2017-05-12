@@ -393,11 +393,27 @@ mod <- glmer(acc ~ q_type * scale(AA) +
 
 summary(mod)
 
+
+
 # run optimizer for longer
 ss <- getME(mod,c("theta","fixef"))
 mod2 <- update(mod,start=ss,control=glmerControl(optCtrl=list(maxfun=2e4)))
 
 knitr::kable(summary(mod2)$coefficients, digits = 3)
+
+#no interactions
+mod3 <- glmer(acc ~ q_type + scale(AA) + scale(RR) + scale(EL) +
+                (q_type | workerid) +
+                (1 | item), 
+              data = d_reg_excl,  
+              family = "binomial")
+
+summary(mod3)
+
+ss <- getME(mod3,c("theta","fixef"))
+mod4 <- update(mod3,start=ss,control=glmerControl(optCtrl=list(maxfun=2e4)))
+
+knitr::kable(summary(mod4)$coefficients, digits = 3)
 ```
 
 Model with no AA scores. 
