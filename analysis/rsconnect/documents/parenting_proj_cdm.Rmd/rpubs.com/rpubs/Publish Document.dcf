@@ -1,8 +1,0 @@
-name: Publish Document
-title:
-account: rpubs
-server: rpubs.com
-appId: https://api.rpubs.com/api/v1/document/265359/e0def3fe3e1f48ab878f691b353fa703
-bundleId: https://api.rpubs.com/api/v1/document/265359/e0def3fe3e1f48ab878f691b353fa703
-url: http://rpubs.com/ehembacher/265359
-when: 1492541461.26123

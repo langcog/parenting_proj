@@ -1,7 +1,0 @@
-name: Publish Document
-account: rpubs
-server: rpubs.com
-bundleId:
-        https://api.rpubs.com/api/v1/document/141955/75896d4506d34e4ab09356395e9d62c0
-url: http://rpubs.com/ehembacher/141955
-when: 1452392670.4847
