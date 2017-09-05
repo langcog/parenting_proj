@@ -1,0 +1,206 @@
+---
+title: "Parenting behaviors"
+author: "Emily"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=FALSE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
+library(langcog)
+library(tidyverse)
+library(ggthemes)
+library(rjson)
+library(stringr)
+library(forcats)
+library(tibble)
+library(lme4)
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_few())
+```
+
+Read in participant data.
+
+```{r}
+files <- dir("../production-results/parenting_behaviors/")
+attitudes <- data.frame()
+behaviors <- data.frame()
+subinfo <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/parenting_behaviors/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  #paq answers
+  attitudes_id <- data.frame(sid = jd$WorkerId, 
+               sent = jd$answers$data$sentence[jd$answers$data$trial_type=="attitudes"],
+               rating = as.numeric(jd$answers$data$rating[jd$answers$data$trial_type=="attitudes"]))
+                   
+  attitudes <- bind_rows(attitudes, attitudes_id)
+  
+  #behaviors
+  behaviors_id <- data.frame(sid = jd$WorkerId,
+                sent = jd$answers$data$sentence[jd$answers$data$trial_type=="behave"],
+                rating = as.numeric(jd$answers$data$rating[25:36]))
+                          
+  behaviors <- bind_rows(behaviors, behaviors_id)
+  
+  #demographics
+  subinfo_id <- data.frame(sid = jd$WorkerId, 
+                   children = jd$answers$data$children,
+                   youngest = jd$answers$data$childAgeYoung,
+                   oldest = jd$answers$data$childAgeOld,
+                   language = jd$answers$data$homelang,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   race = as.character(jd$answers$data$race[1]))
+  subinfo <- bind_rows(subinfo, subinfo_id)
+}
+```
+
+Read in trial info and questionnaire labels.
+
+```{r}
+labels <- read.csv("sent_forms.csv")
+labels$sent <- as.character(labels$sent)
+behave <- read.csv("behaviors.csv")
+```
+
+Clean up labels.
+
+```{r}
+attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
+behaviors$sent <- str_replace_all(as.character(behaviors$sent), "[â‘”“’']", "")
+```
+
+# Data Frames and Exclusions
+
+## Make data frames. 
+
+Questionnaire attitude means.
+
+```{r}
+dq <- attitudes %>%
+  left_join(labels)
+
+db <- behaviors%>%
+  left_join(behave)
+
+dq$rating <- as.numeric(dq$rating)
+dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+
+atts <- dq %>%
+  group_by(sid, category) %>% 
+  summarise(rating_paq = mean(rating))
+
+bevs <- db %>%
+  group_by(sid, category) %>% 
+  summarise(rating_bev = mean(rating))
+
+bevs$rating_bev <- as.numeric(bevs$rating_bev)
+atts$rating_paq <- as.numeric(atts$rating_paq)
+
+all <- atts %>%
+  left_join(bevs)
+
+all$category <- as.factor(all$category)
+all$sid <- as.factor(all$sid)
+```
+
+#Correlation matrix
+
+```{r}
+ggplot(data = all, aes(x= scale(rating_bev), y = scale(rating_paq))) +
+  geom_point(aes(color = category)) + 
+  facet_wrap(~category) + 
+  xlab("Frequency of behavior") + 
+  ylab("PAQ score") + 
+  scale_colour_solarized()+
+  geom_smooth(method="lm", se=FALSE)
+
+aa<- all %>%
+  filter(category == "AA")
+
+cor.test(aa$rating_paq, aa$rating_bev)
+
+el<- all %>%
+  filter(category == "EL")
+
+cor.test(el$rating_paq, el$rating_bev)
+
+rr<- all %>%
+  filter(category == "RR")
+
+cor.test(rr$rating_paq, rr$rating_bev)
+```
+
+
+
+# Questionnaire
+
+Look at mean ratings across sentences.
+
+```{r}
+ms <- dq %>%
+  group_by(category, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) %>%
+  arrange(category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+
+
+#for comparison with CDM data
+beh <- ms
+save(beh, file = "beh.RData")
+```
+
+Plot responses to individual questionnaire items.
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = ms) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+Plot mean subscale scores.
+
+```{r}
+atts_m <- dq %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) %>%
+  arrange(category, desc(mean)) 
+
+ggplot(atts_m, aes(x = category, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+
+
+
+

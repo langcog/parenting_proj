@@ -1,0 +1,310 @@
+---
+title: "Parenting Project Attitudes Questionnaire Uptake"
+author: "Emily & Mike"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+<style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code {
+  font-size: 11px;
+}
+pre {
+  font-size: 11px;
+}
+</style>
+
+Data analysis of uptake experiment for parenting attitudes questionnaire. This is a pilot sample of 50 participants to check whether accuracy differs between control and experimental uptake questions.
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+
+rm(list=ls())
+
+setwd("~/Desktop/parenting_proj/analysis")
+
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
+library(langcog)
+library(dplyr)
+library(ggplot2)
+library(rjson)
+library(stringr)
+library(tidyr)
+library(psych)
+library(nFactors)
+library(lme4)
+# library(nFactors)
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_bw())
+```
+
+Read in participant data.
+
+```{r}
+files <- dir("../production-results/uptake_e4/")
+answers <- data.frame()
+attitudes <- data.frame()
+subinfo <- data.frame()
+
+f <- files[1]
+
+for (f in files) {
+  jf <- paste("../production-results/uptake_e4/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+
+  #uptake responses
+  answers_id <- data.frame(
+    answer= jd$answers$data$answer,
+    item = jd$answers$data$item[jd$answers$data$trial_type =="uptake"],
+    workerid = jd$WorkerId)
+  
+  answers <- bind_rows(answers, answers_id)
+  
+  attitudes_id <- data.frame(workerid = jd$WorkerId, 
+                   sent = jd$answers$data$sentence[jd$answers$data$trial_type=="attitudes"],
+                   rating = as.numeric(jd$answers$data$rating[jd$answers$data$trial_type=="attitudes"])) 
+                   
+  attitudes <- bind_rows(attitudes, attitudes_id)
+  
+  #questionnaire and demo
+  subinfo_id <- data.frame(workerid = jd$WorkerId, 
+                   children = jd$answers$data$children,
+                   language = jd$answers$data$homelang,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   race = as.character(jd$answers$data$race[1]),
+                   rt_exp1 = jd$answers$data$target1_rt,
+                   rt_exp2 = jd$answers$data$target2_rt,
+                   rt_con1 = jd$answers$data$control1_rt,
+                   rt_con2 = jd$answers$data$control2_rt)
+  subinfo <- bind_rows(subinfo, subinfo_id)
+}
+```
+
+Read in trial info and questionnaire labels.
+
+```{r}
+labels <- read.csv("sent_forms_uptake_e4.csv")
+labels$sent <- as.character(labels$sent)
+
+answer_key <- read.csv("uptake_key_e4.csv")
+```
+
+Clean up labels.
+
+```{r}
+attitudes$sent <- as.character(attitudes$sent)
+attitudes$sent <- str_replace_all(attitudes$sent, "'", "")
+attitudes$sent <- str_replace_all(attitudes$sent, "’", "")
+attitudes$sent <- str_replace_all(attitudes$sent, "“", "")
+attitudes$sent <- str_replace_all(attitudes$sent, "”", "")
+attitudes$sent <- str_replace_all(attitudes$sent, "‘", "")
+attitudes$sent <- str_replace_all(attitudes$sent, "â", "")
+```
+
+Plot demographic info.
+
+```{r}
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(language, data=subinfo)
+qplot(ethnicity, data=subinfo)
+```
+
+# Questionnaire
+
+Look at mean ratings across sentences.
+
+```{r}
+dq <- attitudes %>%
+  left_join(labels) 
+
+dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+
+ms <- dq %>%
+  group_by(category, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+```
+
+Plot responses to individual questionnaire items.
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = ms) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+Plot mean subscale scores.
+
+```{r}
+atts_m <- dq %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+atts <- dq %>%
+  group_by(workerid, category) %>% 
+  summarise(rating = mean(rating))
+
+ggplot(atts_m, aes(x = category, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+# Information Uptake Analyses
+
+Get accuracy data. 
+
+```{r}
+uptake <- answers %>%
+  left_join(answer_key) %>%
+  mutate(acc = (answer == answer_cor))%>%
+  select(workerid, item, acc, q_type)
+
+mss<- uptake%>%
+  group_by(workerid, q_type) %>% 
+  summarise(acc = mean(acc))
+
+ms <- uptake %>%
+  group_by(q_type) %>%
+  multi_boot_standard(col = "acc")
+ms
+```
+
+Plot mean uptake accuracy for control and experimental articles. Is one question type harder than the other?
+
+```{r}
+ggplot(ms, aes(x = q_type, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+
+t.test(mss$acc[mss$q_type == 'con'],mss$acc[mss$q_type == 'exp'],paired=TRUE)
+```
+
+Yes, people performed significantly worse on control items.
+
+Item analysis. Are there any problematic items?
+
+```{r}
+items <- uptake %>%
+  group_by(item) %>%
+  multi_boot_standard(col = "acc")
+```
+
+One question in particular has a particularly low accuracy rate (.45). What is the distribution of responses for this item?
+
+```{r}
+c1_4 <- answers%>%
+  filter(item == "c1_4")
+  
+qplot(answer, data=c1_4)
+
+#means without bad item?
+ms <- uptake %>%
+  filter(!item == "c1_4")%>%
+  group_by(q_type) %>%
+  multi_boot_standard(col = "acc")
+ms
+```
+
+Participants frequently selected D as the answer; correct answer was C. This item does seem confusing when I review it. Re-word it for experiment. 
+
+##Plots
+
+Create a data frame that has individuals' subscale scores and accuracy by question type. 
+
+```{r}
+d <- atts %>%
+  left_join(mss) 
+```
+
+```{r}
+ggplot(d, aes(x = rating, y = acc, col = category)) +
+  geom_jitter(height = .02, width = 0, alpha= .3) + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~q_type)
+```
+
+Setting up exclusion based on reading time.
+
+```{r}
+exclude <- subinfo$workerid[subinfo$rt_exp1 < 30 | subinfo$rt_exp2 < 30 | subinfo$rt_con1 < 30 | subinfo$rt_con2 < 30]
+length(exclude)
+
+qplot(subinfo$rt_exp1, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$rt_exp2, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$rt_con1, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+qplot(subinfo$rt_con2, binwidth = 15) + 
+  geom_vline(xintercept =15, lty =2, col="red")
+```
+
+Exclusions.
+
+```{r}
+ggplot(filter(d, !workerid %in% exclude), 
+       aes(x = rating, y = acc, colour = category)) +
+ geom_jitter(height = .02, width = 0, alpha= .3) + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_wrap(~q_type) + 
+  ylim(0,1)
+```
+
+
+```{r}
+d.reg <- atts %>%
+  left_join(uptake)%>%
+  group_by(workerid, category, acc, q_type, item)%>%
+  summarise(rating = mean(rating))%>%
+  spread(category, rating)
+
+d_an <- d.reg %>%
+  filter(!workerid %in% exclude)
+```
+
+## Stats 
+
+```{r eval = FALSE}
+summary(glmer(acc ~ q_type * rules_respect + q_type * early_learning +
+                (1|workerid) +
+                (1|item), 
+              data = d_an, 
+              family = "binomial"))
+```

@@ -1,0 +1,25 @@
+sent,short_sent,category,reverse_code,instrument
+"It is very important that children learn to respect adults, such as parents and teachers.",respect adults,RR,0,attitudes
+"It is very important for young children to do as they are told, for example, waiting when they are told to wait.",do as told,RR,0,attitudes
+Children should be grateful to their parents.,grateful to parents,RR,0,attitudes
+"It is very important that there are consequences when a child breaks a rule, big or small.",consequences break rules,RR,0,attitudes
+It is okay if young children boss around their caregivers.,not ok to boss around caregivers,RR,1,attitudes
+It is okay if children see adults as equals rather than viewing them with respect.,not ok to see adults as equals,RR,1,attitudes
+"Young children should be allowed to make their own decisions, like what to play with and when to eat.",should not make decisions,RR,1,attitudes
+Parents do not need to worry if their child misbehaves a lot.,worry about misbehavior,RR,1,attitudes
+Children should be comforted when they are scared or unhappy.,comfort children,AA,0,attitudes
+Its important for parents to help children learn to deal with their emotions.,help deal with emotions,AA,0,attitudes
+Parents should pay attention to what their child likes and dislikes.,pay attention to likes,AA,0,attitudes
+A child who has close bonds with his or her parents will have better relationships later on in life.,close bonds for relationships,AA,0,attitudes
+Children who receive too much attention from their parents become spoiled.,too much attention does not spoil,AA,1,attitudes
+"Too much affection, such as hugging and kissing, can make a child weak.",too much affection does not make weak,AA,1,attitudes
+Children and parents do not need to feel emotionally close as long as children are kept safe.,need to feel emotionally close,AA,1,attitudes
+"Parents should not try to calm a child who is upset, it is better to let children calm themselves.",calm children when upset,AA,1,attitudes
+It is good to let children explore and experiment.,explore and experiment,EL,0,attitudes
+Parents can help babies learn language by talking to them.,talk to babies,EL,0,attitudes
+"Parents can prepare young children to succeed in school by teaching them things, such as shapes and numbers.",teach kids to prepare for school,EL,0,attitudes
+Babies can learn a lot just by playing.,learn by playing,EL,0,attitudes
+It is not helpful to explain the reasons for rules to young children because they wont understand.,explain rules,EL,1,attitudes
+Children dont need to learn about numbers and math until they go to school.,learn about math before school,EL,1,attitudes
+Reading books to children is not helpful if they have not yet learned to speak.,read to kids,EL,1,attitudes
+Babies cant learn about the world until they learn to speak.,learn before speaking,EL,1,attitudes

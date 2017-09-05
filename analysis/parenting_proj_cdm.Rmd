@@ -1,0 +1,437 @@
+---
+title: "Parenting behaviors"
+author: "Emily"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=FALSE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
+library(langcog)
+library(tidyverse)
+library(ggthemes)
+library(rjson)
+library(forcats)
+library(tibble)
+library(lme4)
+library(lmerTest)
+library(lavaan)
+library(MVN)
+
+select <- dplyr::select # masked by MASS
+theme_set(theme_few())
+```
+
+Read in participant data.
+
+```{r}
+data <- read.csv("../cdm_paq.csv", header =TRUE)
+dem <- read.csv("../cdm_paq_dem.csv", header =TRUE)
+labels <- read.csv("sent_forms.csv")
+labels$sent <- as.character(labels$sent)
+
+questions <- data %>%
+  filter(Status == "Response Type")%>%
+  select(Q1:Q28)%>%
+  gather("item", "sent", Q1:Q28)
+
+d <- data %>%
+  filter(Finished == 1)%>%
+  mutate(sid = ResponseId)%>%
+  select(-Status, -StartDate, - EndDate, - IPAddress, -Progress, -Duration..in.seconds., -Finished, - ResponseId, - RecordedDate, -RecipientLastName, -RecipientFirstName, - RecipientEmail, -ExternalReference, -LocationLatitude, -LocationLongitude, - DistributionChannel)%>%
+  select(sid, Q1:Q28)%>%
+  gather("item", "rating", Q1:Q28)%>%
+  left_join(questions)
+
+subinfo <- dem %>%
+  filter(Finished == "True")%>%
+  transmute(sid = ResponseId, ethnicity = Q25.1, parent_ed = Q26.1, parent_age = Q27.1, parent_gender = Q28.1, num_kids = Q29, oldest_kid = Q30, youngest_kid = Q32, only_kid = Q33)
+```
+
+Make data frames. 
+
+```{r}
+d$sent <- stringr::str_replace_all(d$sent, "’", "")
+
+dq <- d %>%
+  left_join(labels)
+
+#rescore reverse coded items
+dq$rating <- as.numeric(dq$rating)
+dq$rating[dq$reverse_code == 1] <- 8 - dq$rating[dq$reverse_code == 1]
+```
+
+# PAQ
+
+Test for normality.
+
+```{r}
+dq_wide <- dq %>%
+  select(sid, short_sent, rating)%>%
+  spread(short_sent, rating)
+
+x_vars <- dq_wide %>%
+  select(-sid)
+
+uniPlot(x_vars[1:10], type = "histogram")
+uniPlot(x_vars[11:20], type = "histogram")
+uniPlot(x_vars[21:24], type = "histogram")
+
+#histograms for CDM
+ 
+ #get subset for plotting
+ hist_items <- c("Q8", "Q22", "Q12", "Q16") 
+
+ hist <- d %>%
+   select(sid, item, rating)%>%
+   filter(item %in% hist_items)%>%
+   spread(item, rating)
+ 
+ ggplot(hist, aes(Q8, fill = Q8)) +
+  geom_histogram(stat = "count") 
+
+ ggplot(hist, aes(Q22, fill = Q22)) +
+  geom_histogram(stat = "count") 
+ 
+  ggplot(hist, aes(Q12, fill = Q12)) +
+  geom_histogram(stat = "count") 
+  
+   ggplot(hist, aes(Q16, fill = Q16)) +
+  geom_histogram(stat = "count") 
+ 
+#get highest and lowest rated items   
+d$sent <- stringr::str_replace_all(d$sent, "’", "")
+
+dqg <- d %>%
+  left_join(labels)
+
+dqg$rating <- as.numeric(dqg$rating)   
+
+ms <- dqg %>%
+  group_by(category, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) 
+```
+
+Get mean ratings for sentences.
+```{r}
+dq$rating <- dq$rating - 1
+
+ms <- dq %>%
+  group_by(category, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) %>%
+  arrange(category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+
+short_sent_ord <- ms$short_sent_ord
+```
+
+Plot responses to individual questionnaire items.
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = ms) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+Compare to Mturk samples. We are comparing the data collected from CDM parents to experiment 9 (parents and non-parents) of the questionnaire norming study and the data from the parenting behaviors study (self-reported parents).
+
+```{r}
+cdm <- ms %>%
+  ungroup()%>%
+  select(category, short_sent, mean, ci_upper, ci_lower)%>%
+  mutate(sample = "cdm")
+
+load("e9.RData")
+load("beh.RData")
+
+beh_d <- beh %>%
+  ungroup()%>%
+  mutate(category = category_paq)%>%
+  select(category, short_sent, mean, ci_upper, ci_lower)%>%
+  mutate(sample = "mturk1")
+  
+atts <- c("AA", "EL","RR")
+
+e9_d <- e9 %>%
+  filter(category %in% atts)%>%
+  ungroup()%>%
+  select(category, short_sent, mean, ci_upper, ci_lower)%>%
+  mutate(sample = "mturk2")
+
+samp_compare <- e9_d %>%
+  bind_rows(cdm)%>%
+  bind_rows(beh_d)
+
+samp_compare$short_sent <- factor(samp_compare$short_sent, levels = short_sent_ord)
+
+samp_compare$sample <- factor(samp_compare$sample, levels = c("cdm","mturk1","mturk2"))
+
+qplot(short_sent, mean, col = sample,
+      ymin = ci_lower, ymax = ci_upper,
+      geom = "pointrange",
+      data = samp_compare) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+
+#plot subset of questions for delivery to CDM parents.
+
+cdm_items <- c("learn before speaking", "read to kids", "learn by playing", "explore and experiment")
+
+ggplot(filter(samp_compare, short_sent %in% cdm_items), aes(short_sent, mean, fill=sample)) +
+  geom_bar(stat="identity", position = "dodge")
+```
+
+CDM parents agree more with EL items related to exploration and play but less on teaching math before school compared to Mturk. They also rate RR items quite a bit lower than Mturk samples. 
+
+In general there is a bit more variability in agreement with items within subscales compared to Mturk samples. 
+
+Plot mean subscale scores.
+
+```{r}
+atts_m <- dq %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating", na.rm = TRUE) %>%
+  arrange(category, desc(mean)) 
+
+ggplot(atts_m, aes(x = category, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))+ 
+  ylim(c(0,6)) 
+```
+
+
+# Scale reliability
+
+## Whole Scale
+
+```{r}
+wide.paq <- dq %>% 
+  select(sid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.rr <- as.matrix(select(wide.paq, -sid))
+psych::alpha(x = alpha.rr)
+```
+
+## Rules and Respect Subscale
+
+```{r}
+wide.paq <- dq %>% 
+  filter(category == "RR") %>%
+  select(sid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.rr <- as.matrix(select(wide.paq, -sid))
+psych::alpha(x = alpha.rr)
+```
+
+## Affection and Attachment Subscale
+
+```{r}
+wide.paq <- dq %>% 
+  filter(category == "AA") %>%
+  select(sid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.aa <- as.matrix(select(wide.paq, -sid))
+psych::alpha(x = alpha.aa)
+```
+
+## Early Learning Subscale
+
+```{r}
+wide.paq <- dq %>% 
+  filter(category == "EL") %>%
+  select(sid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+alpha.el <- as.matrix(select(wide.paq, -sid))
+psych::alpha(x = alpha.el)
+```
+
+# Demographics
+
+Create a data frame that has subscale scores. 
+```{r}
+ss <- dq %>%
+  dplyr::group_by(sid, category) %>%
+  dplyr::summarise(rating = mean(rating))
+
+ss <- left_join(ss, subinfo)
+```
+
+## By Gender
+  
+```{r echo = FALSE}
+
+gender <- c("Male", "Female")
+qplot(parent_gender, data=filter(subinfo, parent_gender %in% gender), fill = parent_gender)
+
+ms <- ss %>% 
+  filter(parent_gender %in% c("Male","Female")) %>%
+  group_by(parent_gender, category) %>%
+  multi_boot_standard(col = "rating")
+
+ggplot(ms, aes(category, mean, fill=parent_gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+
+ss$category <- relevel(ss$category, ref = "EL")
+ss$parent_gender <- relevel(ss$parent_gender, ref = "Male")
+
+knitr::kable(coef(summary(lmer(rating ~ category * parent_gender + (1|sid), 
+     data =   ss %>% filter(parent_gender %in% c("Male","Female"))))))
+```
+
+Women agree with AA items more than men.
+
+## By Parent Age
+  
+```{r echo = FALSE}
+qplot(parent_age, data= filter(subinfo, parent_age != "", parent_age != "Under 18"), fill = parent_age)
+
+ms <- ss %>% 
+  group_by(parent_age, category) %>%
+  filter(n() > 5)%>%
+  multi_boot_standard(col = "rating")
+
+ggplot(ms, aes(category, mean, fill=parent_age)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+
+ss_age <- ss%>%
+  mutate(parent_age_con = "")
+
+ss_age$category <- relevel(ss_age$category, ref = "EL")
+
+ss_age$parent_age_con[ss_age$parent_age == "Under 18"] <- 18
+ss_age$parent_age_con[ss_age$parent_age == "18 - 24"] <- 21
+ss_age$parent_age_con[ss_age$parent_age == "25 - 34"] <- 30
+ss_age$parent_age_con[ss_age$parent_age == "35 - 44"] <- 40
+ss_age$parent_age_con[ss_age$parent_age == "45 - 54"] <- 50
+ss_age$parent_age_con[ss_age$parent_age == "65 - 74"] <- 60
+
+ss_age$parent_age_con <- as.numeric(ss_age$parent_age_con)
+
+knitr::kable(coef(summary(lmer(rating ~ category * parent_age_con + (1|sid), 
+     data =   ss_age))))
+```
+
+There is a small effect of age such that older parents agree less with AA items.
+
+## By Education
+  
+Unfortunately there is not much variability in Parent Education- most respondants have at least a college education.   
+```{r echo = FALSE}
+subinfo$parent_ed <- factor(subinfo$parent_ed, levels = c("Less than high school","High school graduate","Some college","2 year degree","4 year degree", "Professional degree", "Doctorate"))
+
+qplot(parent_ed, data=filter(subinfo, !is.na(parent_ed)), fill = parent_ed)
+
+ss_ed <- ss %>%
+  mutate(parent_ed_con = "")
+
+ss_ed$parent_ed_con[ss_ed$parent_ed == "Less than high school"] <- 12
+ss_ed$parent_ed_con[ss_ed$parent_ed == "High school graduate"] <- 12
+ss_ed$parent_ed_con[ss_ed$parent_ed == "Some college"] <-14
+ss_ed$parent_ed_con[ss_ed$parent_ed == "2 year degree"] <- 14
+ss_ed$parent_ed_con[ss_ed$parent_ed == "4 year degree"] <- 16
+ss_ed$parent_ed_con[ss_ed$parent_ed == "Professional degree"] <- 19
+ss_ed$parent_ed_con[ss_ed$parent_ed == "Doctorate"] <- 23
+
+ss_ed$parent_ed_con <- as.numeric(ss_ed$parent_ed_con)
+
+ss$parent_ed <- factor(ss$parent_ed, levels = c("Less than high school","High school graduate","Some college","2 year degree","4 year degree", "Professional degree", "Doctorate"))
+
+ms <- ss %>% 
+  group_by(parent_ed, category) %>%
+  filter(n() > 5)%>%
+  multi_boot_standard(col = "rating")
+
+ggplot(ms, aes(category, mean, fill=parent_ed)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+
+knitr::kable(coef(summary(lmer(rating ~ category * scale(parent_ed_con) + (1|sid), 
+     data =ss_ed))))
+```
+
+There is a small effect of parent education such that parents with higher levels of education agree more with EL items.
+
+## By Number of Kids
+  
+```{r echo = FALSE}
+qplot(num_kids, data=filter(subinfo, num_kids != ""), fill = num_kids)
+
+ms <- ss %>% 
+  group_by(num_kids, category) %>%
+  filter(n() > 5)%>%
+  multi_boot_standard(col = "rating")
+
+ms$num_kids <- as.factor(ms$num_kids)
+
+ggplot(ms, aes(category, mean, fill=num_kids)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+
+ss$num_kids <- as.numeric(as.character(ss$num_kids))
+
+ss$category <- relevel(ss$category, ref = "EL")
+
+knitr::kable(coef(summary(lmer(rating ~ category * num_kids + (1|sid), 
+     data =ss))))
+```
+
+With more kids, parents agree more with RR itmes and less with AA and EL items. 
+
+## By Ethnicity
+  
+```{r echo = FALSE}
+eth <- c("Black or African American", "White", "Asian", "Native Hawaiian or Pacific Islander", "American Indian or Alaska Native", "Hispanic or Latino")
+
+top <- c ("White", "Asian", "Hispanic or Latino")
+qplot(ethnicity, data=filter(subinfo, ethnicity %in% eth), fill = ethnicity)
+
+ms <- ss %>% 
+  group_by(ethnicity, category) %>%
+  filter(n() > 5)%>%
+  filter(ethnicity %in% eth)%>%
+  multi_boot_standard(col = "rating")
+
+ggplot(ms, aes(category, mean, fill=ethnicity)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  scale_fill_solarized()
+
+ss$ethnicity <- relevel(ss$ethnicity, ref = "White")
+
+knitr::kable(coef(summary(lmer(rating ~ category * ethnicity + (1|sid), 
+     data =filter(ss, ethnicity %in% top)))))
+```

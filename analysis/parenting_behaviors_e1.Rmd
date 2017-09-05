@@ -1,0 +1,424 @@
+---
+title: "Parenting Project Attitudes Questionnaire Uptake"
+author: "Emily & Mike"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+Data analysis of uptake experiment for parenting attitudes questionnaire. Do scores on the PAQ subscales predict uptake of experimental content compared to control content?
+
+# Data preprocessing
+
+Preliminaries.
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=5, 
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=FALSE)
+suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+library(psych)
+library(langcog)
+library(tidyverse)
+library(ggthemes)
+library(rjson)
+library(stringr)
+library(lme4)
+library(forcats)
+library(tibble)
+
+select <- dplyr::select # masked by MASS
+
+theme_set(theme_few())
+```
+
+Read in participant data.
+
+```{r}
+files <- dir("../production-results/uptake_e4/")
+answers <- data.frame()
+attitudes <- data.frame()
+subinfo <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/uptake_e4/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+
+  #uptake responses
+  answers_id <- data.frame(
+    answer= jd$answers$data$answer,
+    item = jd$answers$data$item[jd$answers$data$trial_type =="uptake"],
+    workerid = jd$WorkerId)
+  
+  answers <- bind_rows(answers, answers_id)
+  
+  attitudes_id <- data.frame(workerid = jd$WorkerId, 
+                   sent = jd$answers$data$sentence[jd$answers$data$trial_type=="attitudes"],
+                   rating = as.numeric(jd$answers$data$rating[jd$answers$data$trial_type=="attitudes"])) 
+                   
+  attitudes <- bind_rows(attitudes, attitudes_id)
+  
+  #questionnaire and demo
+  subinfo_id <- data.frame(workerid = jd$WorkerId, 
+                   children = jd$answers$data$children,
+                   language = jd$answers$data$homelang,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   race = as.character(jd$answers$data$race[1]),
+                   rt_exp1 = jd$answers$data$target1_rt,
+                   rt_exp2 = jd$answers$data$target2_rt,
+                   rt_con1 = jd$answers$data$control1_rt,
+                   rt_con2 = jd$answers$data$control2_rt)
+  subinfo <- bind_rows(subinfo, subinfo_id)
+}
+```
+
+Read in trial info and questionnaire labels.
+
+```{r}
+labels <- read.csv("sent_forms_uptake_e4.csv")
+labels$sent <- as.character(labels$sent)
+
+answer_key <- read.csv("uptake_key_e4.csv")
+```
+
+Clean up labels.
+
+```{r}
+attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
+```
+
+Plot demographic info.
+
+```{r}
+subinfo$education <- factor(subinfo$education, 
+                            levels = c("highSchool","someCollege",
+                                       "4year","someGrad","Grad"))
+
+qplot(ses, data=subinfo)
+qplot(children, data=subinfo)
+qplot(gender, data=subinfo)
+qplot(education, data=subinfo)
+qplot(age, data=subinfo)
+qplot(language, data=subinfo)
+qplot(ethnicity, data=subinfo)
+```
+
+
+# Data Frames and Exclusions
+
+## Make data frames. 
+
+Questionnaire attitude means.
+
+```{r}
+dq <- attitudes %>%
+  left_join(labels) 
+
+dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+
+atts <- dq %>%
+  group_by(workerid, category) %>% 
+  summarise(rating = mean(rating))
+```
+
+Uptake questions. 
+
+```{r}
+
+
+```
+
+## Exclusions
+
+Setting up exclusion based on reading time.
+
+```{r}
+exclusions <- as_tibble(subinfo) %>%
+  select(workerid, starts_with("rt")) %>%
+  gather(article, rt, rt_exp1, rt_exp2, rt_con1, rt_con2) %>%
+  mutate(article = str_replace(str_replace(str_replace(article,"rt_", ""), 
+                                           "exp", "e"), "con","c"))
+
+ggplot(exclusions, aes(x = rt)) + 
+  geom_histogram() + 
+  facet_wrap(~article) +
+  geom_vline(xintercept = 15, lty = 2, col="red")
+```
+Exclude for less than 15s. 
+
+```{r}
+exclusions$exclude <- exclusions$rt < 15
+```
+
+This constitutes `r signif(mean(exclusions$exclude), digits = 2)` of the data.
+
+
+
+# Questionnaire
+
+Look at mean ratings across sentences.
+
+```{r}
+ms <- dq %>%
+  group_by(category, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+```
+
+Plot responses to individual questionnaire items.
+
+```{r}
+qplot(short_sent_ord, mean, col = category,
+      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+      geom = "pointrange",
+      data = ms) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
+  xlab("") + 
+  ylab("Mean Rating") + 
+  ylim(c(0,6)) + 
+  scale_colour_solarized()
+```
+
+Plot mean subscale scores.
+
+```{r}
+atts_m <- dq %>%
+  group_by(category) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+ggplot(atts_m, aes(x = category, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))
+```
+
+# Information Uptake Analyses
+
+Get accuracy data. 
+
+```{r}
+answers$answer <- as.character(answers$answer)
+answer_key$answer_cor <- as.character(answer_key$answer_cor)
+
+uptake <- answers %>%
+  left_join(answer_key) %>%
+  mutate(acc = (answer == answer_cor)) %>%
+  select(workerid, item, acc, q_type, article) %>%
+  left_join(exclusions) %>%
+  filter(!exclude)
+
+mss <- uptake %>%
+  group_by(workerid, q_type) %>% 
+  summarise(acc = mean(acc))
+
+ms <- mss %>%
+  group_by(q_type) %>%
+  multi_boot_standard(col = "acc")
+```
+
+Plot mean uptake accuracy for control and experimental articles. Is one question type harder than the other?
+
+```{r}
+ggplot(ms, aes(x = q_type, y = mean)) + 
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2)
+```
+
+Test for differences
+
+```{r}
+mss_wide <- spread(mss, q_type, acc) %>%
+  filter(!is.na(con) & !is.na(exp))
+
+t.test(mss_wide$con, mss_wide$exp, paired=TRUE)
+```
+
+Items.
+
+```{r}
+ms <- uptake %>%
+  group_by(item, article, q_type) %>% 
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = fct_reorder(item, mean), y = mean, col = article)) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
+  facet_wrap(~article, scales = "free_x") + 
+  ylim(c(0,1)) + 
+  geom_hline(yintercept = .25, lty = 2) + 
+  ylab("Accuracy") + xlab("Item") + 
+  theme_few()
+```
+
+## Demographic predictors of uptake
+
+Add demographics. 
+
+```{r}
+mss <- mss %>%
+  left_join(subinfo)
+```
+
+By gender. 
+
+```{r}
+ms <- mss %>%
+  filter(gender %in% c("Man","Woman")) %>%
+  group_by(q_type, gender) %>%
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = q_type, y = mean, fill = gender)) + 
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2) + 
+  scale_fill_solarized()
+```
+
+By education.
+
+```{r}
+ms <- mss %>%
+  filter(!education == "") %>%
+  group_by(q_type, education) %>%
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = q_type, y = mean, fill = education)) + 
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2) + 
+  scale_fill_solarized()
+```
+
+By race.
+
+```{r}
+ms <- mss %>%
+  # filter(!education == "") %>%
+  group_by(q_type, race) %>%
+  multi_boot_standard(col = "acc")
+
+ggplot(ms, aes(x = q_type, y = mean, fill = race)) + 
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  ylim(c(0,1)) +
+  geom_hline(yintercept = .25, lty = 2) + 
+  scale_fill_solarized()
+```
+
+
+# Plots
+
+# Main plot
+
+```{r}
+d <- mss %>%
+  left_join(atts) %>%
+  left_join(subinfo) %>%
+  mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"), 
+         category = fct_recode(category, "Affection/Attachment" = "AA", 
+                               "Early Learning" = "EL", 
+                               "Rules/Respect" = "RR"))
+
+ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
+ geom_jitter(height = .02, width = 0, alpha= .3) +
+  # geom_point(alpha = .3) + 
+  geom_smooth(method="lm") + 
+  facet_grid(.~category) + 
+  ylim(0,1) + 
+  ylab("Accuracy") +
+  xlab("Subscale Rating") + 
+  scale_color_solarized(name="Condition") +
+  theme(legend.position = "bottom")
+```
+
+## Subgroup plots
+
+Gender.
+
+```{r}
+ggplot(filter(d, gender %in% c("Man","Woman")),  
+       aes(x = rating, y = acc, colour = category)) +
+ geom_jitter(height = .02, width = 0, alpha= .3) + 
+  geom_smooth(method="lm", se=FALSE) + 
+  facet_grid(gender~ q_type) + 
+  ylim(0,1) + 
+  ylab("Accuracy") +
+  xlab("Subscale Rating") 
+```
+
+
+# Stats 
+
+Set up a dataframe for analysis with exclusions.
+
+```{r}
+d_reg <- atts %>%
+  left_join(uptake)%>%
+  group_by(workerid, category, acc, q_type, item, article)%>%
+  summarise(rating = mean(rating))%>%
+  spread(category, rating)
+
+d_reg_excl <- d_reg %>%
+  left_join(exclusions) %>%
+  filter(!exclude)
+```
+
+Model with affection and attachment. 
+
+```{r eval = FALSE}
+mod <- glmer(acc ~ q_type * scale(AA) +  
+                q_type * scale(RR) + 
+                q_type * scale(EL) +
+                (q_type | workerid) +
+                (1 | item), 
+              data = d_reg_excl,  
+              family = "binomial")
+
+summary(mod)
+
+# run optimizer for longer
+ss <- getME(mod,c("theta","fixef"))
+mod2 <- update(mod,start=ss,control=glmerControl(optCtrl=list(maxfun=2e4)))
+
+knitr::kable(summary(mod2)$coefficients, digits = 3)
+```
+
+Model with no AA scores. 
+
+```{r eval = FALSE}
+mod <- glmer(acc ~ q_type * scale(RR) + 
+                q_type * scale(EL) +
+                (q_type | workerid) +
+                (1 | item), 
+              data = d_reg_excl,  
+              family = "binomial")
+
+knitr::kable(summary(mod)$coefficients, digits = 3)
+```
+
+```{r}
+summary(lmer(frequency ~ behave_cat * RR +
+                behave_cat * AA +
+                behave_cat * EL +
+                (1|workerid) + 
+                (1|item), 
+              data = filter(d.reg), 
+              family = "binomial"))
+```
