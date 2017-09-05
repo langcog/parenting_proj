@@ -295,7 +295,18 @@ ggplot(ms, aes(category, mean, fill=parent_gender)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_few()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Parent Gender")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
 
 ss$category <- relevel(ss$category, ref = "EL")
 ss$parent_gender <- relevel(ss$parent_gender, ref = "Male")
@@ -313,16 +324,29 @@ qplot(parent_age, data= filter(subinfo, parent_age != "", parent_age != "Under 1
 
 ms <- ss %>% 
   group_by(parent_age, category) %>%
-  filter(n() > 5)%>%
+  filter(n() > 20)%>%
   multi_boot_standard(col = "rating")
 
 ggplot(ms, aes(category, mean, fill=parent_age)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_few()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Parent Age")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
 
 ss_age <- ss%>%
+  group_by(parent_age, category)%>%
+  filter(n() > 20)%>%
   mutate(parent_age_con = "")
 
 ss_age$category <- relevel(ss_age$category, ref = "EL")
@@ -351,6 +375,8 @@ subinfo$parent_ed <- factor(subinfo$parent_ed, levels = c("Less than high school
 qplot(parent_ed, data=filter(subinfo, !is.na(parent_ed)), fill = parent_ed)
 
 ss_ed <- ss %>%
+  group_by(parent_ed, category)%>%
+  filter(n() > 20)%>%
   mutate(parent_ed_con = "")
 
 ss_ed$parent_ed_con[ss_ed$parent_ed == "Less than high school"] <- 12
@@ -367,14 +393,25 @@ ss$parent_ed <- factor(ss$parent_ed, levels = c("Less than high school","High sc
 
 ms <- ss %>% 
   group_by(parent_ed, category) %>%
-  filter(n() > 5)%>%
+  filter(n() > 20)%>%
   multi_boot_standard(col = "rating")
 
 ggplot(ms, aes(category, mean, fill=parent_ed)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_few()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Parent Education")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
 
 knitr::kable(coef(summary(lmer(rating ~ category * scale(parent_ed_con) + (1|sid), 
      data =ss_ed))))
@@ -398,9 +435,25 @@ ggplot(ms, aes(category, mean, fill=num_kids)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_few()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Number of Children")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
+
+ss <- ss%>%
+  group_by(num_kids, category)%>%
+  filter(n() > 20)
 
 ss$num_kids <- as.numeric(as.character(ss$num_kids))
+
 
 ss$category <- relevel(ss$category, ref = "EL")
 
@@ -428,7 +481,18 @@ ggplot(ms, aes(category, mean, fill=ethnicity)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
-  scale_fill_solarized()
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_few()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Ethnicity")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
 
 ss$ethnicity <- relevel(ss$ethnicity, ref = "White")
 
