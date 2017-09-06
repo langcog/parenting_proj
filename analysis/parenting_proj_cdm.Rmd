@@ -15,7 +15,7 @@ Preliminaries.
 
 ```{r echo=FALSE}
 knitr::opts_chunk$set(fig.width=8, fig.height=5, 
-                      echo=TRUE, warning=FALSE, message=FALSE, cache=FALSE)
+                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
 library(psych)
 library(langcog)
