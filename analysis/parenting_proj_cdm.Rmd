@@ -162,6 +162,8 @@ cdm <- ms %>%
 
 load("e9.RData")
 load("beh.RData")
+load("e9_full.RData")
+load("beh_dq.RData")
 
 beh_d <- beh %>%
   ungroup()%>%
@@ -177,6 +179,37 @@ e9_d <- e9 %>%
   select(category, short_sent, mean, ci_upper, ci_lower)%>%
   mutate(sample = "mturk2")
 
+ss_cdm <- dq %>%
+  dplyr::group_by(sid, category) %>%
+  dplyr::summarise(rating = mean(rating))%>%
+  mutate(sample = "cdm")
+
+ss_e9 <- d_full_e9 %>%
+  filter(category %in% atts)%>%
+  mutate(sid = workerid)%>%
+  select(-workerid)%>%
+  dplyr::group_by(sid, category) %>%
+  dplyr::summarise(rating = mean(rating)) %>%
+  mutate(sample = "mturk1")
+
+ss_beh <- beh_dq %>%
+  dplyr::group_by(sid, category_paq) %>%
+  dplyr::summarise(rating = mean(rating)) %>%
+  mutate(category = category_paq)%>%
+  select(-category_paq)%>%
+  mutate(sample = "mturk2")
+
+ss_cdm$rating <- as.numeric(ss_cdm$rating)
+ss_beh$rating <- as.numeric(ss_beh$rating)
+ss_e9$rating <- as.numeric(ss_e9$rating)
+
+ss_cdm$category <- as.factor(as.character(ss_cdm$category))
+ss_beh$category <- as.factor(as.character(ss_beh$category))
+ss_e9$category <- as.factor(as.character(ss_e9$category))
+
+ss_compare<- bind_rows(ss_cdm, ss_beh)%>%
+  bind_rows(ss_e9)
+
 samp_compare <- e9_d %>%
   bind_rows(cdm)%>%
   bind_rows(beh_d)
@@ -184,6 +217,9 @@ samp_compare <- e9_d %>%
 samp_compare$short_sent <- factor(samp_compare$short_sent, levels = short_sent_ord)
 
 samp_compare$sample <- factor(samp_compare$sample, levels = c("cdm","mturk1","mturk2"))
+
+ss_compare$sample <- factor(ss_compare$sample, levels = c("cdm","mturk1","mturk2"))
+ss_compare$category <- factor(ss_compare$category, levels = c("AA","EL","RR"))
 
 qplot(short_sent, mean, col = sample,
       ymin = ci_lower, ymax = ci_upper,
@@ -498,4 +534,85 @@ ss$ethnicity <- relevel(ss$ethnicity, ref = "White")
 
 knitr::kable(coef(summary(lmer(rating ~ category * ethnicity + (1|sid), 
      data =filter(ss, ethnicity %in% top)))))
+```
+
+## By Sample
+  
+```{r echo = FALSE}
+ms_compare <- ss_compare %>% 
+  filter(sample == "cdm") %>%
+  group_by(category)%>%
+  multi_boot_standard(col = "rating")%>%
+  mutate(sample = "cdm")
+
+ms_compare_1 <- ss_compare %>% 
+  filter(sample == "mturk1") %>%
+  group_by(category)%>%
+  multi_boot_standard(col = "rating")%>%
+  mutate(sample = "mturk1")
+
+ms_compare_2 <- ss_compare %>% 
+  filter(sample == "mturk2") %>%
+  group_by(category)%>%
+  multi_boot_standard(col = "rating")%>%
+  mutate(sample = "mturk2")
+
+ms_comp <- bind_rows(ms_compare, ms_compare_1)%>%
+  bind_rows(ms_compare_2)
+
+ggplot(ms_comp, aes(category, mean, fill=sample)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_few()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Sample")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
+
+knitr::kable(coef(summary(lmer(rating ~ category * sample + (1|sid), 
+     data =   ss_compare))))
+
+t.test(ss_compare$rating[ss_compare$sample == "cdm" & ss_compare$category == "AA"],
+       ss_compare$rating[ss_compare$sample == "mturk1" & ss_compare$category == "AA"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "cdm" & ss_compare$category == "AA"],
+       ss_compare$rating[ss_compare$sample == "mturk2" & ss_compare$category == "AA"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "mturk1" & ss_compare$category == "AA"],
+       ss_compare$rating[ss_compare$sample == "mturk2" & ss_compare$category == "AA"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "cdm" & ss_compare$category == "EL"],
+       ss_compare$rating[ss_compare$sample == "mturk1" & ss_compare$category == "EL"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "cdm" & ss_compare$category == "EL"],
+       ss_compare$rating[ss_compare$sample == "mturk2" & ss_compare$category == "EL"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "mturk1" & ss_compare$category == "EL"],
+       ss_compare$rating[ss_compare$sample == "mturk2" & ss_compare$category == "EL"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "cdm" & ss_compare$category == "RR"],
+       ss_compare$rating[ss_compare$sample == "mturk1" & ss_compare$category == "RR"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "cdm" & ss_compare$category == "RR"],
+       ss_compare$rating[ss_compare$sample == "mturk2" & ss_compare$category == "RR"],
+       paired = FALSE)
+
+t.test(ss_compare$rating[ss_compare$sample == "mturk1" & ss_compare$category == "RR"],
+       ss_compare$rating[ss_compare$sample == "mturk2" & ss_compare$category == "RR"],
+       paired = FALSE)
 ```

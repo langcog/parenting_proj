@@ -101,12 +101,12 @@ Clean up labels.
 
 ```{r}
 d.raw$sent <- as.character(d.raw$sent)
-d.raw$sent <- str_replace_all(d.raw$sent, "'", "")
-d.raw$sent <- str_replace_all(d.raw$sent, "’", "")
-d.raw$sent <- str_replace_all(d.raw$sent, "“", "")
-d.raw$sent <- str_replace_all(d.raw$sent, "”", "")
-d.raw$sent <- str_replace_all(d.raw$sent, "‘", "")
-d.raw$sent <- str_replace_all(d.raw$sent, "â", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "'", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "’", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "“", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "”", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "‘", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "â", "")
 ```
 
 Merge.  
@@ -114,6 +114,9 @@ Merge.
 ```{r}
 d <- left_join(d.raw, labels)
 d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
+
+d_full_e9 <- d
+save(d_full_e9, file = "e9_full.RData")
 ```
 
 Plot demographic info.
@@ -135,19 +138,19 @@ subinfo <- d %>%
 
 subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
 
-subinfo$gender <- str_replace_all(subinfo$gender, "female|FEMALE|F$|f$|Femal$|Females|Females","Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
-subinfo$gender <- str_replace_all(subinfo$gender, "29|24|25|28|32|33|45", "")
-subinfo$gender <- str_replace_all(subinfo$gender, "males", "male")
-subinfo$gender <- str_replace_all(subinfo$gender, " ", "")
+subinfo$gender <- stringr::str_replace_all(subinfo$gender, "female|FEMALE|F$|f$|Femal$|Females|Females","Female")
+subinfo$gender <- stringr::str_replace_all(subinfo$gender, "^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
+subinfo$gender <- stringr::str_replace_all(subinfo$gender, "29|24|25|28|32|33|45", "")
+subinfo$gender <- stringr::str_replace_all(subinfo$gender, "males", "male")
+subinfo$gender <- stringr::str_replace_all(subinfo$gender, " ", "")
 
 
-subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
-subinfo$language <- str_replace_all(subinfo$language," ", "")
-subinfo$language <- str_replace_all(subinfo$language,"arabic", "Arabic")
-subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
-subinfo$language <- str_replace_all(subinfo$language,"german", "German")
-subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
+subinfo$language <- stringr::str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
+subinfo$language <- stringr::str_replace_all(subinfo$language," ", "")
+subinfo$language <- stringr::str_replace_all(subinfo$language,"arabic", "Arabic")
+subinfo$language <- stringr::str_replace_all(subinfo$language,"chinese", "Chinese")
+subinfo$language <- stringr::str_replace_all(subinfo$language,"german", "German")
+subinfo$language <- stringr::str_replace_all(subinfo$language,"tagalog", "Tagalog")
 
 subinfo$childAgeYoung <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
 

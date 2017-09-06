@@ -112,6 +112,9 @@ db$rating[db$rating == 0] <- NA
 #rescore reverse coded items
 dq$rating <- as.numeric(dq$rating)
 dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+
+beh_dq <- dq
+save(beh_dq, file = "beh_dq.RData")
 ```
 
 Get means by category.
