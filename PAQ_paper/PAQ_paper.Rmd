@@ -1,0 +1,304 @@
+---
+title             : "Measuring Lay Theories of Parenting and Child Development"
+shorttitle        : "Measuring Parenting Theories"
+author: 
+  - name          : "Emily Hembacher"
+    affiliation   : "1"
+    corresponding : no    # Define only one corresponding author
+  - name          : "Michael C. Frank"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "450 Serra Mall, Stanford, CA 94301"
+    email         : "mcfrank@stanford.edu"
+affiliation:
+  - id            : "1"
+    institution   : "Stanford University"
+author_note: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+  Enter author note here.
+abstract: |
+  Enter abstract here. Each new line herein must be indented, like this line.
+  
+keywords          : "keywords"
+wordcount         : "X"
+bibliography      : ["paq.bib"]
+figsintext        : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : yes
+mask              : no
+class             : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+knitr::opts_chunk$set(fig.width = 8, fig.height = 5, echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+```
+
+```{r load_packages, include = FALSE}
+library(tidyverse)
+library(psych)
+library(langcog) 
+library(ggthemes) #plot themes
+library(rjson) #for json data
+library(lme4) #mixed effects models
+library(lmerTest) #nicer lmer output
+library(tidyboot) #bootstrapped confidence intervals
+library(magrittr)
+```
+
+
+
+# Methods
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+## Participants
+
+## Material
+
+## Procedure
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+# Results
+
+# Discussion
+
+
+
+## Study 1: Demographic Factors
+
+```{r}
+data <- read.csv("../cdm_paq.csv", header = TRUE)
+dem <- read.csv("../cdm_paq_dem.csv", header = TRUE)
+labels <- read.csv("../analysis/sent_forms_cdm.csv")
+```
+
+```{r}
+#clean up data
+questions <- data %>%
+  filter(Status == "Response Type") %>%
+  select(Q1:Q28) %>%
+  gather("item", "sent", Q1:Q28)
+
+d <- data %>%
+  filter(Finished == 1) %>%
+  mutate(sid = ResponseId) %>%
+  select(sid, Q1:Q28) %>%
+  gather("item", "rating", Q1:Q28) %>%
+  left_join(questions)
+
+subinfo <- dem %>%
+  filter(Finished == "True") %>%
+  transmute(sid = ResponseId, ethnicity = Q25.1, parent_ed = Q26.1, parent_age = Q27.1, parent_gender = Q28.1, num_kids = Q29, oldest_kid = Q30, youngest_kid = Q32, only_kid = Q33)
+
+d$sent <- stringr::str_replace_all(d$sent, "’", "")
+labels$sent <- as.character(labels$sent)
+```
+
+```{r}
+#merge data with labels
+dq <- d %>%
+  left_join(labels)
+
+#rescore reverse coded items
+dq$rating <- as.numeric(dq$rating)
+dq$rating[dq$reverse_code == 1] <- 8 - dq$rating[dq$reverse_code == 1]
+dq$rating <- dq$rating - 1
+```
+
+```{r}
+#create a dataframe that has subject scores and demographics
+ss <- dq %>%
+  group_by(sid, category) %>%
+  summarise(rating = mean(rating))%>%
+  left_join(subinfo)%>%
+  mutate(parent_age_approx = parent_age,
+         parent_ed_years = parent_ed)
+
+#recode parent age to be continuous
+ss$parent_age_approx <- recode(ss$parent_age_approx, "Under 18" = "18", "18 - 24" = "21", "25 - 34" = "30", "35 - 44" = "40", "45 - 54" = "50", "55 - 64" = "60", "65 - 74" = "70")
+ss$parent_age_approx <- as.numeric(as.character(ss$parent_age_approx))
+
+#recode parent ed to be continuous (num years)
+ss$parent_ed_years <- recode(ss$parent_ed_years, "Less than high school" = "12", "High school graduate" = "12", "Some college" = "14", "2 year degree" = "14", "4 year degree" = "16", "Professional degree" = "19", "Doctorate" = "23")
+ss$parent_ed_years <- as.numeric(as.character(ss$parent_ed_years))
+
+ss$ethnicity <- as.character(ss$ethnicity)
+ss$ethnicity[str_detect(ss$ethnicity, ",")] <- "Multiple Ethnicities"
+```
+
+```{r echo = FALSE}
+ms_gender <- ss %>% 
+  filter(parent_gender %in% c("Male","Female")) %>%
+  group_by(parent_gender, category) %>%
+  tidyboot_mean(col = rating, na.rm = TRUE)
+
+ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_base()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Parent Gender")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
+```
+
+```{r echo = FALSE}
+ms_age <- ss %>% 
+  group_by(parent_age, category) %>%
+  filter(n() > 20)%>%
+  tidyboot_mean(col = rating)
+
+ggplot(ms_age, aes(category, mean, fill=parent_age)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_base()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Parent Age")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
+```
+
+```{r echo = FALSE}
+ss$parent_ed <- factor(ss$parent_ed, levels = c("Less than high school","High school graduate","Some college","2 year degree","4 year degree", "Professional degree", "Doctorate"))
+
+ms_ed <- ss %>% 
+  group_by(parent_ed, category) %>%
+  filter(n() > 20)%>%
+  tidyboot_mean(col = rating)
+
+ggplot(ms, aes(category, mean, fill=parent_ed)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_base()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Parent Education")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
+```
+
+```{r echo = FALSE}
+ms_ethnic <- ss %>% 
+  group_by(ethnicity, category) %>%
+  filter(n() > 10)%>%
+  tidyboot_mean(col = rating)
+
+ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_base()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Ethnicity")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
+```
+
+```{r echo = FALSE}
+ms_numkids <- ss %>% 
+  group_by(num_kids, category) %>%
+  filter(n() > 20)%>%
+  tidyboot_mean(col = rating)
+
+ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
+  geom_bar(stat="identity", position = "dodge") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9)) + 
+  xlab("PAQ Subscale") + 
+  ylab("PAQ Score") +
+  langcog::scale_colour_solarized()  +
+  ggthemes::theme_base()+ 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  scale_fill_discrete(name="Number of Children")+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16))
+```
+
+
+```{r}
+summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
+     data=filter(ss, category == "AA")))
+```
+
+```{r}
+summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
+     data=filter(ss, category == "RR")))
+```
+
+```{r}
+summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
+     data=filter(ss, category == "EL")))
+```
+
+# Methods
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+## Participants
+
+## Material
+
+## Procedure
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+# Results
+
+# Discussion
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id = "refs"></div>
+\endgroup
