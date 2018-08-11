@@ -22,11 +22,11 @@ abstract: |
 keywords          : "keywords"
 wordcount         : "X"
 bibliography      : ["paq.bib"]
-figsintext        : no
+figsintext        : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
-lineno            : yes
+lineno            : no
 mask              : no
 class             : "man"
 output            : papaja::apa6_pdf
@@ -35,7 +35,7 @@ editor_options:
 ---
 
 ```{r}
-knitr::opts_chunk$set(fig.width = 8, fig.height = 5, echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+knitr::opts_chunk$set(fig.width = 8, fig.height = 5, echo = FALSE, warning = FALSE, message = FALSE, cache = TRUE)
 ```
 
 ```{r load_packages, include = FALSE}
@@ -48,12 +48,17 @@ library(lme4) #mixed effects models
 library(lmerTest) #nicer lmer output
 library(tidyboot) #bootstrapped confidence intervals
 library(magrittr)
+library(papaja)
+library(xtable)
+library(gtable)
+library(grid)
+library(gridExtra)
 ```
 
 
 
 # Methods
-We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
 
 ## Participants
 
@@ -62,7 +67,7 @@ We report how we determined our sample size, all data exclusions (if any), all m
 ## Procedure
 
 ## Data analysis
-We used `r cite_r("r-references.bib")` for all our analyses.
+
 
 
 # Results
@@ -72,6 +77,10 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 
 
 ## Study 1: Demographic Factors
+
+Approaches to parenting are known to differ across cultures and groups. For example, … To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors.  We administered the PAQ to 680 parents who were members of a local children’s museum and subsequently asked them to provide information about their gender, level of education, age, ethnicity, and the number of children they have. Figure X displays the distributions of demographic factors. To quantify any possible group differences, we conducted separate linear mixed-effects regressions for each subscale with the following structure: 
+
+`score ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)`
 
 ```{r}
 data <- read.csv("../cdm_paq.csv", header = TRUE)
@@ -133,13 +142,13 @@ ss$ethnicity <- as.character(ss$ethnicity)
 ss$ethnicity[str_detect(ss$ethnicity, ",")] <- "Multiple Ethnicities"
 ```
 
-```{r echo = FALSE}
+```{r}
 ms_gender <- ss %>% 
   filter(parent_gender %in% c("Male","Female")) %>%
   group_by(parent_gender, category) %>%
   tidyboot_mean(col = rating, na.rm = TRUE)
 
-ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
+p_gender <- ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
@@ -149,12 +158,11 @@ ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
   ggthemes::theme_base()+ 
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
   scale_fill_discrete(name="Parent Gender")+ 
-  theme(legend.title = element_text(size=16), 
-        legend.text = element_text(size=14), 
-        axis.text.x  = element_text(vjust=0.5, size=14),
-        axis.title.x = element_text(size=16), 
-        axis.text.y  = element_text(vjust=0.5, size=14),
-        axis.title.y = element_text(size=16))
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.title.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
 ```
 
 ```{r echo = FALSE}
@@ -163,7 +171,7 @@ ms_age <- ss %>%
   filter(n() > 20)%>%
   tidyboot_mean(col = rating)
 
-ggplot(ms_age, aes(category, mean, fill=parent_age)) +
+p_age <- ggplot(ms_age, aes(category, mean, fill=parent_age)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
@@ -173,12 +181,11 @@ ggplot(ms_age, aes(category, mean, fill=parent_age)) +
   ggthemes::theme_base()+ 
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
   scale_fill_discrete(name="Parent Age")+ 
-  theme(legend.title = element_text(size=16), 
-        legend.text = element_text(size=14), 
-        axis.text.x  = element_text(vjust=0.5, size=14),
-        axis.title.x = element_text(size=16), 
-        axis.text.y  = element_text(vjust=0.5, size=14),
-        axis.title.y = element_text(size=16))
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.title.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
 ```
 
 ```{r echo = FALSE}
@@ -189,7 +196,7 @@ ms_ed <- ss %>%
   filter(n() > 20)%>%
   tidyboot_mean(col = rating)
 
-ggplot(ms, aes(category, mean, fill=parent_ed)) +
+p_ed <- ggplot(ms_ed, aes(category, mean, fill=parent_ed)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
@@ -199,21 +206,20 @@ ggplot(ms, aes(category, mean, fill=parent_ed)) +
   ggthemes::theme_base()+ 
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
   scale_fill_discrete(name="Parent Education")+ 
-  theme(legend.title = element_text(size=16), 
-        legend.text = element_text(size=14), 
-        axis.text.x  = element_text(vjust=0.5, size=14),
-        axis.title.x = element_text(size=16), 
-        axis.text.y  = element_text(vjust=0.5, size=14),
-        axis.title.y = element_text(size=16))
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.title.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
 ```
 
 ```{r echo = FALSE}
 ms_ethnic <- ss %>% 
   group_by(ethnicity, category) %>%
-  filter(n() > 10)%>%
+  filter(n() > 20)%>%
   tidyboot_mean(col = rating)
 
-ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
+p_ethnic <- ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
@@ -222,13 +228,12 @@ ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
   langcog::scale_colour_solarized()  +
   ggthemes::theme_base()+ 
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  scale_fill_discrete(name="Ethnicity")+ 
-  theme(legend.title = element_text(size=16), 
-        legend.text = element_text(size=14), 
-        axis.text.x  = element_text(vjust=0.5, size=14),
-        axis.title.x = element_text(size=16), 
-        axis.text.y  = element_text(vjust=0.5, size=14),
-        axis.title.y = element_text(size=16))
+  scale_fill_discrete(name="Parent Ethnicity")+ 
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.title.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
 ```
 
 ```{r echo = FALSE}
@@ -237,7 +242,7 @@ ms_numkids <- ss %>%
   filter(n() > 20)%>%
   tidyboot_mean(col = rating)
 
-ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
+p_numkids <- ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
@@ -247,46 +252,80 @@ ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
   ggthemes::theme_base()+ 
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
   scale_fill_discrete(name="Number of Children")+ 
-  theme(legend.title = element_text(size=16), 
-        legend.text = element_text(size=14), 
-        axis.text.x  = element_text(vjust=0.5, size=14),
-        axis.title.x = element_text(size=16), 
-        axis.text.y  = element_text(vjust=0.5, size=14),
-        axis.title.y = element_text(size=16))
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.title.x=element_blank(),
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
 ```
 
-
-```{r}
-summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
-     data=filter(ss, category == "AA")))
+```{r echo = FALSE, fig.width=10, fig.height=8,}
+grid.arrange(p_age, p_ed, p_ethnic, p_gender, p_numkids, nrow = 3)
 ```
 
 ```{r}
-summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
-     data=filter(ss, category == "RR")))
+aa_demo <- summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
+     data=filter(ss, category == "AA", 
+                 ethnicity %in% ms_ethnic$ethnicity,
+                 parent_gender %in% ms_gender$parent_gender)))
 ```
 
 ```{r}
-summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
-     data=filter(ss, category == "EL")))
+rr_demo <- summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
+     data=filter(ss, category == "RR", ethnicity %in% ms_ethnic$ethnicity,
+                 parent_gender %in% ms_gender$parent_gender)))
 ```
 
-# Methods
-We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+```{r}
+el_demo <- summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
+     data=filter(ss, category == "EL", ethnicity %in% ms_ethnic$ethnicity,
+                 parent_gender %in% ms_gender$parent_gender)))
+```
 
-## Participants
+```{r results = "asis"}
+tab_aa_demo <- data.frame(aa_demo$coefficients)
+tab_el_demo <- data.frame(el_demo$coefficients)
+tab_rr_demo <- data.frame(rr_demo$coefficients)
 
-## Material
+factors <- c("Intercept", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male","Intercept", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male")
 
-## Procedure
+subscales <- c("Affection and Attachment", "", "", "", "", "", "","",
+               "Early Learning", "", "", "", "", "", "","",
+               "Rules and Respect", "", "", "", "", "", "","")
 
-## Data analysis
-We used `r cite_r("r-references.bib")` for all our analyses.
+tab_demo_lm <- tab_aa_demo%>%
+  bind_rows(tab_el_demo)%>%
+  bind_rows(tab_rr_demo)%>%
+  mutate(Subscale = subscales,
+         Factor = factors)
+         
+tab_demo_lm  <- tab_demo_lm [,c(5,6,1:4)]
 
+colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "SE", "$t$ value", "$p$ value")
 
-# Results
+tab_demo_lm  %<>% 
+  mutate(
+    stars = ifelse(`$p$ value` > .1, "", 
+                   ifelse(`$p$ value` < .001, "***",
+                          ifelse(`$p$ value` < .01, "**",
+                                 ifelse(`$p$ value` < .05, "*",
+                                        ifelse(`$p$ value` < .1, ".", "Error"))))),
+    
+    `$p$ value` = ifelse(`$p$ value` > .1, round(`$p$ value`, 2), 
+                         ifelse(`$p$ value` < .001, "$<$ .001",
+                                ifelse(`$p$ value` < .01, round(`$p$ value`, 2),
+                                       ifelse(`$p$ value` < .05, round(`$p$ value`, 2),
+                                              ifelse(`$p$ value` < .1, round(`$p$ value`, 2), 
+                                                     "Error")))))
+  )
 
-# Discussion
+colnames(tab_demo_lm) <- c("","","Estimate", "SE", "$t$ value", "$p$ value", "")
+
+aalm_tab <- xtable::xtable(tab_demo_lm, caption = "Results of a linear regression of demographic factors on  PAQ scores.")
+
+print(aalm_tab, type="latex", comment = F, table.placement = "b",
+      floating.environment = "table",hline.after = c(0,8, 16), include.rownames=FALSE, sanitize.text.function=function(x){x}, align = c("l","l","r","r","r","r","l"))
+```
 
 
 \newpage
