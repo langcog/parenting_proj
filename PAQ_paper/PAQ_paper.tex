@@ -230,8 +230,177 @@ Rules and Respect & Intercept & 3.85 & 0.34 & 11.33 & $<$ .001 & *** \\
    & Number of children & 0.11 & 0.04 & 2.75 & 0.01 & ** \\ 
    & Male & -0.12 & 0.09 & -1.32 & 0.19 &  \\ 
   \end{tabular}
-\caption{Results of a linear regression of demographic factors on  PAQ scores.} 
+\caption{Results of separate linear regressions of demographic factors on PAQ scores for each subscale.} 
 \end{table}
+
+\subsection{Study 2: Relation to parenting
+behaviors}\label{study-2-relation-to-parenting-behaviors}
+
+One way of assessing the ecological validity of the PAQ is to ask
+whether the parenting attitudes assessed by the current measure are
+related to actual parenting behaviors. For example, do parents who
+strongly agree with items on the Early Learning subscale read to their
+children more often? Do parents who strongly endorse items on the Rules
+and Respect subscale give more time-outs? To assess this, we asked
+parents on mturk to rate the frequency with which they engaged in a
+number of parenting behaviors after having filled out the PAQ.
+
+\begin{figure}
+\centering
+\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-22-1.pdf}
+\caption{}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-24-1.pdf}
+\caption{}
+\end{figure}
+
+***NOTE: use bayesian stats, including ordinal logit model here?
+
+\subsubsection{Affection and Attachment}\label{affection-and-attachment}
+
+\begin{verbatim}
+## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: 
+## rating_bin ~ AA + RR + EL + child_age + (1 | sid) + (1 | short_sent)
+##    Data: d_aa
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##    777.2    809.9   -381.6    763.2      785 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -5.6545 -0.4463 -0.1969  0.5350  3.0713 
+## 
+## Random effects:
+##  Groups     Name        Variance Std.Dev.
+##  sid        (Intercept) 1.262    1.123   
+##  short_sent (Intercept) 2.678    1.636   
+## Number of obs: 792, groups:  sid, 205; short_sent, 4
+## 
+## Fixed effects:
+##             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)  4.90594    1.14315   4.292 1.77e-05 ***
+## AA          -0.97914    0.22194  -4.412 1.03e-05 ***
+## RR           0.01263    0.15873   0.080    0.937    
+## EL          -0.10770    0.21141  -0.509    0.610    
+## child_age   -0.01160    0.00986  -1.176    0.240    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##           (Intr) AA     RR     EL    
+## AA        -0.191                     
+## RR        -0.179 -0.100              
+## EL        -0.172 -0.673 -0.298       
+## child_age -0.143 -0.082 -0.207  0.095
+\end{verbatim}
+
+\subsubsection{Early Learning}\label{early-learning}
+
+\subsubsection{Rules and Respect}\label{rules-and-respect}
+
+\begin{verbatim}
+## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: 
+## rating_bin ~ AA + RR + EL + child_age + (1 | sid) + (1 | short_sent)
+##    Data: d_rr
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##    883.9    916.4   -434.9    869.9      760 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -4.6250 -0.6407  0.3210  0.5723  1.8340 
+## 
+## Random effects:
+##  Groups     Name        Variance Std.Dev.
+##  sid        (Intercept) 1.847    1.3590  
+##  short_sent (Intercept) 0.964    0.9819  
+## Number of obs: 767, groups:  sid, 204; short_sent, 4
+## 
+## Fixed effects:
+##             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)  4.19556    0.98437   4.262 2.02e-05 ***
+## AA          -0.22895    0.22913  -0.999   0.3177    
+## RR          -0.16977    0.16965  -1.001   0.3170    
+## EL          -0.16866    0.23191  -0.727   0.4671    
+## child_age   -0.01906    0.01052  -1.812   0.0701 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##           (Intr) AA     RR     EL    
+## AA        -0.131                     
+## RR        -0.251 -0.121              
+## EL        -0.259 -0.708 -0.266       
+## child_age -0.191 -0.105 -0.167  0.084
+\end{verbatim}
+
+\subsection{Study 3: Uptake of new information about parenting and child
+development}\label{study-3-uptake-of-new-information-about-parenting-and-child-development}
+
+Parents' existing lay theories about parenting and child development may
+be an important consideration for crafting interventions on parenting
+behaviors. There have been frequent efforts to intervene on parenting
+behaviors, for example, public service announcements telling parents to
+read to their children; courses aimed at helping fathers engage with
+their children; messages aimed at encouraging parents and teachers to
+give children opportunities for free play. There is evidence that
+existing lay theories can interact in surprising ways with this type of
+messaging in other domains. How do parents' lay theories impact how they
+uptake new information?
+
+7.70\% of the data is excluded due to reading time exclusion.
+
+\begin{verbatim}
+## [1] 2.528026e-06
+\end{verbatim}
+
+The average accuracy for control questions was 0.76(CI =
+\texttt{signif(ms\$ci\_lower{[}ms\$q\_type\ ==\ "con"{]},\ digits\ =\ 2)}:\texttt{signif(ms\$ci\_upper{[}ms\$q\_type\ ==\ "con"{]},\ digits\ =\ 2)})
+and the average accuracy for experimenter questions was 0.81(CI =
+\texttt{signif(ms\$ci\_lower{[}ms\$q\_type\ ==\ "con"{]},\ digits\ =\ 2)}:\texttt{signif(ms\$ci\_upper{[}ms\$q\_type\ ==\ "exp"{]},\ digits\ =\ 2)}).
+There was no significant difference in accuracy between conditions, t =
+-4.83, p = 0.00.
+
+\begin{figure}
+\centering
+\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-36-1.pdf}
+\caption{}
+\end{figure}
+
+Set up a dataframe for analysis with exclusions.
+
+Model with affection and attachment.
+
+\begin{tabular}{l|r|r|r|r}
+\hline
+  & Estimate & Std. Error & z value & Pr(>|z|)\\
+\hline
+(Intercept) & 1.643 & 0.250 & 6.559 & 0.000\\
+\hline
+q\_typeexp & 0.487 & 0.345 & 1.413 & 0.158\\
+\hline
+scale(AA) & 0.036 & 0.118 & 0.304 & 0.761\\
+\hline
+scale(RR) & -0.180 & 0.094 & -1.917 & 0.055\\
+\hline
+scale(EL) & 0.617 & 0.119 & 5.200 & 0.000\\
+\hline
+q\_typeexp:scale(AA) & 0.335 & 0.118 & 2.842 & 0.004\\
+\hline
+q\_typeexp:scale(RR) & 0.019 & 0.096 & 0.194 & 0.846\\
+\hline
+q\_typeexp:scale(EL) & -0.201 & 0.116 & -1.730 & 0.084\\
+\hline
+\end{tabular}
 
 \newpage
 
