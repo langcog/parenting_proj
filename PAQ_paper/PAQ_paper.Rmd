@@ -53,6 +53,7 @@ library(xtable)
 library(gtable)
 library(grid)
 library(gridExtra)
+library(brms)
 ```
 
 
@@ -474,11 +475,13 @@ labels = c("Affection and Attachment Behaviors", "Early Learning Behaviors", "Ru
 ```{r}
 ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
   facet_grid(~category_bev) + 
-  geom_point(aes(color = category_paq)) +
+  #geom_point(aes(color = category_paq)) +
   xlab("Frequency of behavior") + 
   ylab("PAQ score") + 
   scale_colour_solarized()+
-  geom_smooth(method="lm", se=FALSE) +
+  geom_smooth(method="lm", se=TRUE) +
+  geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .5) +
+  # geom_point(alpha = .3) + 
   theme_base()+
   labs(colour="PAQ subscale")
 ```
@@ -536,6 +539,43 @@ d_rr$rating_bin <- as.factor(d_rr$rating_bin)
 ```
 
 ***NOTE: use bayesian stats, including ordinal logit model here? 
+
+```{r}
+d$rating <- factor(d$rating,
+levels = c(1, 2, 3, 4, 5, 6),
+labels = c("1-never", "2-almost-never", "3-occasionally", "4-once-or-twice-per-week", "5-most-days", "6-multiple-times-every-day"))
+```
+
+```{r}
+d_aa%<>%
+  mutate(rating = ordered(as.factor(rating)))
+
+aa_mod <- brm(rating ~ AA + RR + EL + child_age + 
+              (1|sid) + 
+              (1|short_sent), data=filter(d_aa, !is.na(rating)),
+              family=cumulative("logit"), control = list(adapt_delta = .99))
+```
+
+```{r}
+d_el%<>%
+  mutate(rating = ordered(as.factor(rating)))
+
+el_mod <- brm(rating ~ AA + RR + EL + child_age + 
+              (1|sid) + 
+              (1|short_sent), data=filter(d_el, !is.na(rating)),
+              family=cumulative("logit"), control = list(adapt_delta = .99))
+```
+
+```{r}
+d_rr%<>%
+  mutate(rating = ordered(as.factor(rating)))
+
+rr_mod <- brm(rating ~ AA + RR + EL + child_age + 
+              (1|sid) + 
+              (1|short_sent), data=filter(d_rr, !is.na(rating)),
+              family=cumulative("logit"), control = list(adapt_delta = .99))
+```
+
 
 ###Affection and Attachment 
 ```{r}
