@@ -84,68 +84,104 @@ Approaches to parenting are known to differ across cultures and groups. For exam
 `score ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)`
 
 ```{r}
-data <- read.csv("../cdm_paq.csv", header = TRUE)
-dem <- read.csv("../cdm_paq_dem.csv", header = TRUE)
-labels <- read.csv("../analysis/sent_forms_cdm.csv")
-```
-
-```{r}
-#clean up data
-questions <- data %>%
-  filter(Status == "Response Type") %>%
-  select(Q1:Q28) %>%
-  gather("item", "sent", Q1:Q28)
-
-d <- data %>%
+#get dataframe with subject responses
+responses_demo <- read.csv("../cdm_paq.csv", header = TRUE)%>%
   filter(Finished == 1) %>%
   mutate(sid = ResponseId) %>%
   select(sid, Q1:Q28) %>%
-  gather("item", "rating", Q1:Q28) %>%
-  left_join(questions)
-
-subinfo <- dem %>%
-  filter(Finished == "True") %>%
-  transmute(sid = ResponseId, ethnicity = Q25.1, parent_ed = Q26.1, parent_age = Q27.1, parent_gender = Q28.1, num_kids = Q29, oldest_kid = Q30, youngest_kid = Q32, only_kid = Q33)
-
-d$sent <- stringr::str_replace_all(d$sent, "’", "")
-labels$sent <- as.character(labels$sent)
-```
-
-```{r}
-#merge data with labels
-dq <- d %>%
-  left_join(labels)
+  gather("item", "rating", Q1:Q28)
 
 #rescore reverse coded items
-dq$rating <- as.numeric(dq$rating)
-dq$rating[dq$reverse_code == 1] <- 8 - dq$rating[dq$reverse_code == 1]
-dq$rating <- dq$rating - 1
+responses_demo$rating <- as.numeric(responses_demo$rating)
+responses_demo$rating[responses_demo$reverse_code == 1] <- 8 -responses_demo$rating[responses_demo$reverse_code == 1]
+responses_demo$rating <- responses_demo$rating - 1
 ```
 
 ```{r}
-#create a dataframe that has subject scores and demographics
-ss <- dq %>%
-  group_by(sid, category) %>%
-  summarise(rating = mean(rating))%>%
-  left_join(subinfo)%>%
+#get dataframe with survey questions
+questions <- read.csv("../cdm_paq.csv", header = TRUE)%>%
+  filter(Status == "Response Type") %>%
+  select(Q1:Q28) %>%
+  gather("item", "sent", Q1:Q28)
+```
+
+```{r}
+#get dataframe with demographic info
+subinfo <- read.csv("../cdm_paq_dem.csv", header = TRUE)%>%
+  filter(Finished == "True") %>%
+  transmute(sid = ResponseId, ethnicity = Q25.1, parent_ed = Q26.1, parent_age = Q27.1, parent_gender = Q28.1, num_kids = Q29, oldest_kid = Q30, youngest_kid = Q32, only_kid = Q33)%>%
   mutate(parent_age_approx = parent_age,
          parent_ed_years = parent_ed)
 
 #recode parent age to be continuous
-ss$parent_age_approx <- recode(ss$parent_age_approx, "Under 18" = "18", "18 - 24" = "21", "25 - 34" = "30", "35 - 44" = "40", "45 - 54" = "50", "55 - 64" = "60", "65 - 74" = "70")
-ss$parent_age_approx <- as.numeric(as.character(ss$parent_age_approx))
+subinfo$parent_age_approx <- recode(subinfo$parent_age_approx, "Under 18" = "18", "18 - 24" = "21", "25 - 34" = "30", "35 - 44" = "40", "45 - 54" = "50", "55 - 64" = "60", "65 - 74" = "70")
+subinfo$parent_age_approx <- as.numeric(as.character(subinfo$parent_age_approx))
 
 #recode parent ed to be continuous (num years)
-ss$parent_ed_years <- recode(ss$parent_ed_years, "Less than high school" = "12", "High school graduate" = "12", "Some college" = "14", "2 year degree" = "14", "4 year degree" = "16", "Professional degree" = "19", "Doctorate" = "23")
-ss$parent_ed_years <- as.numeric(as.character(ss$parent_ed_years))
+subinfo$parent_ed_years <- recode(subinfo$parent_ed_years, "Less than high school" = "12", "High school graduate" = "12", "Some college" = "14", "2 year degree" = "14", "4 year degree" = "16", "Professional degree" = "19", "Doctorate" = "23")
+subinfo$parent_ed_years <- as.numeric(as.character(subinfo$parent_ed_years))
 
-ss$ethnicity <- as.character(ss$ethnicity)
-ss$ethnicity[str_detect(ss$ethnicity, ",")] <- "Multiple Ethnicities"
+subinfo$ethnicity <- as.character(subinfo$ethnicity)
+subinfo$ethnicity[str_detect(subinfo$ethnicity, ",")] <- "Multiple Ethnicities"
 ```
 
 ```{r}
-ms_gender <- ss %>% 
-  filter(parent_gender %in% c("Male","Female")) %>%
+#get dataframe with short sentences
+labels_demo <-  read.csv("../analysis/sent_forms_cdm.csv")%>%
+  mutate(sent = as.character(sent))
+```
+
+```{r}
+#merge questionnaire data with labels and demo info
+d_demo <- responses_demo%>%
+  left_join(questions)%>%
+  mutate(sent = stringr::str_replace_all(sent, "’", ""))%>%
+  left_join(labels)%>%
+  left_join(subinfo)
+```
+
+```{r}
+#create a dataframe that has mean subject scores and demographics
+ss <- d_demo %>%
+  group_by(sid, category) %>%
+  summarise(rating = mean(rating))%>%
+  left_join(subinfo)
+```
+
+```{r}
+#only plot groups that have at least 20 observations
+genders <- c("Male", "Female")
+
+ethnicities <- ss%>%
+  group_by(ethnicity) %>%
+  filter(n() > 20)%>%
+  select(ethnicity)%>%
+  filter(ethnicity !="")%>%
+  unique
+ethnicities <- ethnicities$ethnicity
+
+ages <- ss%>%
+  group_by(parent_age) %>%
+  filter(n() > 20)%>%
+  select(parent_age)%>%
+  unique
+
+parent_eds <- ss%>%
+  group_by(parent_ed) %>%
+  filter(n() > 20)%>%
+  select(parent_ed)%>%
+  unique
+
+nums_kids <- ss%>%
+  group_by(num_kids) %>%
+  filter(n() > 20)%>%
+  select(num_kids)%>%
+  unique
+```
+
+```{r}
+ms_gender <- d_demo %>% 
+  filter(parent_gender %in% genders) %>%
   group_by(parent_gender, category) %>%
   tidyboot_mean(col = rating, na.rm = TRUE)
 
@@ -167,9 +203,9 @@ p_gender <- ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
 ```
 
 ```{r echo = FALSE}
-ms_age <- ss %>% 
+ms_age <- d_demo %>% 
   group_by(parent_age, category) %>%
-  filter(n() > 20)%>%
+  filter(parent_age %in% ages) %>%
   tidyboot_mean(col = rating)
 
 p_age <- ggplot(ms_age, aes(category, mean, fill=parent_age)) +
@@ -192,9 +228,9 @@ p_age <- ggplot(ms_age, aes(category, mean, fill=parent_age)) +
 ```{r echo = FALSE}
 ss$parent_ed <- factor(ss$parent_ed, levels = c("Less than high school","High school graduate","Some college","2 year degree","4 year degree", "Professional degree", "Doctorate"))
 
-ms_ed <- ss %>% 
+ms_ed <- d_demo %>% 
   group_by(parent_ed, category) %>%
-  filter(n() > 20)%>%
+  filter(parent_ed %in% parent_eds) %>%
   tidyboot_mean(col = rating)
 
 p_ed <- ggplot(ms_ed, aes(category, mean, fill=parent_ed)) +
@@ -215,9 +251,9 @@ p_ed <- ggplot(ms_ed, aes(category, mean, fill=parent_ed)) +
 ```
 
 ```{r echo = FALSE}
-ms_ethnic <- ss %>% 
+ms_ethnic <- d_demo %>% 
   group_by(ethnicity, category) %>%
-  filter(n() > 20)%>%
+  filter(ethnicity %in% ethnicities) %>%
   tidyboot_mean(col = rating)
 
 p_ethnic <- ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
@@ -238,9 +274,9 @@ p_ethnic <- ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
 ```
 
 ```{r echo = FALSE}
-ms_numkids <- ss %>% 
+ms_numkids <- d_demo %>% 
   group_by(num_kids, category) %>%
-  filter(n() > 20)%>%
+  filter(num_kids %in% nums_kids) %>%
   tidyboot_mean(col = rating)
 
 p_numkids <- ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
@@ -265,22 +301,60 @@ grid.arrange(p_age, p_ed, p_ethnic, p_gender, p_numkids, nrow = 3)
 ```
 
 ```{r}
-aa_demo <- summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
-     data=filter(ss, category == "AA", 
-                 ethnicity %in% ms_ethnic$ethnicity,
-                 parent_gender %in% ms_gender$parent_gender)))
+#make a new dataframe for regression models
+d_demo_mods <- d_demo%>%
+  transmute(sid = sid,
+            rating = ordered(factor(rating)),
+            item = short_sent,
+            category = category,
+            parent_age = as.numeric(parent_age_approx),
+            parent_ed_years = as.numeric(parent_ed_years),
+            num_kids = as.numeric(num_kids),
+            ethnicity = as.factor(ethnicity),
+            parent_gender = as.factor(parent_gender))
+
+d_demo_mods$ethnicity[!d_demo_mods$ethnicity %in% ethnicities] <- NA
+d_demo_mods$parent_gender[!d_demo_mods$parent_gender %in% genders] <- NA
 ```
 
-```{r}
-rr_demo <- summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
-     data=filter(ss, category == "RR", ethnicity %in% ms_ethnic$ethnicity,
-                 parent_gender %in% ms_gender$parent_gender)))
+```{r eval = TRUE}
+#bayes ordinal logistic
+aa_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
+                       (1|sid), 
+     data=filter(d_demo_mods , category == "AA"),
+              family=cumulative("logit"), control = list(adapt_delta = .99))
+
+#Elapsed Time: 340.339 seconds (Warm-up)
+#               213.377 seconds (Sampling)
+#               553.717 seconds (Total)
+
+save(aa_demo_mod, file = "saved_mods/aa_demo_mod.Rdata")
 ```
 
-```{r}
-el_demo <- summary(lm(rating ~ as.numeric(parent_age) + ethnicity + as.numeric(parent_ed_years) + as.numeric(num_kids) + parent_gender, 
-     data=filter(ss, category == "EL", ethnicity %in% ms_ethnic$ethnicity,
-                 parent_gender %in% ms_gender$parent_gender)))
+```{r eval = TRUE}
+#bayes ordinal logistic
+
+el_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
+                       (1|sid), 
+     data=filter(d_demo_mods , category == "EL"),
+              family=cumulative("logit"), control = list(adapt_delta = .99))
+
+ # Elapsed Time: 121.687 seconds (Warm-up)
+ #               62.2147 seconds (Sampling)
+ #               183.901 seconds (Total)
+
+save(el_demo_mod, file = "saved_mods/el_demo_mod.Rdata")
+```
+
+```{r eval = TRUE}
+#bayes ordinal logistic
+
+rr_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
+                       (1|sid), 
+     data=filter(d_demo_mods, category == "RR"),
+              family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(rr_demo_mod, file = "saved_mods/rr_demo_mod.Rdata")
 ```
 
 ```{r results = "asis"}
@@ -412,7 +486,6 @@ all <- atts %>%
   filter(!children == "0")
 ```
 
-
 ```{r}
 #Recode variables for plotting.
 bev <- behaviors %>%
@@ -538,74 +611,46 @@ d_el$rating_bin <- as.factor(d_el$rating_bin)
 d_rr$rating_bin <- as.factor(d_rr$rating_bin)
 ```
 
-***NOTE: use bayesian stats, including ordinal logit model here? 
-
 ```{r}
 d$rating <- factor(d$rating,
 levels = c(1, 2, 3, 4, 5, 6),
 labels = c("1-never", "2-almost-never", "3-occasionally", "4-once-or-twice-per-week", "5-most-days", "6-multiple-times-every-day"))
 ```
 
-```{r}
+```{r eval = TRUE}
 d_aa%<>%
   mutate(rating = ordered(as.factor(rating)))
 
-aa_mod <- brm(rating ~ AA + RR + EL + child_age + 
+aa_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
               (1|sid) + 
               (1|short_sent), data=filter(d_aa, !is.na(rating)),
               family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(aa_behave_mod, file = "saved_mods/aa_mod_behave.Rdata")
 ```
 
-```{r}
+```{r eval = TRUE}
 d_el%<>%
   mutate(rating = ordered(as.factor(rating)))
 
-el_mod <- brm(rating ~ AA + RR + EL + child_age + 
+el_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
               (1|sid) + 
               (1|short_sent), data=filter(d_el, !is.na(rating)),
               family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(el_behave_mod, file = "saved_mods/el_mod_behave.Rdata")
 ```
 
-```{r}
+```{r eval = TRUE}
 d_rr%<>%
   mutate(rating = ordered(as.factor(rating)))
 
-rr_mod <- brm(rating ~ AA + RR + EL + child_age + 
+rr_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
               (1|sid) + 
               (1|short_sent), data=filter(d_rr, !is.na(rating)),
               family=cumulative("logit"), control = list(adapt_delta = .99))
-```
 
-
-###Affection and Attachment 
-```{r}
-model <- summary(glmer(rating_bin ~ AA + RR + EL + child_age + 
-                (1|sid) + 
-                (1|short_sent), #behavior item
-              data = d_aa, 
-              family = "binomial"))
-model
-```
-
-###Early Learning 
-```{r eval = FALSE}
-#for EL behaviors 
-model <- summary(glmer(rating_bin ~ AA + RR + EL + child_age + 
-                (1|sid) + 
-                (1|short_sent), #behavior item
-              data = d_el, 
-              family = "binomial"))
-model
-```
-
-###Rules and Respect 
-```{r}
-model <- summary(glmer(rating_bin ~ AA + RR + EL + child_age + 
-                (1|sid) + 
-                (1|short_sent), #behavior item
-              data = d_rr, 
-              family = "binomial"))
-model
+save(rr_behave_mod, file = "saved_mods/rr_behave_mod.Rdata")
 ```
 
 ## Study 3: Uptake of new information about parenting and child development
@@ -773,7 +818,19 @@ mod <- glmer(acc ~ q_type * scale(AA) +
               data = d_reg_excl,  
               family = "binomial")
 
-knitr::kable(summary(mod)$coefficients, digits = 3)
+#knitr::kable(summary(mod)$coefficients, digits = 3)
+```
+
+```{r eval = TRUE}
+uptake_mod <- brm(acc ~ q_type * scale(AA) +  
+                q_type * scale(RR) + 
+                q_type * scale(EL) +
+                (q_type | workerid) +
+                (1 | item), 
+              data = d_reg_excl,
+              family = bernoulli())
+
+save(uptake_mod, file ="saved_mods/uptake_mod.Rmd")
 ```
 
 \newpage
