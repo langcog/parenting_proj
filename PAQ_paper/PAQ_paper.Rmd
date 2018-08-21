@@ -367,7 +367,7 @@ rr_d <- summary(rr_demo_mod)
 rr_demo <- data.frame(rr_d$fixed)
 ```
 
-```{r results = "asis"}
+```{r demo_tab, results = "asis"}
 factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male")
 
 subscales <- c("AA", "", "", "", "", "", "", 
@@ -388,9 +388,6 @@ colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 
 demo_tab <- xtable::xtable(tab_demo_lm, caption = "Results of separate bayesian ordinal logistic regressionsof demographic factors on PAQ scores for each subscale.")
 
 print(demo_tab, type="latex", comment = F, table.placement = "h", hline.after = c(0, 7, 14), include.rownames=FALSE, align = c("r","l","r","r","r","r"))
-
-
-#       floating.environment = "table", include.rownames=FALSE, sanitize.text.function=function(x){x}, align = c("","l","r","r","r","r")
 ```
 
 
@@ -634,7 +631,46 @@ rr_behave_mod <- brm(rating ~ AA + RR + EL + child_age +
               (1|short_sent), data=filter(d_rr, !is.na(rating)),
               family=cumulative("logit"), control = list(adapt_delta = .99))
 
-save(rr_behave_mod, file = "saved_mods/rr_behave_mod.Rdata")
+save(rr_behave_mod, file = "saved_mods/rr_mod_behave.Rdata")
+```
+
+```{r}
+#load saved ordinal logistic regression models
+load ("saved_mods/aa_mod_behave.Rdata")
+load ("saved_mods/el_mod_behave.Rdata")
+load ("saved_mods/rr_mod_behave.Rdata")
+
+aa_b <- summary(aa_behave_mod)
+aa_behave <- data.frame(aa_b$fixed)
+
+el_b <- summary(el_behave_mod)
+el_behave <- data.frame(el_b$fixed)
+
+rr_b <- summary(rr_behave_mod)
+rr_behave <- data.frame(rr_b$fixed)
+```
+
+```{r behave_tab, results = "asis"}
+factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age")
+
+behaviors <- c("AA", "", "", "", 
+               "EL", "", "", "", 
+               "RR", "", "", "")
+
+tab_behave_lm <- aa_behave%>%
+  bind_rows(el_behave)%>%
+  bind_rows(rr_behave)%>%
+  mutate(Factor = factors)%>%
+  filter(!str_detect(Factor,"Intercept"))%>%  
+  mutate(`Behavior Category` = behaviors)
+  
+tab_behave_lm  <- tab_behave_lm [,c(8,7,1:4)]
+
+colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+
+behave_tab <- xtable::xtable(tab_behave_lm, caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
+
+print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(0, 4, 8), include.rownames=FALSE, align = c("r","l","r","r","r","r"))
 ```
 
 ## Study 3: Uptake of new information about parenting and child development
@@ -726,8 +762,9 @@ answer_key$answer_cor <- as.character(answer_key$answer_cor)
 
 uptake <- answers %>%
   left_join(answer_key) %>%
-  mutate(acc = (answer == answer_cor)) %>%
-  select(workerid, item, acc, q_type, article) %>%
+  mutate(acc = (answer == answer_cor),
+         sid = workerid) %>%
+  select(sid, item, acc, q_type, article) %>%
   left_join(exclusions) %>%
   filter(!exclude)
 
@@ -791,15 +828,46 @@ d_reg_excl <- d_reg %>%
 ```
 
 ```{r eval = FALSE}
-uptake_mod <- brm(acc ~ q_type * scale(AA) +  
-                q_type * scale(RR) + 
-                q_type * scale(EL) +
+uptake_mod <- brm(acc ~ q_type * AA +  
+                q_type * RR + 
+                q_type * EL +
                 (q_type | workerid) +
                 (1 | item), 
               data = d_reg_excl,
               family = bernoulli())
 
 save(uptake_mod, file ="saved_mods/uptake_mod.Rmd")
+```
+
+```{r}
+#load saved ordinal logistic regression models
+load ("saved_mods/uptake_mod.Rdata")
+
+up <- summary(uptake_mod)
+uptake <- data.frame(up$fixed)
+```
+
+```{r behave_tab, results = "asis"}
+factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age")
+
+behaviors <- c("AA", "", "", "", 
+               "EL", "", "", "", 
+               "RR", "", "", "")
+
+tab_behave_lm <- aa_behave%>%
+  bind_rows(el_behave)%>%
+  bind_rows(rr_behave)%>%
+  mutate(Factor = factors)%>%
+  filter(!str_detect(Factor,"Intercept"))%>%  
+  mutate(`Behavior Category` = behaviors)
+  
+tab_behave_lm  <- tab_behave_lm [,c(8,7,1:4)]
+
+colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+
+behave_tab <- xtable::xtable(tab_behave_lm, caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
+
+print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(0, 4, 8), include.rownames=FALSE, align = c("r","l","r","r","r","r"))
 ```
 
 \newpage
