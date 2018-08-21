@@ -54,34 +54,22 @@ library(gtable)
 library(grid)
 library(gridExtra)
 library(brms)
+library(viridis)
 ```
 
 
 
-# Methods
+# Survey Construction
 
 
-## Participants
+## Generation of items
 
-## Material
+## Revised questionnaire norming
 
-## Procedure
-
-## Data analysis
+# Survey Validation
 
 
-
-# Results
-
-# Discussion
-
-
-
-## Study 1: Demographic Factors
-
-Approaches to parenting are known to differ across cultures and groups. For example, … To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors.  We administered the PAQ to 680 parents who were members of a local children’s museum and subsequently asked them to provide information about their gender, level of education, age, ethnicity, and the number of children they have. Figure X displays the distributions of demographic factors. To quantify any possible group differences, we conducted separate linear mixed-effects regressions for each subscale with the following structure: 
-
-`score ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)`
+##External Validity Study 1: Demographic Factors
 
 ```{r}
 #get dataframe with subject responses
@@ -90,11 +78,6 @@ responses_demo <- read.csv("../cdm_paq.csv", header = TRUE)%>%
   mutate(sid = ResponseId) %>%
   select(sid, Q1:Q28) %>%
   gather("item", "rating", Q1:Q28)
-
-#rescore reverse coded items
-responses_demo$rating <- as.numeric(responses_demo$rating)
-responses_demo$rating[responses_demo$reverse_code == 1] <- 8 -responses_demo$rating[responses_demo$reverse_code == 1]
-responses_demo$rating <- responses_demo$rating - 1
 ```
 
 ```{r}
@@ -102,7 +85,25 @@ responses_demo$rating <- responses_demo$rating - 1
 questions <- read.csv("../cdm_paq.csv", header = TRUE)%>%
   filter(Status == "Response Type") %>%
   select(Q1:Q28) %>%
-  gather("item", "sent", Q1:Q28)
+  gather("item", "sent", Q1:Q28)%>%  
+  mutate(sent = stringr::str_replace_all(sent, "’", ""))
+```
+
+```{r}
+#get dataframe with short sentences
+labels_demo <-  read.csv("../analysis/sent_forms_cdm.csv")%>%
+  mutate(sent = as.character(sent))
+```
+
+```{r}
+responses_demo%<>%
+  left_join(questions)%>%
+  left_join(labels_demo)
+
+#rescore reverse coded items
+responses_demo$rating <- as.numeric(responses_demo$rating)
+responses_demo$rating[responses_demo$reverse_code == 1] <- 8 -responses_demo$rating[responses_demo$reverse_code == 1]
+responses_demo$rating <- responses_demo$rating - 1
 ```
 
 ```{r}
@@ -126,17 +127,8 @@ subinfo$ethnicity[str_detect(subinfo$ethnicity, ",")] <- "Multiple Ethnicities"
 ```
 
 ```{r}
-#get dataframe with short sentences
-labels_demo <-  read.csv("../analysis/sent_forms_cdm.csv")%>%
-  mutate(sent = as.character(sent))
-```
-
-```{r}
 #merge questionnaire data with labels and demo info
 d_demo <- responses_demo%>%
-  left_join(questions)%>%
-  mutate(sent = stringr::str_replace_all(sent, "’", ""))%>%
-  left_join(labels)%>%
   left_join(subinfo)
 ```
 
@@ -156,7 +148,8 @@ ethnicities <- ss%>%
   group_by(ethnicity) %>%
   filter(n() > 20)%>%
   select(ethnicity)%>%
-  filter(ethnicity !="")%>%
+  filter(ethnicity !="",
+         ethnicity != "Other")%>%
   unique
 ethnicities <- ethnicities$ethnicity
 
@@ -165,18 +158,21 @@ ages <- ss%>%
   filter(n() > 20)%>%
   select(parent_age)%>%
   unique
+ages <- ages$parent_age
 
 parent_eds <- ss%>%
   group_by(parent_ed) %>%
   filter(n() > 20)%>%
   select(parent_ed)%>%
   unique
+parent_eds <- parent_eds$parent_ed
 
 nums_kids <- ss%>%
   group_by(num_kids) %>%
   filter(n() > 20)%>%
   select(num_kids)%>%
   unique
+nums_kids <- nums_kids$num_kids
 ```
 
 ```{r}
@@ -184,17 +180,18 @@ ms_gender <- d_demo %>%
   filter(parent_gender %in% genders) %>%
   group_by(parent_gender, category) %>%
   tidyboot_mean(col = rating, na.rm = TRUE)
+```
 
+```{r}
 p_gender <- ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
   xlab("PAQ Subscale") + 
   ylab("PAQ Score") +
-  langcog::scale_colour_solarized()  +
-  ggthemes::theme_base()+ 
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE, name="Parent Gender") +
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  scale_fill_discrete(name="Parent Gender")+ 
   theme(legend.title = element_text(size=10), 
         legend.text = element_text(size=10), 
         axis.title.x=element_blank(),
@@ -202,22 +199,23 @@ p_gender <- ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
         axis.title.y = element_text(size=12))
 ```
 
-```{r echo = FALSE}
+```{r}
 ms_age <- d_demo %>% 
-  group_by(parent_age, category) %>%
   filter(parent_age %in% ages) %>%
+  group_by(parent_age, category) %>%
   tidyboot_mean(col = rating)
+```
 
+```{r}
 p_age <- ggplot(ms_age, aes(category, mean, fill=parent_age)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
   xlab("PAQ Subscale") + 
   ylab("PAQ Score") +
-  langcog::scale_colour_solarized()  +
-  ggthemes::theme_base()+ 
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE, name="Parent Age") +
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  scale_fill_discrete(name="Parent Age")+ 
   theme(legend.title = element_text(size=10), 
         legend.text = element_text(size=10), 
         axis.title.x=element_blank(),
@@ -225,24 +223,25 @@ p_age <- ggplot(ms_age, aes(category, mean, fill=parent_age)) +
         axis.title.y = element_text(size=12))
 ```
 
-```{r echo = FALSE}
+```{r}
 ss$parent_ed <- factor(ss$parent_ed, levels = c("Less than high school","High school graduate","Some college","2 year degree","4 year degree", "Professional degree", "Doctorate"))
 
 ms_ed <- d_demo %>% 
   group_by(parent_ed, category) %>%
   filter(parent_ed %in% parent_eds) %>%
   tidyboot_mean(col = rating)
+```
 
+```{r}
 p_ed <- ggplot(ms_ed, aes(category, mean, fill=parent_ed)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
   xlab("PAQ Subscale") + 
   ylab("PAQ Score") +
-  langcog::scale_colour_solarized()  +
-  ggthemes::theme_base()+ 
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE, name="Parent Education") +
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  scale_fill_discrete(name="Parent Education")+ 
   theme(legend.title = element_text(size=10), 
         legend.text = element_text(size=10), 
         axis.title.x=element_blank(),
@@ -250,22 +249,23 @@ p_ed <- ggplot(ms_ed, aes(category, mean, fill=parent_ed)) +
         axis.title.y = element_text(size=12))
 ```
 
-```{r echo = FALSE}
+```{r}
 ms_ethnic <- d_demo %>% 
   group_by(ethnicity, category) %>%
   filter(ethnicity %in% ethnicities) %>%
   tidyboot_mean(col = rating)
+```
 
+```{r}
 p_ethnic <- ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
   xlab("PAQ Subscale") + 
   ylab("PAQ Score") +
-  langcog::scale_colour_solarized()  +
-  ggthemes::theme_base()+ 
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE, name="Parent Ethnicity") +
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  scale_fill_discrete(name="Parent Ethnicity")+ 
   theme(legend.title = element_text(size=10), 
         legend.text = element_text(size=10), 
         axis.title.x=element_blank(),
@@ -273,22 +273,23 @@ p_ethnic <- ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
         axis.title.y = element_text(size=12))
 ```
 
-```{r echo = FALSE}
+```{r}
 ms_numkids <- d_demo %>% 
   group_by(num_kids, category) %>%
   filter(num_kids %in% nums_kids) %>%
   tidyboot_mean(col = rating)
+```
 
+```{r}
 p_numkids <- ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
   geom_bar(stat="identity", position = "dodge") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
              position = position_dodge(width = .9)) + 
   xlab("PAQ Subscale") + 
   ylab("PAQ Score") +
-  langcog::scale_colour_solarized()  +
-  ggthemes::theme_base()+ 
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE, name="Number of Children") +
   scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  scale_fill_discrete(name="Number of Children")+ 
   theme(legend.title = element_text(size=10), 
         legend.text = element_text(size=10), 
         axis.title.x=element_blank(),
@@ -296,7 +297,7 @@ p_numkids <- ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
         axis.title.y = element_text(size=12))
 ```
 
-```{r echo = FALSE, fig.width=10, fig.height=8,}
+```{r, demographics,  fig.width=10, fig.height=8, fig.cap= "Demographic variability in PAQ scores. Error bars represent +/-95% CI computed by non-parametric bootstrap."}
 grid.arrange(p_age, p_ed, p_ethnic, p_gender, p_numkids, nrow = 3)
 ```
 
@@ -317,38 +318,31 @@ d_demo_mods$ethnicity[!d_demo_mods$ethnicity %in% ethnicities] <- NA
 d_demo_mods$parent_gender[!d_demo_mods$parent_gender %in% genders] <- NA
 ```
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 #bayes ordinal logistic
+#takes a long time to run
 aa_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
                        (1|sid), 
      data=filter(d_demo_mods , category == "AA"),
               family=cumulative("logit"), control = list(adapt_delta = .99))
 
-#Elapsed Time: 340.339 seconds (Warm-up)
-#               213.377 seconds (Sampling)
-#               553.717 seconds (Total)
-
 save(aa_demo_mod, file = "saved_mods/aa_demo_mod.Rdata")
 ```
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 #bayes ordinal logistic
-
+#takes a long time to run
 el_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
                        (1|sid), 
      data=filter(d_demo_mods , category == "EL"),
               family=cumulative("logit"), control = list(adapt_delta = .99))
 
- # Elapsed Time: 121.687 seconds (Warm-up)
- #               62.2147 seconds (Sampling)
- #               183.901 seconds (Total)
-
 save(el_demo_mod, file = "saved_mods/el_demo_mod.Rdata")
 ```
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 #bayes ordinal logistic
-
+#takes a long time to run
 rr_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
                        (1|sid), 
      data=filter(d_demo_mods, category == "RR"),
@@ -357,50 +351,52 @@ rr_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids 
 save(rr_demo_mod, file = "saved_mods/rr_demo_mod.Rdata")
 ```
 
-```{r results = "asis"}
-tab_aa_demo <- data.frame(aa_demo$coefficients)
-tab_el_demo <- data.frame(el_demo$coefficients)
-tab_rr_demo <- data.frame(rr_demo$coefficients)
+```{r}
+#load saved ordinal logistic regression models
+load ("saved_mods/aa_demo_mod.Rdata")
+load ("saved_mods/el_demo_mod.Rdata")
+load ("saved_mods/rr_demo_mod.Rdata")
 
-factors <- c("Intercept", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male","Intercept", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male")
+aa_d <- summary(aa_demo_mod)
+aa_demo <- data.frame(aa_d$fixed)
 
-subscales <- c("Affection and Attachment", "", "", "", "", "", "","",
-               "Early Learning", "", "", "", "", "", "","",
-               "Rules and Respect", "", "", "", "", "", "","")
+el_d <- summary(el_demo_mod)
+el_demo <- data.frame(el_d$fixed)
 
-tab_demo_lm <- tab_aa_demo%>%
-  bind_rows(tab_el_demo)%>%
-  bind_rows(tab_rr_demo)%>%
-  mutate(Subscale = subscales,
-         Factor = factors)
-         
-tab_demo_lm  <- tab_demo_lm [,c(5,6,1:4)]
-
-colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "SE", "$t$ value", "$p$ value")
-
-tab_demo_lm  %<>% 
-  mutate(
-    stars = ifelse(`$p$ value` > .1, "", 
-                   ifelse(`$p$ value` < .001, "***",
-                          ifelse(`$p$ value` < .01, "**",
-                                 ifelse(`$p$ value` < .05, "*",
-                                        ifelse(`$p$ value` < .1, ".", "Error"))))),
-    
-    `$p$ value` = ifelse(`$p$ value` > .1, round(`$p$ value`, 2), 
-                         ifelse(`$p$ value` < .001, "$<$ .001",
-                                ifelse(`$p$ value` < .01, round(`$p$ value`, 2),
-                                       ifelse(`$p$ value` < .05, round(`$p$ value`, 2),
-                                              ifelse(`$p$ value` < .1, round(`$p$ value`, 2), 
-                                                     "Error")))))
-  )
-
-colnames(tab_demo_lm) <- c("","","Estimate", "SE", "$t$ value", "$p$ value", "")
-
-aalm_tab <- xtable::xtable(tab_demo_lm, caption = "Results of separate linear regressions of demographic factors on PAQ scores for each subscale.")
-
-print(aalm_tab, type="latex", comment = F, table.placement = "b",
-      floating.environment = "table",hline.after = c(0,8, 16), include.rownames=FALSE, sanitize.text.function=function(x){x}, align = c("l","l","r","r","r","r","l"))
+rr_d <- summary(rr_demo_mod)
+rr_demo <- data.frame(rr_d$fixed)
 ```
+
+```{r results = "asis"}
+factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male")
+
+subscales <- c("AA", "", "", "", "", "", "", 
+               "EL", "", "", "", "", "", "", 
+               "RR", "", "", "", "", "", "")
+
+tab_demo_lm <- aa_demo%>%
+  bind_rows(el_demo)%>%
+  bind_rows(rr_demo)%>%
+  mutate(Factor = factors)%>%
+  filter(!str_detect(Factor,"Intercept"))%>%  
+  mutate(Subscale = subscales)
+  
+tab_demo_lm  <- tab_demo_lm [,c(8,7,1:4)]
+
+colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+
+demo_tab <- xtable::xtable(tab_demo_lm, caption = "Results of separate bayesian ordinal logistic regressionsof demographic factors on PAQ scores for each subscale.")
+
+print(demo_tab, type="latex", comment = F, table.placement = "h", hline.after = c(0, 7, 14), include.rownames=FALSE, align = c("r","l","r","r","r","r"))
+
+
+#       floating.environment = "table", include.rownames=FALSE, sanitize.text.function=function(x){x}, align = c("","l","r","r","r","r")
+```
+
+
+Approaches to parenting are known to differ across cultures and groups. To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors. We administered the PAQ to 680 parents who were members of a local children’s museum and subsequently asked them to provide information about their gender, level of education, age, ethnicity, and the number of children they have. Figure \ref{fig:demographics} displays the distributions of demographic factors. To quantify any possible group differences, we fit Bayesian mixed effects ordinal regression models for each subscale (AA, EL, RR) with the following structure:
+
+`agreement rating ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)`
 
 ## Study 2: Relation to parenting behaviors
 
@@ -502,6 +498,7 @@ bev$rating[bev$rating=="6"] <- "Multiple times ever day"
 
 bev$rating <- factor(bev$rating, levels = c("My child is too young", "Never", "Almost never","Occasionally","Once or twice per week","Most days","Multiple times every day"))
 
+
 bev$short_sent <- factor(bev$short_sent, levels = c("read","practice numbers and letters","make observations", "educational programming","talk about feelings","spend time cuddling","sleep in the same bed","hug and kiss","talk sternly","give time out or punishments","talk about setting limits","help with chores"))
 
 subinfo$behave_age[subinfo$behave_age == "0-6"] <- "0-6 months"
@@ -510,53 +507,40 @@ subinfo$behave_age[subinfo$behave_age == "7-12"] <- "7-12 months"
 subinfo$behave_age <- factor(subinfo$behave_age, levels = c("0-6 months", "7-12 months", "1-1.5","1.5-2","2-2.5","2.5-3","3-3.5","3.5-4", "4-4.5","4.5-5", "older"))
 ```
 
-```{r}
-#make new theme that is theme_base but with 90 degree axis labels
-new_theme <- function (base_size = 16, base_family = "") 
-{
-    theme_foundation() + theme(line = element_line(colour = "black", 
-        lineend = "round", linetype = "solid"), rect = element_rect(fill = "white", 
-        colour = "black", linetype = "solid"), text = element_text(colour = "black", 
-        face = "plain", family = base_family, size = base_size, 
-        vjust = 0.5, hjust = 0.5, lineheight = 1), panel.grid = element_blank(), 
-        strip.background = element_rect(colour = NA), legend.key = element_rect(colour = NA), 
-        title = element_text(size = rel(1)), plot.title = element_text(size = rel(1.2), 
-            face = "bold"), strip.text = element_text(), axis.ticks.length = unit(0.5, 
-            "lines"),
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))
-}
-```
-
-```{r}
-#What do the frequencies look like?
+```{r, behave_freq, echo = FALSE, fig.width=10, fig.height=6, fig.cap= "Frequencies of different parenting activities reported by parents."}
 ggplot(filter(bev, !is.na(rating)), aes(short_sent, fill = rating, shape = category)) + 
   geom_bar(position = "fill")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
   xlab("Behavior") + 
   ylab("Proportion responding") +
-  new_theme() + 
-  scale_fill_discrete(name="Frequency")
+  theme_base()+
+  scale_fill_viridis(name="Frequency", discrete = TRUE, breaks=c("Most days","Once or twice per week","Occasionally", "Almost never", "Never"))+
+  coord_flip()+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y = element_text(size = 12),
+        legend.position="bottom",
+        legend.text = element_text(size = 14),
+        legend.title=element_blank()) 
 ```
 
 ```{r}
 #descriptive labels for behavior categories
 all$category_bev <- factor(all$category_bev,
 levels = c("AA", "EL", "RR"),
-labels = c("Affection and Attachment Behaviors", "Early Learning Behaviors", "Rules and Respect Behaviors"))
+labels = c("AA Behaviors", "EL Behaviors", "RR Behaviors"))
 ```
 
-```{r}
+```{r behave_paq, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the frequency of parenting behaviors divided into the same categories."}
 ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
+  geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .3) +
+  geom_smooth(method="lm", se=TRUE) +
   facet_grid(~category_bev) + 
-  #geom_point(aes(color = category_paq)) +
   xlab("Frequency of behavior") + 
   ylab("PAQ score") + 
-  scale_colour_solarized()+
-  geom_smooth(method="lm", se=TRUE) +
-  geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .5) +
-  # geom_point(alpha = .3) + 
+  labs(colour="PAQ subscale")+
   theme_base()+
-  labs(colour="PAQ subscale")
+  scale_color_viridis(discrete = TRUE) +
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))
 ```
 
 ```{r}
@@ -617,7 +601,7 @@ levels = c(1, 2, 3, 4, 5, 6),
 labels = c("1-never", "2-almost-never", "3-occasionally", "4-once-or-twice-per-week", "5-most-days", "6-multiple-times-every-day"))
 ```
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 d_aa%<>%
   mutate(rating = ordered(as.factor(rating)))
 
@@ -629,7 +613,7 @@ aa_behave_mod <- brm(rating ~ AA + RR + EL + child_age +
 save(aa_behave_mod, file = "saved_mods/aa_mod_behave.Rdata")
 ```
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 d_el%<>%
   mutate(rating = ordered(as.factor(rating)))
 
@@ -641,7 +625,7 @@ el_behave_mod <- brm(rating ~ AA + RR + EL + child_age +
 save(el_behave_mod, file = "saved_mods/el_mod_behave.Rdata")
 ```
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 d_rr%<>%
   mutate(rating = ordered(as.factor(rating)))
 
@@ -761,41 +745,40 @@ mss_wide <- spread(mss, q_type, acc) %>%
   filter(!is.na(con) & !is.na(exp))
 
 t_acc_q_type <- t.test(mss_wide$con, mss_wide$exp, paired=TRUE)
-
-t_acc_q_type$p.value
 ```
 
-The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)`(CI = `signif(ms$ci_lower[ms$q_type == "con"], digits = 2)`:`signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)`(CI = `signif(ms$ci_lower[ms$q_type == "con"], digits = 2)`:`signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
+The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
 
 ```{r}
 d <- mss %>%
   left_join(atts) %>%
   left_join(subinfo) %>%
   mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"))
+```
 
+```{r uptake, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the uptake of information in experimental (child development-related) and control articles."}
 ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
  geom_jitter(height = .02, width = 0, alpha= .3) +
-  # geom_point(alpha = .3) + 
   geom_smooth(method="lm") + 
   facet_grid(.~category) + 
-  ylim(0,1) + 
   ylab("Accuracy") +
-  xlab("Subscale Rating") + 
-  scale_color_solarized(name="Condition") +
-  theme(legend.position = "bottom")+ 
-  ggthemes::theme_few()+ 
-  theme(legend.title = element_text(size=16), 
+  xlab("PAQ Rating") + 
+  theme(legend.position = "bottom",
+        legend.title = element_text(size=16), 
         legend.text = element_text(size=14), 
         axis.text.x  = element_text(vjust=0.5, size=14),
         axis.title.x = element_text(size=16), 
         axis.text.y  = element_text(vjust=0.5, size=14),
         axis.title.y = element_text(size=16),
-        strip.text = element_text(size=14))
+        strip.text = element_text(size=14))+
+  theme_base()+
+  scale_color_viridis(name="Condition", discrete = TRUE) 
 ```
 
-Set up a dataframe for analysis with exclusions.
+
 
 ```{r}
+#Set up a dataframe for analysis with exclusions.
 d_reg <- atts %>%
   left_join(uptake)%>%
   group_by(workerid, category, acc, q_type, item, article)%>%
@@ -807,21 +790,7 @@ d_reg_excl <- d_reg %>%
   filter(!exclude)
 ```
 
-Model with affection and attachment. 
-
-```{r eval = TRUE}
-mod <- glmer(acc ~ q_type * scale(AA) +  
-                q_type * scale(RR) + 
-                q_type * scale(EL) +
-                (q_type | workerid) +
-                (1 | item), 
-              data = d_reg_excl,  
-              family = "binomial")
-
-#knitr::kable(summary(mod)$coefficients, digits = 3)
-```
-
-```{r eval = TRUE}
+```{r eval = FALSE}
 uptake_mod <- brm(acc ~ q_type * scale(AA) +  
                 q_type * scale(RR) + 
                 q_type * scale(EL) +
