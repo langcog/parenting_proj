@@ -1,4 +1,4 @@
-\documentclass[floatsintext,man]{apa6}
+\documentclass[man]{apa6}
 
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
@@ -39,6 +39,12 @@
   {\begin{landscape}\begin{center}\begin{ThreePartTable}}
   {\end{ThreePartTable}\end{center}\end{landscape}}
 
+  \usepackage{ifthen} % Only add declarations when endfloat package is loaded
+  \ifthenelse{\equal{\string man}{\string man}}{%
+   \DeclareDelayedFloatFlavor{ThreePartTable}{table} % Make endfloat play with longtable
+   % \DeclareDelayedFloatFlavor{ltable}{table} % Make endfloat play with lscape
+   \DeclareDelayedFloatFlavor{lltable}{table} % Make endfloat play with lscape & longtable
+  }{}%
 
 
 
@@ -183,7 +189,8 @@ Error bars represent +/-95\% CI computed by non-parametric bootstrap.}
 \begin{table}[h]
 \centering
 \begin{tabular}{llrrrr}
- Subscale & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\ 
+  \hline
+Subscale & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\ 
   \hline
 AA & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\ 
    & Hispanic or Latino & 0.72 & 0.20 & 0.34 & 1.11 \\ 
@@ -208,8 +215,9 @@ RR & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
    & Parent Education & -0.02 & 0.02 & -0.05 & 0.01 \\ 
    & Number of children & 0.15 & 0.06 & 0.04 & 0.25 \\ 
    & Male & -0.17 & 0.12 & -0.39 & 0.06 \\ 
-  \end{tabular}
-\caption{Results of separate bayesian ordinal logistic regressionsof demographic factors on PAQ scores for each subscale.} 
+   \hline
+\end{tabular}
+\caption{Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes. Intercept estimates are not displayed to conserve space.} 
 \end{table}
 
 Approaches to parenting are known to differ across cultures and groups.
@@ -219,36 +227,57 @@ subscales based on demographic factors. We administered the PAQ to 680
 parents who were members of a local children's museum and subsequently
 asked them to provide information about their gender, level of
 education, age, ethnicity, and the number of children they have. Figure
-\ref{fig:demographics} displays the distributions of demographic
-factors. To quantify any possible group differences, we fit Bayesian
-mixed effects ordinal regression models for each subscale (AA, EL, RR)
-with the following structure:
+\ref{fig:demographics} displays the average PAQ scores for each
+demographic category.
 
+To quantify any possible group differences, we fit separate Bayesian
+mixed effects ordinal regression models for each subscale (AA, EL, RR)
+with the following structure, with likert ratings of agreement for each
+item (1-6) entered as dependent measures:
 \texttt{agreement\ rating\ \textasciitilde{}\ age\ +\ education\ +\ ethnicity\ +\ gender\ +\ number\ of\ children\ +\ (1\ \textbar{}\ subject)\ +\ (1\textbar{}\ item)}
+Groups with fewer than 20 cases were removed from plots and analyses to
+avoid overfitting. Although displayed as categorical for visual
+simplicity in Figure \ref{fig:demographics}, parent age and education in
+years were entered as continuous variables in the regression models.
+
+Table 1 displays the results of the regression analyses. We found that
+stronger agreement with AA attitudes was associated with identifying as
+Hispanic or Latino (\(\beta\) = 0.72, 95\% CI = 0.34 - 1.11), White
+(\(\beta\) = 0.31, 95\% CI = 0.12 - 0.49), or multiple ethnicities
+(\(\beta\) = 0.50, 95\% CI = 0.18 - 0.82) compared to Asian (the
+comparison level). Having a greater number of children was associated
+with lower agreement with AA attitudes (\(\beta\) = -0.14, 95\% CI =
+-0.24 - -0.03), as was identifying as Male (\(\beta\) = -0.70, 95\% CI =
+-0.92 - -0.48). Parent education was not meaningfully associated with AA
+scores.
+
+We found that stronger agreement with EL scores was associated with
+identifying as White (\(\beta\) = 0.44, 95\% CI = 0.25 - 0.62) or
+multiple ethnicities (\(\beta\) = 0.56, 95\% CI = 0.22 - 0.90), and
+having more children was associated with slightly lower agreement with
+EL scores (\(\beta\) = -0.14, 95\% CI = -0.24 - -0.03). No other
+demographic variables were related to EL scores.
+
+Finally, we found that stronger agreement with RR attitudes was
+associated with having a greater number of children (\(\beta\) = 0.15,
+95\% CI = 0.04 - 0.25), and identifying as White was associated with
+lower agreement with RR attitudes (\(\beta\) = -0.20, 95\% CI = -0.38 -
+-0.01).
 
 \subsection{Study 2: Relation to parenting
 behaviors}\label{study-2-relation-to-parenting-behaviors}
 
-One way of assessing the ecological validity of the PAQ is to ask
-whether the parenting attitudes assessed by the current measure are
-related to actual parenting behaviors. For example, do parents who
-strongly agree with items on the Early Learning subscale read to their
-children more often? Do parents who strongly endorse items on the Rules
-and Respect subscale give more time-outs? To assess this, we asked
-parents on mturk to rate the frequency with which they engaged in a
-number of parenting behaviors after having filled out the PAQ.
-
 \begin{figure}
 \centering
-\includegraphics{PAQ_paper_files/figure-latex/behave_freq-1.pdf}
-\caption{(\#fig:behave\_freq)Frequencies of different parenting
-activities reported by parents.}
+\includegraphics{PAQ_paper_files/figure-latex/behavefreq-1.pdf}
+\caption{\label{fig:behavefreq}Frequencies of different parenting activities
+reported by parents.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{PAQ_paper_files/figure-latex/behave_paq-1.pdf}
-\caption{(\#fig:behave\_paq)Relations between PAQ scores (Affection and
+\includegraphics{PAQ_paper_files/figure-latex/behavepaq-1.pdf}
+\caption{\label{fig:behavepaq}Relations between PAQ scores (Affection and
 Attachment, Early Learning, and Rules and Respect) and the frequency of
 parenting behaviors divided into the same categories.}
 \end{figure}
@@ -256,7 +285,8 @@ parenting behaviors divided into the same categories.}
 \begin{table}[h]
 \centering
 \begin{tabular}{llrrrr}
- Behavior Category & Factor & Estimate & Est.Error & l.95..CI & u.95..CI \\ 
+  \hline
+Behavior Category & Factor & Estimate & Est.Error & l.95..CI & u.95..CI \\ 
   \hline
 AA & AA PAQ score & 0.81 & 0.15 & 0.53 & 1.11 \\ 
    & RR PAQ score & -0.02 & 0.11 & -0.24 & 0.20 \\ 
@@ -272,9 +302,26 @@ RR & AA PAQ score & 0.10 & 0.20 & -0.30 & 0.50 \\
    & RR PAQ score & 0.34 & 0.15 & 0.04 & 0.64 \\ 
    & EL PAQ score & 0.02 & 0.20 & -0.36 & 0.41 \\ 
    & Child Age & 0.03 & 0.01 & 0.01 & 0.05 \\ 
-  \end{tabular}
-\caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.} 
+   \hline
+\end{tabular}
+\caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories. Intercept estimates are not displayed to conserve space.} 
 \end{table}
+
+One way of assessing the ecological validity of the PAQ is to ask
+whether the parenting attitudes assessed by the current measure are
+related to actual parenting behaviors. For example, do parents who
+strongly agree with items on the Early Learning subscale read to their
+children more often? Do parents who strongly endorse items on the Rules
+and Respect subscale give more time-outs? To assess this, we asked
+parents on mturk to rate the frequency with which they engaged in a
+number of parenting behaviors, focusing on the last month (e.g.,
+\enquote{In the last month, how often did you talk about setting limits
+with your child (e.g., \enquote{only 10 minutes of screen time} or
+\enquote{no hitting})?}). Prior to reporting on the frequencies of these
+behaviors, parents completed the PAQ.
+
+The distribution of frequencies that parents reported is displayed in
+Figure \ref{fig:behave_freq}.
 
 \subsection{Study 3: Uptake of new information about parenting and child
 development}\label{study-3-uptake-of-new-information-about-parenting-and-child-development}
@@ -294,7 +341,7 @@ uptake new information?
 
 The average accuracy for control questions was 0.76(CI = 0.73 - 0.78)
 and the average accuracy for experimenter questions was 0.81(CI = 0.73 -
-0.83). There was no significant difference in accuracy between
+0.84). There was no significant difference in accuracy between
 conditions, t = -4.83, p = 0.00.
 
 \begin{figure}
@@ -321,7 +368,7 @@ Condition & -0.21 & 0.75 & -1.68 & 1.29 \\
   EL PAQ score * Condition & -0.27 & 0.16 & -0.58 & 0.05 \\ 
    \hline
 \end{tabular}
-\caption{Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy.} 
+\caption{Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy. The Intercept estimate is not displayed to conserve space.} 
 \end{table}
 
 \newpage

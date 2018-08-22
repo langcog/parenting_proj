@@ -2,8 +2,9 @@
 \ifnextchar[{\eatarg}{}
 
 \centering
-\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-6-1.pdf}
-\caption{}
+\includegraphics{PAQ_paper_files/figure-latex/demographics-1.pdf}
+\caption{\label{fig:demographics}Demographic variability in PAQ scores.
+Error bars represent +/-95\% CI computed by non-parametric bootstrap.}
 \end{figure*}
 \efloatseparator
  
@@ -11,8 +12,9 @@
 \ifnextchar[{\eatarg}{}
 
 \centering
-\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-7-1.pdf}
-\caption{}
+\includegraphics{PAQ_paper_files/figure-latex/behavefreq-1.pdf}
+\caption{\label{fig:behavefreq}Frequencies of different parenting activities
+reported by parents.}
 \end{figure*}
 \efloatseparator
  
@@ -20,8 +22,10 @@
 \ifnextchar[{\eatarg}{}
 
 \centering
-\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-8-1.pdf}
-\caption{}
+\includegraphics{PAQ_paper_files/figure-latex/behavepaq-1.pdf}
+\caption{\label{fig:behavepaq}Relations between PAQ scores (Affection and
+Attachment, Early Learning, and Rules and Respect) and the frequency of
+parenting behaviors divided into the same categories.}
 \end{figure*}
 \efloatseparator
  
@@ -29,17 +33,11 @@
 \ifnextchar[{\eatarg}{}
 
 \centering
-\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-9-1.pdf}
-\caption{}
-\end{figure*}
-\efloatseparator
- 
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-
-\centering
-\includegraphics{PAQ_paper_files/figure-latex/unnamed-chunk-10-1.pdf}
-\caption{}
+\includegraphics{PAQ_paper_files/figure-latex/uptake-1.pdf}
+\caption{\label{fig:uptake}Relations between PAQ scores (Affection and
+Attachment, Early Learning, and Rules and Respect) and the uptake of
+information in experimental (child development-related) and control
+articles.}
 \end{figure*}
 \efloatseparator
  

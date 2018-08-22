@@ -1,0 +1,86 @@
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\begin{tabular}{llrrrr}
+  \hline
+Subscale & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\
+  \hline
+AA & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
+   & Hispanic or Latino & 0.72 & 0.20 & 0.34 & 1.11 \\
+   & Multiple Ethnicities & 0.50 & 0.16 & 0.18 & 0.82 \\
+   & White & 0.31 & 0.09 & 0.12 & 0.49 \\
+   & Parent Education & 0.02 & 0.02 & -0.01 & 0.05 \\
+   & Number of children & -0.14 & 0.05 & -0.24 & -0.03 \\
+   & Male & -0.70 & 0.11 & -0.92 & -0.48 \\
+   \hline
+EL & Parent Age & 0.01 & 0.01 & -0.00 & 0.02 \\
+   & Hispanic or Latino & 0.26 & 0.19 & -0.12 & 0.64 \\
+   & Multiple Ethnicities & 0.56 & 0.17 & 0.22 & 0.90 \\
+   & White & 0.44 & 0.09 & 0.25 & 0.62 \\
+   & Parent Education & 0.02 & 0.02 & -0.01 & 0.05 \\
+   & Number of children & -0.14 & 0.05 & -0.24 & -0.03 \\
+   & Male & -0.18 & 0.11 & -0.41 & 0.04 \\
+   \hline
+RR & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
+   & Hispanic or Latino & 0.27 & 0.20 & -0.11 & 0.67 \\
+   & Multiple Ethnicities & -0.02 & 0.17 & -0.34 & 0.31 \\
+   & White & -0.20 & 0.10 & -0.38 & -0.01 \\
+   & Parent Education & -0.02 & 0.02 & -0.05 & 0.01 \\
+   & Number of children & 0.15 & 0.06 & 0.04 & 0.25 \\
+   & Male & -0.17 & 0.12 & -0.39 & 0.06 \\
+   \hline
+\end{tabular}
+\caption{Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes. Intercept estimates are not displayed to conserve space.}
+\end{table*}
+\efloatseparator
+ 
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\begin{tabular}{llrrrr}
+  \hline
+Behavior Category & Factor & Estimate & Est.Error & l.95..CI & u.95..CI \\
+  \hline
+AA & AA PAQ score & 0.81 & 0.15 & 0.53 & 1.11 \\
+   & RR PAQ score & -0.02 & 0.11 & -0.24 & 0.20 \\
+   & EL PAQ score & -0.01 & 0.14 & -0.30 & 0.26 \\
+   & Child Age & 0.01 & 0.01 & -0.00 & 0.02 \\
+   \hline
+EL & AA PAQ score & 0.36 & 0.18 & 0.01 & 0.73 \\
+   & RR PAQ score & 0.20 & 0.14 & -0.07 & 0.47 \\
+   & EL PAQ score & 0.52 & 0.18 & 0.17 & 0.88 \\
+   & Child Age & 0.01 & 0.01 & -0.00 & 0.03 \\
+   \hline
+RR & AA PAQ score & 0.10 & 0.20 & -0.30 & 0.50 \\
+   & RR PAQ score & 0.34 & 0.15 & 0.04 & 0.64 \\
+   & EL PAQ score & 0.02 & 0.20 & -0.36 & 0.41 \\
+   & Child Age & 0.03 & 0.01 & 0.01 & 0.05 \\
+   \hline
+\end{tabular}
+\caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories. Intercept estimates are not displayed to conserve space.}
+\end{table*}
+\efloatseparator
+ 
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\begin{tabular}{lrrrr}
+  \hline
+Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\
+  \hline
+Condition & -0.21 & 0.75 & -1.68 & 1.29 \\
+  AA PAQ score & 0.05 & 0.15 & -0.25 & 0.35 \\
+  RR PAQ score & -0.21 & 0.11 & -0.42 & 0.01 \\
+  EL PAQ score & 0.82 & 0.16 & 0.52 & 1.14 \\
+  AA PAQ score * Condition & 0.42 & 0.16 & 0.11 & 0.73 \\
+  RR PAQ score * Condition & 0.02 & 0.11 & -0.19 & 0.23 \\
+  EL PAQ score * Condition & -0.27 & 0.16 & -0.58 & 0.05 \\
+   \hline
+\end{tabular}
+\caption{Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy. The Intercept estimate is not displayed to conserve space.}
+\end{table*}
+\efloatseparator
+ 
