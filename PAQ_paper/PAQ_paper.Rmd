@@ -58,7 +58,6 @@ library(viridis)
 ```
 
 
-
 # Survey Construction
 
 
@@ -691,18 +690,18 @@ for (f in files) {
   answers_id <- data.frame(
     answer= jd$answers$data$answer,
     item = jd$answers$data$item[jd$answers$data$trial_type =="uptake"],
-    workerid = jd$WorkerId)
+    sid = jd$WorkerId)
   
   answers <- bind_rows(answers, answers_id)
   
-  attitudes_id <- data.frame(workerid = jd$WorkerId, 
+  attitudes_id <- data.frame(sid = jd$WorkerId, 
                    sent = jd$answers$data$sentence[jd$answers$data$trial_type=="attitudes"],
                    rating = as.numeric(jd$answers$data$rating[jd$answers$data$trial_type=="attitudes"])) 
                    
   attitudes <- bind_rows(attitudes, attitudes_id)
   
   #questionnaire and demo
-  subinfo_id <- data.frame(workerid = jd$WorkerId, 
+  subinfo_id <- data.frame(sid = jd$WorkerId, 
                    children = jd$answers$data$children,
                    language = jd$answers$data$homelang,
                    ses = jd$answers$data$ladder,
@@ -740,14 +739,14 @@ dq <- attitudes %>%
 dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
 
 atts <- dq %>%
-  group_by(workerid, category) %>% 
+  group_by(sid, category) %>% 
   summarise(rating = mean(rating))
 ```
 
 ```{r}
 #Setting up exclusion based on reading time. Exclude for less than 15s. 
 exclusions <- as_tibble(subinfo) %>%
-  select(workerid, starts_with("rt")) %>%
+  select(sid, starts_with("rt")) %>%
   gather(article, rt, rt_exp1, rt_exp2, rt_con1, rt_con2) %>%
   mutate(article = stringr::str_replace(stringr::str_replace(stringr::str_replace(article,"rt_", ""), "exp", "e"), "con","c"),
          exclude = rt <15)
@@ -762,14 +761,13 @@ answer_key$answer_cor <- as.character(answer_key$answer_cor)
 
 uptake <- answers %>%
   left_join(answer_key) %>%
-  mutate(acc = (answer == answer_cor),
-         sid = workerid) %>%
+  mutate(acc = (answer == answer_cor)) %>%
   select(sid, item, acc, q_type, article) %>%
   left_join(exclusions) %>%
   filter(!exclude)
 
 mss <- uptake %>%
-  group_by(workerid, q_type) %>% 
+  group_by(sid, q_type) %>% 
   summarise(acc = mean(acc))
 
 ms <- mss %>%
@@ -818,7 +816,7 @@ ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
 #Set up a dataframe for analysis with exclusions.
 d_reg <- atts %>%
   left_join(uptake)%>%
-  group_by(workerid, category, acc, q_type, item, article)%>%
+  group_by(sid, category, acc, q_type, item, article)%>%
   summarise(rating = mean(rating))%>%
   spread(category, rating)
 
@@ -831,12 +829,12 @@ d_reg_excl <- d_reg %>%
 uptake_mod <- brm(acc ~ q_type * AA +  
                 q_type * RR + 
                 q_type * EL +
-                (q_type | workerid) +
+                (q_type | sid) +
                 (1 | item), 
               data = d_reg_excl,
               family = bernoulli())
 
-save(uptake_mod, file ="saved_mods/uptake_mod.Rmd")
+save(uptake_mod, file ="saved_mods/uptake_mod.Rdata")
 ```
 
 ```{r}
@@ -847,27 +845,20 @@ up <- summary(uptake_mod)
 uptake <- data.frame(up$fixed)
 ```
 
-```{r behave_tab, results = "asis"}
-factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age")
+```{r uptake_tab, results = "asis"}
+factors <- c("Intercept", "Condition", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * Condition", "RR PAQ score * Condition", "EL PAQ score * Condition")
 
-behaviors <- c("AA", "", "", "", 
-               "EL", "", "", "", 
-               "RR", "", "", "")
-
-tab_behave_lm <- aa_behave%>%
-  bind_rows(el_behave)%>%
-  bind_rows(rr_behave)%>%
+tab_uptake <- uptake%>%
   mutate(Factor = factors)%>%
-  filter(!str_detect(Factor,"Intercept"))%>%  
-  mutate(`Behavior Category` = behaviors)
+  filter(!str_detect(Factor,"Intercept"))
   
-tab_behave_lm  <- tab_behave_lm [,c(8,7,1:4)]
+tab_uptake <- tab_uptake [,c(7,1:4)]
 
-colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+colnames(tab_uptake) <- c("Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
 
-behave_tab <- xtable::xtable(tab_behave_lm, caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
+tab_uptake_ <- xtable::xtable(tab_uptake, caption = "Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy.")
 
-print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(0, 4, 8), include.rownames=FALSE, align = c("r","l","r","r","r","r"))
+print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"))
 ```
 
 \newpage
