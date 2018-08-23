@@ -41,7 +41,7 @@ RR & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
 [h]
 \centering
 \caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.}
-\label{tab:behavemod}
+\label{tab:behavetab}
 \begin{tabular}{llrrrr}
   \hline
 Behavior Category & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\
@@ -113,13 +113,13 @@ RR & you talk sternly to your child when he/she did something you dont want?\\
   \hline
 Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\
   \hline
-Condition & -0.21 & 0.75 & -1.68 & 1.29 \\
+Child Development Articles & -0.21 & 0.75 & -1.68 & 1.29 \\
   AA PAQ score & 0.05 & 0.15 & -0.25 & 0.35 \\
   RR PAQ score & -0.21 & 0.11 & -0.42 & 0.01 \\
   EL PAQ score & 0.82 & 0.16 & 0.52 & 1.14 \\
-  AA PAQ score * Condition & 0.42 & 0.16 & 0.11 & 0.73 \\
-  RR PAQ score * Condition & 0.02 & 0.11 & -0.19 & 0.23 \\
-  EL PAQ score * Condition & -0.27 & 0.16 & -0.58 & 0.05 \\
+  AA PAQ score * Child Development Articles & 0.42 & 0.16 & 0.11 & 0.73 \\
+  RR PAQ score * Child Development Articles & 0.02 & 0.11 & -0.19 & 0.23 \\
+  EL PAQ score * Child Development Articles & -0.27 & 0.16 & -0.58 & 0.05 \\
    \hline
 \end{tabular}
 \end{table*}

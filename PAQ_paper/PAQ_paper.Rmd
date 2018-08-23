@@ -393,7 +393,7 @@ print(demo_tab, type="latex", comment = F, table.placement = "h", hline.after = 
 
 Approaches to parenting are known to differ across cultures and groups. To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors. We administered the PAQ to 680 parents who were members of a local children’s museum and subsequently asked them to provide information about their gender, level of education, age, ethnicity, and the number of children they have. Figure \ref{fig:demographics} displays the average PAQ scores for each demographic category.
 
-To quantify any possible group differences, we fit separate Bayesian mixed effects ordinal regression models for each subscale (AA, EL, RR) with the following structure, with likert ratings of agreement for each item (1-6) entered as dependent measures: `agreement rating ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)` Groups with fewer than 20 cases were removed from plots and analyses to avoid overfitting. Although displayed as categorical for visual simplicity in Figure \ref{fig:demographics}, parent age and education in years were entered as continuous variables in the regression models.
+To quantify any possible group differences, we fit separate Bayesian mixed-effects ordinal regression models for each subscale (AA, EL, RR) with the following structure, with likert ratings of agreement for each item (1-6) entered as dependent measures: `agreement rating ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)` Groups with fewer than 20 cases were removed from plots and analyses to avoid overfitting. Although displayed as categorical for visual simplicity in Figure \ref{fig:demographics}, parent age and education in years were entered as continuous variables in the regression models.
 
 Table \ref{tab:demo} displays the results of the regression analyses. We found that stronger agreement with AA attitudes was associated with identifying as Hispanic or Latino ($\beta$ = `r round(aa_demo$Estimate[8], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[8], digits = 2)` - `r round(aa_demo$u.95..CI[8], digits = 2)`), White ($\beta$ = `r round(aa_demo$Estimate[10], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[10], digits = 2)` - `r round(aa_demo$u.95..CI[10], digits = 2)`), or multiple ethnicities ($\beta$ = `r round(aa_demo$Estimate[9], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[9], digits = 2)` - `r round(aa_demo$u.95..CI[9], digits = 2)`) compared to Asian (the comparison level). Having a greater number of children was associated with lower agreement with AA attitudes ($\beta$ = `r round(aa_demo$Estimate[12], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[12], digits = 2)` - `r round(aa_demo$u.95..CI[12], digits = 2)`), as was identifying as Male ($\beta$ = `r round(aa_demo$Estimate[13], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[13], digits = 2)` - `r round(aa_demo$u.95..CI[13], digits = 2)`). Parent education was not meaningfully associated with AA scores.
 
@@ -684,7 +684,7 @@ kable(behaviors_sents, "latex", caption = "Behaviors that parents were asked to 
 
 Another way of assessing the ecological validity of the PAQ is to ask whether the parenting attitudes it assesses are related to actual parenting behaviors. For example, do parents who strongly agree with items on the Early Learning subscale read to their children more often? Do parents who strongly endorse items on the Rules and Respect subscale give more time-outs? To assess this, we asked a sample of 250 parents on Amazon's Mechanical Turk to complete the PAQ and then rate the frequency with which they engaged in a number of parenting behaviors, focusing on the prior month (Table \ref{tab:behavesents}). We elicited responses about 12 different behaviors, with four corresponding to each PAQ category. Parents chose between the following frequency options: "Multiple times per day", "Most days", "Once or twice per week," "Occasionally," "Almost never," "Never," and "My child is too young for this." Parents who did not have children under the age of 5 were excluded from analyses, as were any responses of "My child is too young for this."
 
-The distribution of frequencies that parents reported is displayed in Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are associated with parenting attitudes, we calculated participants' average PAQ subscale scores and fit separate bayesian ordinal logistic mixed effects regressions for the three cateogories of behaviors with the following structure: `behavior frequency ~ AA PAQ score + EL PAQ score + RR PAQ score + child age + (1 | subject) + (1| item)` (Table \ref{tab:behavetab}). The relation between PAQ scores and behavior frequencies are presented in Figure \ref{fig:behavepaq}.
+The distribution of frequencies that parents reported is displayed in Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are associated with parenting attitudes, we calculated participants' average PAQ subscale scores and fit separate bayesian ordinal logistic mixed-effects regressions for the three cateogories of behaviors with the following structure: `behavior frequency ~ AA PAQ score + EL PAQ score + RR PAQ score + child age + (1 | subject) + (1| item)` (Table \ref{tab:behavetab}). The relation between PAQ scores and behavior frequencies are presented in Figure \ref{fig:behavepaq}.
 
 We found that the frequency of AA behaviors was positively associated with AA attitudes ($\beta$ = `r round(aa_behave$Estimate[6], digits = 2)`, 95% CI = `r round(aa_behave$l.95..CI[6], digits = 2)` - `r round(aa_behave$u.95..CI[6], digits = 2)`), but not RR or EL attitudes or child age. Frequency of EL behaviors was positively associated with stronger agreement with both AA ($\beta$ = `r round(el_behave$Estimate[6], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[6], digits = 2)` - `r round(el_behave$u.95..CI[6], digits = 2)`) and EL attitudes ($\beta$ = `r round(el_behave$Estimate[8], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[8], digits = 2)` - `r round(el_behave$u.95..CI[8], digits = 2)`). The frequency of RR behaviors was positively associated with stronger RR attitudes ($\beta$ = `r round(rr_behave$Estimate[7], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[7], digits = 2)` - `r round(rr_behave$u.95..CI[7], digits = 2)`), and to a lesser extent, child age ($\beta$ = `r round(rr_behave$Estimate[9], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[9], digits = 2)` - `r round(rr_behave$u.95..CI[9], digits = 2)`). 
 
@@ -796,11 +796,6 @@ mss_wide <- spread(mss, q_type, acc) %>%
 t_acc_q_type <- t.test(mss_wide$con, mss_wide$exp, paired=TRUE)
 ```
 
-250 adults on Amazon's Mechanical Turk.
-
-`r signif(mean(exclusions$exclude*100), digits = 2)`% of the data is excluded due to reading time exclusion.
-
-The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
 
 ```{r}
 d <- mss %>%
@@ -827,8 +822,6 @@ ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
   theme_base()+
   scale_color_viridis(name="Condition", discrete = TRUE) 
 ```
-
-
 
 ```{r}
 #Set up a dataframe for analysis with exclusions.
@@ -864,7 +857,7 @@ uptake <- data.frame(up$fixed)
 ```
 
 ```{r uptake_tab, results = "asis"}
-factors <- c("Intercept", "Condition", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * Condition", "RR PAQ score * Condition", "EL PAQ score * Condition")
+factors <- c("Intercept", "Child Development Articles", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * Child Development Articles", "RR PAQ score * Child Development Articles", "EL PAQ score * Child Development Articles")
 
 tab_uptake <- uptake%>%
   mutate(Factor = factors)%>%
@@ -878,6 +871,14 @@ tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a 
 
 print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"), caption.placement = "top")
 ```
+
+We asked 250 adults on Amazon's Mechanical Turk to fill out the PAQ and then read four popular press articles, two of which related to child development and two of which related to other science topics. The articles were edited for length, and the order in which the articles were presented was randomized. Next, participants answered six four-alternative forced-choice questions testing their memory and understanding of each article (24 total questions). We were specifically interested in whether participants who agreed more strongly with EL attitudes would better understand and remember the information in the child development articles, which we predicted may have been consistent with their existing views of development. Participants' accuracy in relation to their average AA, EL and RR scores is displayed in Figure \ref{fig:uptake}.
+
+The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
+
+To assess whether participants who more strongly agreed with EL attitudes were at an advantage for understanding and remembering the child development articles they read, we fit a bayesian logistic mixed-effects regression with the following structure: `accuracy ~ AA PAQ score * article type + EL PAQ score * article type + RR PAQ score * article type + (article type | subject) + (1| item)`. We excluded `r signif(mean(exclusions$exclude*100), digits = 2)`% of responses from analyses because participants spent fewer than 15 seconds reading the article, our pre-determined minimum reading time.
+
+We found that participants who agreed more strongly with EL attitudes were more likely to answer uptake questions correctly overall ($\beta$ = `r round(uptake$Estimate[5], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[5], digits = 2)` - `r round(uptake$u.95..CI[5], digits = 2)`), but there was no interaction between EL scores and article type, meaning that there was no advantage for people with higher EL scores for understanding child development content in particular. However, unexpectedly, there was an interaction between AA attitudes and article type ($\beta$ = `r round(uptake$Estimate[6], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[6], digits = 2)` - `r round(uptake$u.95..CI[6], digits = 2)`), such that people with stronger AA attitudes performed better on questions about child development articles compared to control articles. 
 
 \newpage
 
