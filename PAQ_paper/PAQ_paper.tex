@@ -188,6 +188,8 @@ Error bars represent +/-95\% CI computed by non-parametric bootstrap.}
 
 \begin{table}[h]
 \centering
+\caption{Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.} 
+\label{tab:demo}
 \begin{tabular}{llrrrr}
   \hline
 Subscale & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\ 
@@ -217,7 +219,6 @@ RR & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
    & Male & -0.17 & 0.12 & -0.39 & 0.06 \\ 
    \hline
 \end{tabular}
-\caption{Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes. Intercept estimates are not displayed to conserve space.} 
 \end{table}
 
 Approaches to parenting are known to differ across cultures and groups.
@@ -240,16 +241,16 @@ avoid overfitting. Although displayed as categorical for visual
 simplicity in Figure \ref{fig:demographics}, parent age and education in
 years were entered as continuous variables in the regression models.
 
-Table 1 displays the results of the regression analyses. We found that
-stronger agreement with AA attitudes was associated with identifying as
-Hispanic or Latino (\(\beta\) = 0.72, 95\% CI = 0.34 - 1.11), White
-(\(\beta\) = 0.31, 95\% CI = 0.12 - 0.49), or multiple ethnicities
-(\(\beta\) = 0.50, 95\% CI = 0.18 - 0.82) compared to Asian (the
-comparison level). Having a greater number of children was associated
-with lower agreement with AA attitudes (\(\beta\) = -0.14, 95\% CI =
--0.24 - -0.03), as was identifying as Male (\(\beta\) = -0.70, 95\% CI =
--0.92 - -0.48). Parent education was not meaningfully associated with AA
-scores.
+Table \ref{tab:demo} displays the results of the regression analyses. We
+found that stronger agreement with AA attitudes was associated with
+identifying as Hispanic or Latino (\(\beta\) = 0.72, 95\% CI = 0.34 -
+1.11), White (\(\beta\) = 0.31, 95\% CI = 0.12 - 0.49), or multiple
+ethnicities (\(\beta\) = 0.50, 95\% CI = 0.18 - 0.82) compared to Asian
+(the comparison level). Having a greater number of children was
+associated with lower agreement with AA attitudes (\(\beta\) = -0.14,
+95\% CI = -0.24 - -0.03), as was identifying as Male (\(\beta\) = -0.70,
+95\% CI = -0.92 - -0.48). Parent education was not meaningfully
+associated with AA scores.
 
 We found that stronger agreement with EL scores was associated with
 identifying as White (\(\beta\) = 0.44, 95\% CI = 0.25 - 0.62) or
@@ -284,9 +285,11 @@ parenting behaviors divided into the same categories.}
 
 \begin{table}[h]
 \centering
+\caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.} 
+\label{tab:behavemod}
 \begin{tabular}{llrrrr}
   \hline
-Behavior Category & Factor & Estimate & Est.Error & l.95..CI & u.95..CI \\ 
+Behavior Category & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\ 
   \hline
 AA & AA PAQ score & 0.81 & 0.15 & 0.53 & 1.11 \\ 
    & RR PAQ score & -0.02 & 0.11 & -0.24 & 0.20 \\ 
@@ -304,24 +307,79 @@ RR & AA PAQ score & 0.10 & 0.20 & -0.30 & 0.50 \\
    & Child Age & 0.03 & 0.01 & 0.01 & 0.05 \\ 
    \hline
 \end{tabular}
-\caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories. Intercept estimates are not displayed to conserve space.} 
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:behavesents}Behaviors that parents were asked to report on, and their corresponding attitude categories.}
+\centering
+\begin{tabular}[t]{l|>{\raggedright\arraybackslash}p{35em}}
+\hline
+Category & In the last month, how often did...\\
+\hline
+AA & you and your child talk about feelings (e.g., when he/she was sad/angry)?\\
+\hline
+ & you and your child spend time cuddling?\\
+\hline
+ & your child sleep in the same bed as you?\\
+\hline
+ & you hug or kiss your child?\\
+\hline
+EL & you read to your child?\\
+\hline
+ & you practice numbers or letters with your child?\\
+\hline
+ & you share facts or observations about the world when you were doing other tasks (e.g., did you know butter comes from cows? while shopping at the grocery store)?\\
+\hline
+ & your child watch educational programming (e.g., shows like Sesame Street) or play with educational apps (e.g., apps designed to teach numbers, colors, shapes, etc.) on a tablet or mobile device?\\
+\hline
+RR & you talk sternly to your child when he/she did something you dont want?\\
+\hline
+ & you give your child time out or other punishments for acting out?\\
+\hline
+ & you talk about setting limits with your child (e.g., only 10 minutes of screen time or no hitting)?\\
+\hline
+ & your child help or try to help with chores or tasks (including cleaning up his/her toys)?\\
+\hline
+\end{tabular}
 \end{table}
 
 One way of assessing the ecological validity of the PAQ is to ask
-whether the parenting attitudes assessed by the current measure are
-related to actual parenting behaviors. For example, do parents who
-strongly agree with items on the Early Learning subscale read to their
-children more often? Do parents who strongly endorse items on the Rules
-and Respect subscale give more time-outs? To assess this, we asked
-parents on mturk to rate the frequency with which they engaged in a
-number of parenting behaviors, focusing on the last month (e.g.,
-\enquote{In the last month, how often did you talk about setting limits
-with your child (e.g., \enquote{only 10 minutes of screen time} or
-\enquote{no hitting})?}). Prior to reporting on the frequencies of these
-behaviors, parents completed the PAQ.
+whether the parenting attitudes it assesses are related to actual
+parenting behaviors. For example, do parents who strongly agree with
+items on the Early Learning subscale read to their children more often?
+Do parents who strongly endorse items on the Rules and Respect subscale
+give more time-outs? To assess this, we asked a sample of 250 parents on
+Amazon's Mechanical Turk to complete the PAQ and then rate the frequency
+with which they engaged in a number of parenting behaviors, focusing on
+the prior month (Table \ref{tab:behavesents}). We elicited responses
+about 12 different behaviors, with four corresponding to each PAQ
+category. Parents chose between the following frequency options:
+\enquote{Multiple times per day}, \enquote{Most days}, \enquote{Once or
+twice per week,} \enquote{Occasionally,} \enquote{Almost never,}
+\enquote{Never,} and \enquote{My child is too young for this.} Parents
+who did not have children under the age of 5 were excluded from
+analyses, as were any responses of \enquote{My child is too young for
+this.}
 
 The distribution of frequencies that parents reported is displayed in
-Figure \ref{fig:behave_freq}.
+Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are
+associated with parenting attitudes, we calculated participants' average
+PAQ subscale scores and fit separate bayesian ordinal logistic mixed
+effects regressions for the three cateogories of behaviors with the
+following structure:
+\texttt{behavior\ frequency\ \textasciitilde{}\ AA\ PAQ\ score\ +\ EL\ PAQ\ score\ +\ RR\ PAQ\ score\ +\ child\ age\ +\ (1\ \textbar{}\ subject)\ +\ (1\textbar{}\ item)}
+(Table \ref{tab:behavetab}). The relation between PAQ scores and
+behavior frequencies are presented in Figure \ref{fig:behavepaq}.
+
+We found that the frequency of AA behaviors was positively associated
+with AA attitudes (\(\beta\) = 0.81, 95\% CI = 0.53 - 1.11), but not RR
+or EL attitudes or child age. Frequency of EL behaviors was positively
+associated with stronger agreement with both AA (\(\beta\) = 0.36, 95\%
+CI = 0.01 - 0.73) and EL attitudes (\(\beta\) = 0.52, 95\% CI = 0.17 -
+0.88). The frequency of RR behaviors was positively associated with
+stronger RR attitudes (\(\beta\) = 0.34, 95\% CI = 0.04 - 0.64), and to
+a lesser extent, child age (\(\beta\) = 0.03, 95\% CI = 0.01 - 0.05).
 
 \subsection{Study 3: Uptake of new information about parenting and child
 development}\label{study-3-uptake-of-new-information-about-parenting-and-child-development}
@@ -355,6 +413,8 @@ articles.}
 
 \begin{table}[h]
 \centering
+\caption{Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy.} 
+\label{tab:uptake}
 \begin{tabular}{lrrrr}
   \hline
 Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\ 
@@ -368,7 +428,6 @@ Condition & -0.21 & 0.75 & -1.68 & 1.29 \\
   EL PAQ score * Condition & -0.27 & 0.16 & -0.58 & 0.05 \\ 
    \hline
 \end{tabular}
-\caption{Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy. The Intercept estimate is not displayed to conserve space.} 
 \end{table}
 
 \newpage

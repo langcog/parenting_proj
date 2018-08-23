@@ -55,6 +55,8 @@ library(grid)
 library(gridExtra)
 library(brms)
 library(viridis)
+library(huxtable)
+library(kableExtra)
 ```
 
 
@@ -384,16 +386,16 @@ tab_demo_lm  <- tab_demo_lm [,c(8,7,1:4)]
 
 colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
 
-demo_tab <- xtable::xtable(tab_demo_lm, caption = "Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes. Intercept estimates are not displayed to conserve space.")
+demo_tab <- xtable(tab_demo_lm, label = "tab:demo", caption = "Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.")
 
-print(demo_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 7, 14, 21), include.rownames=FALSE, align = c("r","l","r","r","r","r"))
+print(demo_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 7, 14, 21), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
 ```
 
 Approaches to parenting are known to differ across cultures and groups. To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors. We administered the PAQ to 680 parents who were members of a local children’s museum and subsequently asked them to provide information about their gender, level of education, age, ethnicity, and the number of children they have. Figure \ref{fig:demographics} displays the average PAQ scores for each demographic category.
 
 To quantify any possible group differences, we fit separate Bayesian mixed effects ordinal regression models for each subscale (AA, EL, RR) with the following structure, with likert ratings of agreement for each item (1-6) entered as dependent measures: `agreement rating ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)` Groups with fewer than 20 cases were removed from plots and analyses to avoid overfitting. Although displayed as categorical for visual simplicity in Figure \ref{fig:demographics}, parent age and education in years were entered as continuous variables in the regression models.
 
-Table 1 displays the results of the regression analyses. We found that stronger agreement with AA attitudes was associated with identifying as Hispanic or Latino ($\beta$ = `r round(aa_demo$Estimate[8], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[8], digits = 2)` - `r round(aa_demo$u.95..CI[8], digits = 2)`), White ($\beta$ = `r round(aa_demo$Estimate[10], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[10], digits = 2)` - `r round(aa_demo$u.95..CI[10], digits = 2)`), or multiple ethnicities ($\beta$ = `r round(aa_demo$Estimate[9], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[9], digits = 2)` - `r round(aa_demo$u.95..CI[9], digits = 2)`) compared to Asian (the comparison level). Having a greater number of children was associated with lower agreement with AA attitudes ($\beta$ = `r round(aa_demo$Estimate[12], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[12], digits = 2)` - `r round(aa_demo$u.95..CI[12], digits = 2)`), as was identifying as Male ($\beta$ = `r round(aa_demo$Estimate[13], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[13], digits = 2)` - `r round(aa_demo$u.95..CI[13], digits = 2)`). Parent education was not meaningfully associated with AA scores.
+Table \ref{tab:demo} displays the results of the regression analyses. We found that stronger agreement with AA attitudes was associated with identifying as Hispanic or Latino ($\beta$ = `r round(aa_demo$Estimate[8], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[8], digits = 2)` - `r round(aa_demo$u.95..CI[8], digits = 2)`), White ($\beta$ = `r round(aa_demo$Estimate[10], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[10], digits = 2)` - `r round(aa_demo$u.95..CI[10], digits = 2)`), or multiple ethnicities ($\beta$ = `r round(aa_demo$Estimate[9], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[9], digits = 2)` - `r round(aa_demo$u.95..CI[9], digits = 2)`) compared to Asian (the comparison level). Having a greater number of children was associated with lower agreement with AA attitudes ($\beta$ = `r round(aa_demo$Estimate[12], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[12], digits = 2)` - `r round(aa_demo$u.95..CI[12], digits = 2)`), as was identifying as Male ($\beta$ = `r round(aa_demo$Estimate[13], digits = 2)`, 95% CI = `r round(aa_demo$l.95..CI[13], digits = 2)` - `r round(aa_demo$u.95..CI[13], digits = 2)`). Parent education was not meaningfully associated with AA scores.
 
 We found that stronger agreement with EL scores was associated with identifying as White ($\beta$ = `r round(el_demo$Estimate[10], digits = 2)`, 95% CI = `r round(el_demo$l.95..CI[10], digits = 2)` - `r round(el_demo$u.95..CI[10], digits = 2)`) or multiple ethnicities ($\beta$ = `r round(el_demo$Estimate[9], digits = 2)`, 95% CI = `r round(el_demo$l.95..CI[9], digits = 2)` - `r round(el_demo$u.95..CI[9], digits = 2)`), and having more children was associated with slightly lower agreement with EL scores ($\beta$ = `r round(el_demo$Estimate[12], digits = 2)`, 95% CI = `r round(el_demo$l.95..CI[12], digits = 2)` - `r round(el_demo$u.95..CI[12], digits = 2)`). No other demographic variables were related to EL scores.
 
@@ -485,7 +487,6 @@ all <- atts %>%
 #Recode variables for plotting.
 bev <- behaviors %>%
   left_join(behave)%>%
-  filter(rating != 0)%>%
   group_by(category)
 
 bev$rating[bev$rating=="1"] <- "Never"
@@ -493,10 +494,9 @@ bev$rating[bev$rating=="2"] <- "Almost never"
 bev$rating[bev$rating=="3"] <- "Occasionally"
 bev$rating[bev$rating=="4"] <- "Once or twice per week"
 bev$rating[bev$rating=="5"] <- "Most days"
-bev$rating[bev$rating=="6"] <- "Multiple times ever day"
+bev$rating[bev$rating=="6"] <- "Multiple times every day"
 
 bev$rating <- factor(bev$rating, levels = c("My child is too young", "Never", "Almost never","Occasionally","Once or twice per week","Most days","Multiple times every day"))
-
 
 bev$short_sent <- factor(bev$short_sent, levels = c("read","practice numbers and letters","make observations", "educational programming","talk about feelings","spend time cuddling","sleep in the same bed","hug and kiss","talk sternly","give time out or punishments","talk about setting limits","help with chores"))
 
@@ -511,9 +511,10 @@ ggplot(filter(bev, !is.na(rating)), aes(short_sent, fill = rating, shape = categ
   geom_bar(position = "fill")+
   ylab("Proportion responding") +
   theme_base()+
-  scale_fill_viridis(name="Frequency", discrete = TRUE, breaks=c("Most days","Once or twice per week","Occasionally", "Almost never", "Never"))+
+  scale_fill_viridis(name="Frequency", discrete = TRUE, breaks=c("Multiple times every day","Most days","Once or twice per week","Occasionally", "Almost never", "Never"))+
   coord_flip()+
-  theme(axis.text.x=element_blank(),
+  theme(axis.title.y=element_blank(),
+        axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         axis.text.y = element_text(size = 12),
         legend.position="bottom",
@@ -572,9 +573,6 @@ d<- d%>%
   mutate(child_age = behave_age)%>%
   select(-behave_age)%>%
   mutate(rating_bin = rating)
-
-d$rating_bin[d$rating %in% 1:4] <- "low"
-d$rating_bin[d$rating %in% 5:6] <- "high"
 
 d_aa <- d%>%
   filter(category_bev == "AA")%>%
@@ -651,7 +649,7 @@ rr_b <- summary(rr_behave_mod)
 rr_behave <- data.frame(rr_b$fixed)
 ```
 
-```{r behave_tab, results = "asis"}
+```{r behavetab, results = "asis"}
 factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age")
 
 behaviors <- c("AA", "", "", "", 
@@ -667,20 +665,32 @@ tab_behave_lm <- aa_behave%>%
   
 tab_behave_lm  <- tab_behave_lm [,c(8,7,1:4)]
 
-colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+colnames(tab_behave_lm) <- c("Behavior Category","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
 
-behave_tab <- xtable::xtable(tab_behave_lm, caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories. Intercept estimates are not displayed to conserve space.")
+behave_tab <- xtable(tab_behave_lm, label = "tab:behavetab", caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
 
-print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 4, 8, 12), include.rownames=FALSE, align = c("r","l","r","r","r","r"))
+print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 4, 8, 12), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
 ```
 
-One way of assessing the ecological validity of the PAQ is to ask whether the parenting attitudes assessed by the current measure are related to actual parenting behaviors. For example, do parents who strongly agree with items on the Early Learning subscale read to their children more often? Do parents who strongly endorse items on the Rules and Respect subscale give more time-outs? To assess this, we asked parents on mturk to rate the frequency with which they engaged in a number of parenting behaviors, focusing on the last month (e.g., "In the last month, how often did you talk about setting limits with your child (e.g., “only 10 minutes of screen time” or “no hitting”)?"). Prior to reporting on the frequencies of these behaviors, parents completed the PAQ. 
+```{r behavesents, results = "asis"}
+cat <- c("AA", "", "", "", "EL", "","", "", "RR", "","","")
+behaviors_sents <- behave%>%
+  arrange(category)%>%
+  transmute(Category=cat, `In the last month, how often did...` = str_replace(sent, "In the last month, how often did", ""))
+  
+kable(behaviors_sents, "latex", caption = "Behaviors that parents were asked to report on, and their corresponding attitude categories.") %>%
+  column_spec(2, width = "35em")
+```
 
-The distribution of frequencies that parents reported is displayed in Figure \ref{fig:behave_freq}. 
+Another way of assessing the ecological validity of the PAQ is to ask whether the parenting attitudes it assesses are related to actual parenting behaviors. For example, do parents who strongly agree with items on the Early Learning subscale read to their children more often? Do parents who strongly endorse items on the Rules and Respect subscale give more time-outs? To assess this, we asked a sample of 250 parents on Amazon's Mechanical Turk to complete the PAQ and then rate the frequency with which they engaged in a number of parenting behaviors, focusing on the prior month (Table \ref{tab:behavesents}). We elicited responses about 12 different behaviors, with four corresponding to each PAQ category. Parents chose between the following frequency options: "Multiple times per day", "Most days", "Once or twice per week," "Occasionally," "Almost never," "Never," and "My child is too young for this." Parents who did not have children under the age of 5 were excluded from analyses, as were any responses of "My child is too young for this."
+
+The distribution of frequencies that parents reported is displayed in Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are associated with parenting attitudes, we calculated participants' average PAQ subscale scores and fit separate bayesian ordinal logistic mixed effects regressions for the three cateogories of behaviors with the following structure: `behavior frequency ~ AA PAQ score + EL PAQ score + RR PAQ score + child age + (1 | subject) + (1| item)` (Table \ref{tab:behavetab}). The relation between PAQ scores and behavior frequencies are presented in Figure \ref{fig:behavepaq}.
+
+We found that the frequency of AA behaviors was positively associated with AA attitudes ($\beta$ = `r round(aa_behave$Estimate[6], digits = 2)`, 95% CI = `r round(aa_behave$l.95..CI[6], digits = 2)` - `r round(aa_behave$u.95..CI[6], digits = 2)`), but not RR or EL attitudes or child age. Frequency of EL behaviors was positively associated with stronger agreement with both AA ($\beta$ = `r round(el_behave$Estimate[6], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[6], digits = 2)` - `r round(el_behave$u.95..CI[6], digits = 2)`) and EL attitudes ($\beta$ = `r round(el_behave$Estimate[8], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[8], digits = 2)` - `r round(el_behave$u.95..CI[8], digits = 2)`). The frequency of RR behaviors was positively associated with stronger RR attitudes ($\beta$ = `r round(rr_behave$Estimate[7], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[7], digits = 2)` - `r round(rr_behave$u.95..CI[7], digits = 2)`), and to a lesser extent, child age ($\beta$ = `r round(rr_behave$Estimate[9], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[9], digits = 2)` - `r round(rr_behave$u.95..CI[9], digits = 2)`). 
 
 ## Study 3: Uptake of new information about parenting and child development
 
-Parents’ existing lay theories about parenting and child development may be an important consideration for crafting interventions on parenting behaviors. There have been frequent efforts to intervene on parenting behaviors, for example, public service announcements telling parents to read to their children; courses aimed at helping fathers engage with their children; messages aimed at encouraging parents and teachers to give children opportunities for free play. There is evidence that existing lay theories can interact in surprising ways with this type of messaging in other domains. How do parents’ lay theories impact how they uptake new information?
+Parents’ attitudes about parenting and child development may be an important consideration for crafting interventions on parenting behaviors or beliefs. There are frequent efforts to intervene on parenting practices, for example, public service announcements telling parents to read to their children; courses aimed at helping fathers engage with their children; messages aimed at encouraging parents and teachers to give children opportunities for free play. There is evidence that existing lay theories can interact in surprising ways with this type of messaging in other domains. Here we asked whether parents' attitudes about parenting and child development would predict how they uptake new information about child development versus an unrelated topic. 
 
 ```{r}
 files <- dir("../production-results/uptake_e4/")
@@ -758,8 +768,6 @@ exclusions <- as_tibble(subinfo) %>%
          exclude = rt <15)
 ```
 
-`r signif(mean(exclusions$exclude*100), digits = 2)`% of the data is excluded due to reading time exclusion.
-
 ```{r}
 #Get accuracy data. 
 answers$answer <- as.character(answers$answer)
@@ -787,6 +795,10 @@ mss_wide <- spread(mss, q_type, acc) %>%
 
 t_acc_q_type <- t.test(mss_wide$con, mss_wide$exp, paired=TRUE)
 ```
+
+250 adults on Amazon's Mechanical Turk.
+
+`r signif(mean(exclusions$exclude*100), digits = 2)`% of the data is excluded due to reading time exclusion.
 
 The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
 
@@ -862,9 +874,9 @@ tab_uptake <- tab_uptake [,c(7,1:4)]
 
 colnames(tab_uptake) <- c("Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
 
-tab_uptake_ <- xtable::xtable(tab_uptake, caption = "Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy. The Intercept estimate is not displayed to conserve space.")
+tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy.")
 
-print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"))
+print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"), caption.placement = "top")
 ```
 
 \newpage

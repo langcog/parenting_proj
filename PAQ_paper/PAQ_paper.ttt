@@ -2,6 +2,8 @@
 \ifnextchar[{\eatarg}{}
 [h]
 \centering
+\caption{Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.}
+\label{tab:demo}
 \begin{tabular}{llrrrr}
   \hline
 Subscale & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\
@@ -31,7 +33,6 @@ RR & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
    & Male & -0.17 & 0.12 & -0.39 & 0.06 \\
    \hline
 \end{tabular}
-\caption{Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes. Intercept estimates are not displayed to conserve space.}
 \end{table*}
 \efloatseparator
  
@@ -39,9 +40,11 @@ RR & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
 \ifnextchar[{\eatarg}{}
 [h]
 \centering
+\caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.}
+\label{tab:behavemod}
 \begin{tabular}{llrrrr}
   \hline
-Behavior Category & Factor & Estimate & Est.Error & l.95..CI & u.95..CI \\
+Behavior Category & Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\
   \hline
 AA & AA PAQ score & 0.81 & 0.15 & 0.53 & 1.11 \\
    & RR PAQ score & -0.02 & 0.11 & -0.24 & 0.20 \\
@@ -59,7 +62,44 @@ RR & AA PAQ score & 0.10 & 0.20 & -0.30 & 0.50 \\
    & Child Age & 0.03 & 0.01 & 0.01 & 0.05 \\
    \hline
 \end{tabular}
-\caption{Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories. Intercept estimates are not displayed to conserve space.}
+\end{table*}
+\efloatseparator
+ 
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{tab:behavesents}Behaviors that parents were asked to report on, and their corresponding attitude categories.}
+\centering
+\begin{tabular}[t]{l|>{\raggedright\arraybackslash}p{35em}}
+\hline
+Category & In the last month, how often did...\\
+\hline
+AA & you and your child talk about feelings (e.g., when he/she was sad/angry)?\\
+\hline
+ & you and your child spend time cuddling?\\
+\hline
+ & your child sleep in the same bed as you?\\
+\hline
+ & you hug or kiss your child?\\
+\hline
+EL & you read to your child?\\
+\hline
+ & you practice numbers or letters with your child?\\
+\hline
+ & you share facts or observations about the world when you were doing other tasks (e.g., did you know butter comes from cows? while shopping at the grocery store)?\\
+\hline
+ & your child watch educational programming (e.g., shows like Sesame Street) or play with educational apps (e.g., apps designed to teach numbers, colors, shapes, etc.) on a tablet or mobile device?\\
+\hline
+RR & you talk sternly to your child when he/she did something you dont want?\\
+\hline
+ & you give your child time out or other punishments for acting out?\\
+\hline
+ & you talk about setting limits with your child (e.g., only 10 minutes of screen time or no hitting)?\\
+\hline
+ & your child help or try to help with chores or tasks (including cleaning up his/her toys)?\\
+\hline
+\end{tabular}
 \end{table*}
 \efloatseparator
  
@@ -67,6 +107,8 @@ RR & AA PAQ score & 0.10 & 0.20 & -0.30 & 0.50 \\
 \ifnextchar[{\eatarg}{}
 [h]
 \centering
+\caption{Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy.}
+\label{tab:uptake}
 \begin{tabular}{lrrrr}
   \hline
 Factor & Estimate & Est. Error & Lower 95\% CI & Upper 95\% CI \\
@@ -80,7 +122,6 @@ Condition & -0.21 & 0.75 & -1.68 & 1.29 \\
   EL PAQ score * Condition & -0.27 & 0.16 & -0.58 & 0.05 \\
    \hline
 \end{tabular}
-\caption{Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy. The Intercept estimate is not displayed to conserve space.}
 \end{table*}
 \efloatseparator
  
