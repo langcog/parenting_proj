@@ -55,19 +55,316 @@ library(grid)
 library(gridExtra)
 library(brms)
 library(viridis)
-library(huxtable)
 library(kableExtra)
+library(nFactors)
+select <- dplyr::select # masked by MASS
 ```
 
 
 # Survey Construction
 
-
 ## Generation of items
 
 ## Revised questionnaire norming
 
+```{r}
+files <- dir("../production-results/e9/")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste("../production-results/e9/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  
+  # clean up different tasks
+  trial_type <- jd$answer$data$trial_type
+  
+  #parenting questionnaire 
+  sent <- jd$answers$data$sentence
+  rating <- as.numeric(jd$answers$data$rating)
+                       
+  sent <- sent[sent != ""]
+  # sent <- sent[trial_type != "priorities_instruct"]
+  rating <- rating[sent != ""] 
+  # rating <- rating[trial_type != "priorities_instruct"] 
+  
+  #demographics
+  race1 <- as.character(jd$answers$data$race[1])
+  race2 <- as.character(jd$answers$data$race[2])  
+  
+  id <- data.frame(workerid = jd$WorkerId, 
+                   sent = sent,
+                   rating = rating,
+                   children = jd$answers$data$children,
+                   language = jd$answers$data$homelang,
+                   ses = jd$answers$data$ladder,
+                   gender = jd$answers$data$gender,
+                   age = jd$answers$data$age,
+                   education = jd$answers$data$education,
+                   ethnicity = jd$answers$data$ethnicity,
+                   childAgeYoung = jd$answers$data$childAgeYoung,
+                   childAgeOld = jd$answers$data$childAgeOld,
+                   race1 = race1,
+                   race2 = race2,
+                   duplicate = jd$WorkerId %in% d.raw$workerid)
+  d.raw <- bind_rows(d.raw, id)
+}
+#remove duplicates from workers who did the study twice
+
+d.raw%<>%
+  filter(duplicate == FALSE)
+```
+
+```{r}
+#Map on question short forms so that we can use these instead. 
+labels <- read.csv("../analysis/sent_forms_e9.csv")
+labels$sent <- as.character(labels$sent)
+```
+
+```{r}
+#Clean up labels.
+d.raw$sent <- as.character(d.raw$sent)
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "'", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "’", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "“", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "”", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "‘", "")
+d.raw$sent <- stringr::str_replace_all(d.raw$sent, "â", "")
+```
+
+```{r}
+d <- left_join(d.raw, labels)
+d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
+
+d_full_e9 <- d
+save(d_full_e9, file = "e9_full.RData")
+```
+
+```{r}
+#Plot demographic info.
+subinfo <- d %>% 
+  select(workerid, age, gender, children, ses, education, language, 
+         ethnicity, childAgeYoung, childAgeOld, race1, race2) %>%
+  distinct
+
+subinfo$race <- subinfo$race1
+subinfo$race[!is.na(subinfo$race2)]<- "Multiple Races"
+subinfo$race <- as.factor(subinfo$race)
+
+subinfo$race <- recode(subinfo$race, "amInd" = "American Indian or Alaska Native", "asian" = "Asian", "black" = "Black", "natHaw" = "Native Hawaiian or US Pacific Islander", "other" = "Other", "white"= "White")
+
+subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
+subinfo$education <- recode(subinfo$education, "highSchool" = "High school","someCollege" = "Some college","4year" = "4 year","someGrad" = "Some grad school","Grad" = "Grad school")
+
+subinfo$gender <- str_replace_all(subinfo$gender, "woman|female|FEMALE|F$|f$|Femal$|Females|Females","Female")
+subinfo$gender <- str_replace_all(subinfo$gender, "man|^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
+subinfo$gender[subinfo$gender != "Female" & subinfo$gender != "Male"] <- NA
+
+subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
+subinfo$language <- str_replace_all(subinfo$language," ", "")
+subinfo$language <- str_replace_all(subinfo$language,"arabic", "Arabic")
+subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
+subinfo$language <- str_replace_all(subinfo$language,"german", "German")
+subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
+
+subinfo$childAgeYoung <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+subinfo$childAgeOld <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
+
+subinfo$ses <- factor(subinfo$ses, levels = c("1","2","3","4","5","6","7","8","9","10"))
+
+subinfo$children <- factor(subinfo$children)
+subinfo$children <- recode(subinfo$children, "morethan5"= ">5")
+
+subinfo$ethnicity[subinfo$ethnicity == "" | subinfo$ethnicity == "NA"] <- NA
+subinfo$ethnicity <- recode(subinfo$ethnicity, "NonHispanic"= "Non-Hispanic")
+```
+
+
+```{r}
+#demographics plots
+ses_plot <- ggplot(filter(subinfo, !is.na(ses)), aes(ses))+
+  geom_histogram(stat = "count") +
+  xlab("SES") + 
+  ylab("Count") +
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
+  
+gender_plot <- ggplot(filter(subinfo, !is.na(gender)), aes(gender))+
+  geom_histogram(stat = "count") +
+  xlab("Gender") + 
+  ylab("Count") +
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
+
+education_plot <- ggplot(filter(subinfo, !is.na(education)), aes(education))+
+  geom_histogram(stat = "count") +
+  xlab("Education") + 
+  ylab("Count") +
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
+
+age_plot <- ggplot(filter(subinfo, !is.na(age)), aes(age))+
+  geom_histogram(stat = "count") +
+  xlab("Age") + 
+  ylab("Count") +
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
+
+ethnicity_plot <- ggplot(filter(subinfo, !is.na(ethnicity)), aes(ethnicity))+
+  geom_histogram(stat = "count") +
+  xlab("Ethnicity") + 
+  ylab("Count") +
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
+
+race_plot <- ggplot(filter(subinfo, !is.na(race)), aes(stringr::str_wrap(race, 10)))+
+  geom_histogram(stat = "count") +
+  xlab("Race") + 
+  ylab("Count") +
+  theme_base()+
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.title = element_text(size=10), 
+        legend.text = element_text(size=10), 
+        axis.text.y  = element_text(vjust=0.5, size=10),
+        axis.title.y = element_text(size=12))
+```
+
+```{r normdemo,  fig.width=12, fig.height=8, fig.cap= "Demographic information for participants in the final norming sample."}
+grid.arrange(ses_plot, age_plot, gender_plot, education_plot, ethnicity_plot, race_plot, nrow = 3)
+```
+
+```{r}
+#look at mean ratings across sentences.
+ms <- d %>%
+  filter(instrument == "attitudes")%>%
+  group_by(category, short_sent, reverse_code) %>%
+  multi_boot_standard(col = "rating") %>%
+  arrange(category, desc(mean)) 
+
+ms$short_sent_ord <- factor(ms$short_sent, 
+                             levels = ms$short_sent)
+
+ms$reverse_code <- recode(ms$reverse_code, "0" = "No", "1" = "Yes")
+
+ms%<>%
+  mutate(`Reverse coded` = factor(reverse_code),
+         `PAQ category` = factor(category))
+```
+
+```{r sentratings,  fig.width=10, fig.height=8, fig.cap= "Average ratings for individual PAQ items."}
+ggplot(ms, aes(short_sent_ord, mean, colour = `PAQ category`, shape = `Reverse coded`)) +
+  geom_point(size = 3.5)+
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+             position = position_dodge(width = .9))+
+  xlab("") + 
+  ylab("Mean Rating") + 
+  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+  theme_base()+
+  scale_color_viridis(discrete=TRUE)+
+  theme(axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(angle=90, hjust = 1, vjust =.5),
+        legend.position="bottom",
+        legend.text = element_text(size = 14)) 
+```
+
+```{r}
+wide_all <- d %>% 
+  filter(instrument == "attitudes") %>%
+  select(workerid, short_sent, rating) %>% 
+  arrange(workerid)%>%
+  spread(short_sent, rating)
+
+alpha.mat <- as.matrix(select(wide_all, -workerid))
+alpha_whole <- alpha(x = alpha.mat)
+
+wide_aa <- d %>% 
+  filter(category == "AA") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+
+alpha.aa <- as.matrix(select(wide_aa, -workerid))
+alpha_aa <- alpha(x = alpha.aa)
+
+wide_el <- d %>% 
+  filter(category == "EL") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+
+alpha.el <- as.matrix(select(wide_el, -workerid))
+alpha_el <- alpha(x = alpha.el)
+
+wide_rr <- d %>% 
+  filter(category == "RR") %>%
+  select(workerid, short_sent, rating) %>% 
+  spread(short_sent, rating)
+
+alpha.rr <- as.matrix(select(wide_rr, -workerid))
+alpha_rr <- alpha(x = alpha.rr)
+```
+
+Alpha for the whole scale was `r round(alpha_whole$total$raw_alpha, digits = 2)`, alpha for the AA subscale was `r round(alpha_aa$total$raw_alpha, digits = 2)`, alpha for the EL subscale was `r round(alpha_el$total$raw_alpha, digits = 2)`, and alpha for the RR subscale was `r round(alpha_rr$total$raw_alpha, digits = 2)`.
+
+# Factor analysis
+
+```{r}
+#Get eigenvalues for determining number of factors. 
+att.mat <- select(wide_all, -workerid)
+
+ev <- eigen(cor(x=att.mat)) # get eigenvalues
+
+ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
+               rep=100,cent=.05)
+
+nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
+#plotnScree(nS)
+```
+
+```{r}
+#Now plot factor analysis
+n.factors <- 3
+
+af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
+
+loadings <- data.frame(af$loadings[,1:n.factors]) %>%
+  mutate(item = rownames(af$loadings)) %>%
+  gather(factor, loading, starts_with("Factor"))
+loadings$item <- factor(loadings$item)
+
+labels$item <- labels$short_sent
+loadings <- left_join(loadings, labels, by = "item")
+```
+
+```{r factors,  fig.width=10, fig.height=8, fig.cap= "Factor loadings on individual PAQ questions."}
+qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
+  scale_fill_viridis() + 
+  facet_grid(category ~ ., scales = "free_y") +
+  theme_base() +        
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
 # Survey Validation
+
 
 
 ##External Validity Study 1: Demographic Factors
@@ -506,7 +803,7 @@ subinfo$behave_age[subinfo$behave_age == "7-12"] <- "7-12 months"
 subinfo$behave_age <- factor(subinfo$behave_age, levels = c("0-6 months", "7-12 months", "1-1.5","1.5-2","2-2.5","2.5-3","3-3.5","3.5-4", "4-4.5","4.5-5", "older"))
 ```
 
-```{r behavefreq, echo = FALSE, fig.width=10, fig.height=6, fig.cap= "Frequencies of different parenting activities reported by parents."}
+```{r behavefreq, echo = FALSE, fig.width=10, fig.height=6, fig.cap= "Frequencies of parenting activities reported by parents."}
 ggplot(filter(bev, !is.na(rating)), aes(short_sent, fill = rating, shape = category)) + 
   geom_bar(position = "fill")+
   ylab("Proportion responding") +
@@ -857,7 +1154,7 @@ uptake <- data.frame(up$fixed)
 ```
 
 ```{r uptake_tab, results = "asis"}
-factors <- c("Intercept", "Child Development Articles", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * Child Development Articles", "RR PAQ score * Child Development Articles", "EL PAQ score * Child Development Articles")
+factors <- c("Intercept", "EL Articles", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * EL Articles", "RR PAQ score * EL Articles", "EL PAQ score * EL Articles")
 
 tab_uptake <- uptake%>%
   mutate(Factor = factors)%>%
@@ -867,7 +1164,7 @@ tab_uptake <- tab_uptake [,c(7,1:4)]
 
 colnames(tab_uptake) <- c("Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
 
-tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a bayesian logistic regression of PAQ scores and experimental condition on accuracy.")
+tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a bayesian logistic regression of PAQ scores and article topic (EL vs. control) on memory for information in articles.")
 
 print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"), caption.placement = "top")
 ```

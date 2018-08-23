@@ -2,6 +2,34 @@
 \ifnextchar[{\eatarg}{}
 
 \centering
+\includegraphics{PAQ_paper_files/figure-latex/normdemo-1.pdf}
+\caption{\label{fig:normdemo}Demographic information for participants in the
+final norming sample.}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{PAQ_paper_files/figure-latex/sentratings-1.pdf}
+\caption{\label{fig:sentratings}Average ratings for individual PAQ items.}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{PAQ_paper_files/figure-latex/factors-1.pdf}
+\caption{\label{fig:factors}Factor loadings on individual PAQ questions.}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
 \includegraphics{PAQ_paper_files/figure-latex/demographics-1.pdf}
 \caption{\label{fig:demographics}Demographic variability in PAQ scores.
 Error bars represent +/-95\% CI computed by non-parametric bootstrap.}
@@ -13,8 +41,8 @@ Error bars represent +/-95\% CI computed by non-parametric bootstrap.}
 
 \centering
 \includegraphics{PAQ_paper_files/figure-latex/behavefreq-1.pdf}
-\caption{\label{fig:behavefreq}Frequencies of different parenting activities
-reported by parents.}
+\caption{\label{fig:behavefreq}Frequencies of parenting activities reported
+by parents.}
 \end{figure*}
 \efloatseparator
  
