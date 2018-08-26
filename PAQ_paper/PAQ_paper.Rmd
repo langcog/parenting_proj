@@ -5,7 +5,7 @@ author:
   - name          : "Emily Hembacher"
     affiliation   : "1"
     corresponding : no    # Define only one corresponding author
-  - name          : "Michael C. Frank"
+  - name           : "Michael C. Frank"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
     address       : "450 Serra Mall, Stanford, CA 94301"
@@ -22,7 +22,7 @@ abstract: |
 keywords          : "keywords"
 wordcount         : "X"
 bibliography      : ["paq.bib"]
-figsintext        : no
+figsintext        : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
@@ -60,12 +60,11 @@ library(nFactors)
 select <- dplyr::select # masked by MASS
 ```
 
+#Introduction
 
-# Survey Construction
+In the following sections, we describe the process of generating scale items and initial steps towards validating the scale. To construct the scale, we followed a structured plan, generating items based on our review of the literature on parenting attitudes and practices and then using dimension reduction techniques to identify latent factors (i.e., implicit theories) driving people’s responses [@clark1995;@furr2011;@simms2008]. We then conducted a series of studies aimed at estimating ecological validity for the scale. Specifically, we asked whether people's parenting attitudes as assessed by the PAQ varied based on demographic factors, whether people's attitudes were related to their self-reported parenting behaviors, and whether attitudes mediated people's understanding of and memory for new information about parenting and child development. 
 
-## Generation of items
-
-## Revised questionnaire norming
+# Scale Construction 
 
 ```{r}
 files <- dir("../production-results/e9/")
@@ -134,9 +133,6 @@ d.raw$sent <- stringr::str_replace_all(d.raw$sent, "â", "")
 ```{r}
 d <- left_join(d.raw, labels)
 d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
-
-d_full_e9 <- d
-save(d_full_e9, file = "e9_full.RData")
 ```
 
 ```{r}
@@ -179,7 +175,6 @@ subinfo$ethnicity[subinfo$ethnicity == "" | subinfo$ethnicity == "NA"] <- NA
 subinfo$ethnicity <- recode(subinfo$ethnicity, "NonHispanic"= "Non-Hispanic")
 ```
 
-
 ```{r}
 #demographics plots
 ses_plot <- ggplot(filter(subinfo, !is.na(ses)), aes(ses))+
@@ -204,7 +199,7 @@ gender_plot <- ggplot(filter(subinfo, !is.na(gender)), aes(gender))+
         axis.text.y  = element_text(vjust=0.5, size=10),
         axis.title.y = element_text(size=12))
 
-education_plot <- ggplot(filter(subinfo, !is.na(education)), aes(education))+
+education_plot <- ggplot(filter(subinfo, !is.na(education)), aes(stringr::str_wrap(education, 10)))+
   geom_histogram(stat = "count") +
   xlab("Education") + 
   ylab("Count") +
@@ -322,9 +317,29 @@ alpha.rr <- as.matrix(select(wide_rr, -workerid))
 alpha_rr <- alpha(x = alpha.rr)
 ```
 
-Alpha for the whole scale was `r round(alpha_whole$total$raw_alpha, digits = 2)`, alpha for the AA subscale was `r round(alpha_aa$total$raw_alpha, digits = 2)`, alpha for the EL subscale was `r round(alpha_el$total$raw_alpha, digits = 2)`, and alpha for the RR subscale was `r round(alpha_rr$total$raw_alpha, digits = 2)`.
+```{r itemstab, results = "asis"}
+items <- labels %>%
+  filter(instrument == "attitudes")%>%
+  select(category, sent, reverse_code)%>%
+  arrange(category)
 
-# Factor analysis
+items$sent[items$reverse_code == 1] <- paste(items$sent[items$reverse_code == 1], "*", sep = "")
+
+cat <- c("AA", "", "", "", "", "", "", "", 
+         "EL", "", "", "", "", "", "", "",
+         "RR", "", "", "", "", "", "", "")
+
+items%<>%
+  transmute(Category = cat,
+            Item = sent)
+  
+kable(items,caption = "Parenting Attitudes Scale items.", "latex", booktabs = T) %>%
+kable_styling(font_size = 9, 
+              latex_options = c("hold_position")) %>%
+column_spec(1, bold = T) %>%
+column_spec(2, width = "40em")%>%  
+footnote(general = "*Indicates reverse coded items.")
+```
 
 ```{r}
 #Get eigenvalues for determining number of factors. 
@@ -363,11 +378,25 @@ qplot(factor, item, fill=loading, geom="tile", data = loadings) +
         axis.title.y=element_blank())
 ```
 
+##Item generation and dimension reduction
+
+In an initial phase of scale construction, we generated 27 statements that described various attitudes about parenting and child development that we predicted parents might differ on. We selected these items based on a literature review of previous parenting research, including existing measures and theories such as the Knowledge of Infant Development Inventory [KIDI, @macphee2002], Baumrind's parenting framework, and theories of attachment parenting [@jones2014]. Critically, although the present scale is theoretically related to existing frameworks, the present scale differs from them in that parents are asked about their attitudes, rather than their knowledge or behaviors. Items included in the initial set related to parents' emotional and physical relationships with their children, their beliefs about children's early learning, beliefs about children's autonomy, and other topics. 
+
+<!-- initial scale corresponds to e2 in repo, e1 was mostly knowledge questions and questions from Schulz study, so I'm not considering it as part of the norming process --> 
+
+We administered the initial scale to 250 adults on Amazon's Mechanical Turk (Mturk).  Participants used a 7-point Likert scale to report the degree to which they agreed with each statement from 0 (Do not Agree) to 6 (Strongly Agree). We began by conducting exploratory factor analysis (EFA) to assess the dimensionality of the scale. Based on the output of a parallel analysis [@horn1965], we retained 5 factors in this initial model. We subsequently dropped any items that had factor loadings less than .40 on the relevant factor, as well as any items that had factor loadings greater than .40 on another factor. 
+
+We repeated this process a total of 8 times. After several iterations, the parallel analysis began returning 3 factors, so we retained 3 factors in subsequent factor analyses. The first factor appeared to corresponded to a theory about affection and attachment and captured the idea that emotionally close parent-child relationships are important for development. The second factor corresponded to ideas around the importance of fostering early learning. The third factor corresponded to ideas around rules and respect, including children's autonomy and behavioral control. We titled these factors Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR). Once we had identified these categories, we dropped items belonging to each category (based on factor loadings) if analyses revealed that Cronbach’s alpha for that category would be increased by dropping the item. We also added new items that were theoretically consistent with the categories that had emerged. Some items were rephrased such that half of the items in each subscale were negatively worded to control for response sets [e.g., a tendency to rate all items highly, @simms2008].
+
+##Final scale
+
+The final set of items comprising the three subscales is presented in Table \ref{tab:items}. For the final sample, which consisted of 250 participants recruited on Mturk, Chronbach's alpha for the whole scale was `r round(alpha_whole$total$raw_alpha, digits = 2)`, for the AA subscale was `r round(alpha_aa$total$raw_alpha, digits = 2)`, for the EL subscale was `r round(alpha_el$total$raw_alpha, digits = 2)`, and for the RR subscale was `r round(alpha_rr$total$raw_alpha, digits = 2)`. In sum, items within subscales are highly correlated, but items across subscales are highly correlated as well, which may reflect response biases to rate all items particularly high or low. 
+
+We next examined the loadings of individual items onto the three factors (Figure \ref{fig:loadings}). Items loaded onto the three factors roughly consistent with our established subscales, although some items from the AA subscale loaded onto both the AA and EL factors, and several items from the EL subscale loaded more strongly onto the AA factor. Given the partial overlap of the EL and AA factors, it is possible that participants’ responses on these items were driven to some extent by a more general attitude towards more involved parenting. 
+
 # Survey Validation
 
-
-
-##External Validity Study 1: Demographic Factors
+##Study 1: Variability in parenting attitudes based on demographic factors
 
 ```{r}
 #get dataframe with subject responses
@@ -685,7 +714,7 @@ colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 
 
 demo_tab <- xtable(tab_demo_lm, label = "tab:demo", caption = "Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.")
 
-print(demo_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 7, 14, 21), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
+print(demo_tab, type="latex", comment = F, table.placement = "H", hline.after = c(-1, 0, 7, 14, 21), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
 ```
 
 Approaches to parenting are known to differ across cultures and groups. To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors. We administered the PAQ to 680 parents who were members of a local children’s museum and subsequently asked them to provide information about their gender, level of education, age, ethnicity, and the number of children they have. Figure \ref{fig:demographics} displays the average PAQ scores for each demographic category.
@@ -698,7 +727,7 @@ We found that stronger agreement with EL scores was associated with identifying 
 
 Finally, we found that stronger agreement with RR attitudes was associated with having a greater number of children ($\beta$ = `r round(rr_demo$Estimate[12], digits = 2)`, 95% CI = `r round(rr_demo$l.95..CI[12], digits = 2)` - `r round(rr_demo$u.95..CI[12], digits = 2)`), and identifying as White was associated with lower agreement with RR attitudes ($\beta$ = `r round(rr_demo$Estimate[10], digits = 2)`, 95% CI = `r round(rr_demo$l.95..CI[10], digits = 2)` - `r round(rr_demo$u.95..CI[10], digits = 2)`).
 
-## Study 2: Relation to parenting behaviors
+## Study 2: Relation of attitudes to parenting behaviors
 
 ```{r}
 files <- dir("../production-results/parenting_behaviors_e2/")
@@ -974,18 +1003,23 @@ cat <- c("AA", "", "", "", "EL", "","", "", "RR", "","","")
 behaviors_sents <- behave%>%
   arrange(category)%>%
   transmute(Category=cat, `In the last month, how often did...` = str_replace(sent, "In the last month, how often did", ""))
-  
-kable(behaviors_sents, "latex", caption = "Behaviors that parents were asked to report on, and their corresponding attitude categories.") %>%
-  column_spec(2, width = "35em")
+
+kable(behaviors_sents ,caption = "Frequencies of parenting activities reported by parents.", "latex", booktabs = T) %>%
+kable_styling(font_size = 9, 
+              latex_options = c("hold_position")) %>%
+column_spec(1, bold = T) %>%
+column_spec(2, width = "40em")
 ```
 
-Another way of assessing the ecological validity of the PAQ is to ask whether the parenting attitudes it assesses are related to actual parenting behaviors. For example, do parents who strongly agree with items on the Early Learning subscale read to their children more often? Do parents who strongly endorse items on the Rules and Respect subscale give more time-outs? To assess this, we asked a sample of 250 parents on Amazon's Mechanical Turk to complete the PAQ and then rate the frequency with which they engaged in a number of parenting behaviors, focusing on the prior month (Table \ref{tab:behavesents}). We elicited responses about 12 different behaviors, with four corresponding to each PAQ category. Parents chose between the following frequency options: "Multiple times per day", "Most days", "Once or twice per week," "Occasionally," "Almost never," "Never," and "My child is too young for this." Parents who did not have children under the age of 5 were excluded from analyses, as were any responses of "My child is too young for this."
+Another way of assessing the ecological validity of the PAQ is to ask whether the parenting attitudes it measures are related to actual parenting behaviors. For example, do parents who strongly agree with items on the Early Learning subscale read to their children more often? Do parents who strongly endorse items on the Rules and Respect subscale give more time-outs? To assess this, we asked a sample of 250 parents on Mturk to complete the PAQ and then rate the frequency with which they engaged in a number of parenting behaviors, focusing on the prior month (Table \ref{tab:behavesents}). We elicited responses about 12 different behaviors, with four corresponding to each PAQ category. Parents chose between the following frequency options: "Multiple times per day", "Most days", "Once or twice per week," "Occasionally," "Almost never," "Never," and "My child is too young for this." Parents who did not have children under the age of 5 were excluded from analyses, as were any responses of "My child is too young for this."
 
 The distribution of frequencies that parents reported is displayed in Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are associated with parenting attitudes, we calculated participants' average PAQ subscale scores and fit separate bayesian ordinal logistic mixed-effects regressions for the three cateogories of behaviors with the following structure: `behavior frequency ~ AA PAQ score + EL PAQ score + RR PAQ score + child age + (1 | subject) + (1| item)` (Table \ref{tab:behavetab}). The relation between PAQ scores and behavior frequencies are presented in Figure \ref{fig:behavepaq}.
 
 We found that the frequency of AA behaviors was positively associated with AA attitudes ($\beta$ = `r round(aa_behave$Estimate[6], digits = 2)`, 95% CI = `r round(aa_behave$l.95..CI[6], digits = 2)` - `r round(aa_behave$u.95..CI[6], digits = 2)`), but not RR or EL attitudes or child age. Frequency of EL behaviors was positively associated with stronger agreement with both AA ($\beta$ = `r round(el_behave$Estimate[6], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[6], digits = 2)` - `r round(el_behave$u.95..CI[6], digits = 2)`) and EL attitudes ($\beta$ = `r round(el_behave$Estimate[8], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[8], digits = 2)` - `r round(el_behave$u.95..CI[8], digits = 2)`). The frequency of RR behaviors was positively associated with stronger RR attitudes ($\beta$ = `r round(rr_behave$Estimate[7], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[7], digits = 2)` - `r round(rr_behave$u.95..CI[7], digits = 2)`), and to a lesser extent, child age ($\beta$ = `r round(rr_behave$Estimate[9], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[9], digits = 2)` - `r round(rr_behave$u.95..CI[9], digits = 2)`). 
 
-## Study 3: Uptake of new information about parenting and child development
+These results suggest that parenting attitudes as assessed by the PAQ have a meaningful relation to the actual behaviors parents engage in with their children. This suggests that the current scale taps firmly held beliefs that drive parents' decisions and behavior. It also suggests that intervening on these beliefs may be an effective way of promoting behavior change in parents, for example, to promote opportunities for early learning. However, it is important to consider that the present data are correlational and based on self-report. For example, it is possible that participants' self-reported behaviors capture their intentions rather than their actual behaviors, which would likely be highly correlated with their self-reported attitudes. Future work utilizing an intervention approach, and/or a diary method of self-report, would help distinguish these possibilities.
+
+## Study 3: Memory for new information about parenting and child development
 
 Parents’ attitudes about parenting and child development may be an important consideration for crafting interventions on parenting behaviors or beliefs. There are frequent efforts to intervene on parenting practices, for example, public service announcements telling parents to read to their children; courses aimed at helping fathers engage with their children; messages aimed at encouraging parents and teachers to give children opportunities for free play. There is evidence that existing lay theories can interact in surprising ways with this type of messaging in other domains. Here we asked whether parents' attitudes about parenting and child development would predict how they uptake new information about child development versus an unrelated topic. 
 
@@ -1169,13 +1203,25 @@ tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a 
 print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"), caption.placement = "top")
 ```
 
-We asked 250 adults on Amazon's Mechanical Turk to fill out the PAQ and then read four popular press articles, two of which related to child development and two of which related to other science topics. The articles were edited for length, and the order in which the articles were presented was randomized. Next, participants answered six four-alternative forced-choice questions testing their memory and understanding of each article (24 total questions). We were specifically interested in whether participants who agreed more strongly with EL attitudes would better understand and remember the information in the child development articles, which we predicted may have been consistent with their existing views of development. Participants' accuracy in relation to their average AA, EL and RR scores is displayed in Figure \ref{fig:uptake}.
+We asked 250 adults on Mturk to fill out the PAQ and then read four popular press articles, two of which related to child development [@refs] and two of which related to other science topics [@refs]. The articles were edited for length, and the order in which the articles were presented was randomized. Next, participants answered six four-alternative forced-choice questions testing their memory and understanding of each article (24 total questions). We were specifically interested in whether participants who agreed more strongly with EL attitudes would better understand and remember the information in the child development articles, which we predicted may have been consistent with their existing views of development. Participants' accuracy in relation to their average AA, EL and RR scores is displayed in Figure \ref{fig:uptake}.
 
 The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
 
 To assess whether participants who more strongly agreed with EL attitudes were at an advantage for understanding and remembering the child development articles they read, we fit a bayesian logistic mixed-effects regression with the following structure: `accuracy ~ AA PAQ score * article type + EL PAQ score * article type + RR PAQ score * article type + (article type | subject) + (1| item)`. We excluded `r signif(mean(exclusions$exclude*100), digits = 2)`% of responses from analyses because participants spent fewer than 15 seconds reading the article, our pre-determined minimum reading time.
 
-We found that participants who agreed more strongly with EL attitudes were more likely to answer uptake questions correctly overall ($\beta$ = `r round(uptake$Estimate[5], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[5], digits = 2)` - `r round(uptake$u.95..CI[5], digits = 2)`), but there was no interaction between EL scores and article type, meaning that there was no advantage for people with higher EL scores for understanding child development content in particular. However, unexpectedly, there was an interaction between AA attitudes and article type ($\beta$ = `r round(uptake$Estimate[6], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[6], digits = 2)` - `r round(uptake$u.95..CI[6], digits = 2)`), such that people with stronger AA attitudes performed better on questions about child development articles compared to control articles. 
+We found that participants who agreed more strongly with EL attitudes were more likely to answer memory questions correctly overall ($\beta$ = `r round(uptake$Estimate[5], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[5], digits = 2)` - `r round(uptake$u.95..CI[5], digits = 2)`), but there was no interaction between EL scores and article type, meaning that there was no advantage for people with higher EL scores for understanding child development content in particular. However, unexpectedly, there was an interaction between AA attitudes and article type ($\beta$ = `r round(uptake$Estimate[6], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[6], digits = 2)` - `r round(uptake$u.95..CI[6], digits = 2)`), such that people with stronger AA attitudes performed better on questions about child development articles compared to control articles. Rules and Respect attitudes did not predict memory for the articles.
+
+In sum, our results suggest that people who believe more strongly in the importance of early learning (i.e., those with higher EL PAQ scores) are more likely to understand and recall details from science articles, but they do not have a specific advantage for science articles related to cognitive development during infancy. Contrary to our predictions, we did find that people with higher AA scores had a specific advantage for remembering the EL articles compared to control articles. Although the present data cannot speak to why this might be, one possibility is that people with higher AA scores have a stronger orientation towards content about early childhood (compared to the unrelated content in the control article) in general.  These results could also reflect the fact that EL and AA attitudes may overlap somewhat, as suggested by their respective factor loadings, at least in the population we sampled for these analyses.
+
+#Discussion
+
+In the present work, we established a new scale to measure people’s attitudes about parenting and child development in three categories: Rules and Respect, Affection and Attachment, and Early Learning. These subscales are meant to capture meaningful differences in how people view child development and the relative importance of different parenting behaviors. We subjected our new scale to psychometric evaluation, and found acceptably high correlations among subscale items, as well as the predicted factor structure across subscales. In addition, we found meaningful differences in attitudes across demographic groups and we observed the expected relations between parenting attitudes and behaviors. We also found that PAQ subscale scores predicted understanding and memory for new information in science articles, though not in the predicted patterns, as people with higher AA scores had an advantage for remembering the content of EL articles, but not people with higher EL scores.
+
+In sum, this work provides initial evidence that meaningful differences in adults’ attitudes about child development and parenting can be assessed by our new scale. 
+
+Although the present studies provide initial evidence for the reliability and validity of our parenting measure among the population we sampled, which was predominantly White and highly educated, further evidence across a broader range of participants would provide additional support for the scale. In addition, future work should target predictive validity by determining whether subscale scores differentially predict parents observable behaviors with their children, such as the quality of conversations they engage their child in.
+ 
+Implicit theories are a powerful driver of human behavior. Sometimes, the interaction between interventions and their subjects' underlying beliefs can produce powerful, non-linear results [@medin2014]. Thus, given both the variability in attitudes towards parenting across cultures and the importance of improving parenting outcomes, it behooves us to understand implicit theories of parenting. The current work takes a first step in this direction. 
 
 \newpage
 

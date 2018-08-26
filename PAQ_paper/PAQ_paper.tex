@@ -1,4 +1,4 @@
-\documentclass[man]{apa6}
+\documentclass[floatsintext,man]{apa6}
 
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
@@ -39,12 +39,6 @@
   {\begin{landscape}\begin{center}\begin{ThreePartTable}}
   {\end{ThreePartTable}\end{center}\end{landscape}}
 
-  \usepackage{ifthen} % Only add declarations when endfloat package is loaded
-  \ifthenelse{\equal{\string man}{\string man}}{%
-   \DeclareDelayedFloatFlavor{ThreePartTable}{table} % Make endfloat play with longtable
-   % \DeclareDelayedFloatFlavor{ltable}{table} % Make endfloat play with lscape
-   \DeclareDelayedFloatFlavor{lltable}{table} % Make endfloat play with lscape & longtable
-  }{}%
 
 
 
@@ -167,12 +161,23 @@ line.}
 
 
 
-\section{Survey Construction}\label{survey-construction}
+\section{Introduction}\label{introduction}
 
-\subsection{Generation of items}\label{generation-of-items}
+In the following sections, we describe the process of generating scale
+items and initial steps towards validating the scale. To construct the
+scale, we followed a structured plan, generating items based on our
+review of the literature on parenting attitudes and practices and then
+using dimension reduction techniques to identify latent factors (i.e.,
+implicit theories) driving people's responses (Clark \& Watson, 1995;
+Furr, 2011; Simms, 2008). We then conducted a series of studies aimed at
+estimating ecological validity for the scale. Specifically, we asked
+whether people's parenting attitudes as assessed by the PAQ varied based
+on demographic factors, whether people's attitudes were related to their
+self-reported parenting behaviors, and whether attitudes mediated
+people's understanding of and memory for new information about parenting
+and child development.
 
-\subsection{Revised questionnaire
-norming}\label{revised-questionnaire-norming}
+\section{Scale Construction}\label{scale-construction}
 
 \begin{figure}
 \centering
@@ -187,11 +192,48 @@ final norming sample.}
 \caption{\label{fig:sentratings}Average ratings for individual PAQ items.}
 \end{figure}
 
-Alpha for the whole scale was 0.90, alpha for the AA subscale was 0.82,
-alpha for the EL subscale was 0.83, and alpha for the RR subscale was
-0.81.
+\begin{table}[!h]
 
-\section{Factor analysis}\label{factor-analysis}
+\caption{\label{tab:itemstab}Parenting Attitudes Scale items.}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{>{\bfseries}l>{\raggedright\arraybackslash}p{40em}}
+\toprule
+Category & Item\\
+\midrule
+AA & Children should be comforted when they are scared or unhappy.\\
+ & Its important for parents to help children learn to deal with their emotions.\\
+ & Parents should pay attention to what their child likes and dislikes.\\
+ & A child who has close bonds with his or her parents will have better relationships later on in life.\\
+ & Children who receive too much attention from their parents become spoiled.*\\
+\addlinespace
+ & Too much affection, such as hugging and kissing, can make a child weak.*\\
+ & Children and parents do not need to feel emotionally close as long as children are kept safe.*\\
+ & Parents should not try to calm a child who is upset, it is better to let children calm themselves.*\\
+EL & It is good to let children explore and experiment.\\
+ & Parents can help babies learn language by talking to them.\\
+\addlinespace
+ & Parents can prepare young children to succeed in school by teaching them things, such as shapes and numbers.\\
+ & Babies can learn a lot just by playing.\\
+ & It is not helpful to explain the reasons for rules to young children because they wont understand.*\\
+ & Children dont need to learn about numbers and math until they go to school.*\\
+ & Reading books to children is not helpful if they have not yet learned to speak.*\\
+\addlinespace
+ & Babies cant learn about the world until they learn to speak.*\\
+RR & It is very important that children learn to respect adults, such as parents and teachers.\\
+ & It is very important for young children to do as they are told, for example, waiting when they are told to wait.\\
+ & Children should be grateful to their parents.\\
+ & It is very important that there are consequences when a child breaks a rule, big or small.\\
+\addlinespace
+ & It is okay if young children boss around their caregivers.*\\
+ & It is okay if children see adults as equals rather than viewing them with respect.*\\
+ & Young children should be allowed to make their own decisions, like what to play with and when to eat.*\\
+ & Parents do not need to worry if their child misbehaves a lot.*\\
+\bottomrule
+\multicolumn{2}{l}{\textit{Note: }}\\
+\multicolumn{2}{l}{*Indicates reverse coded items.}\\
+\end{tabular}
+\end{table}
 
 \begin{figure}
 \centering
@@ -199,10 +241,77 @@ alpha for the EL subscale was 0.83, and alpha for the RR subscale was
 \caption{\label{fig:factors}Factor loadings on individual PAQ questions.}
 \end{figure}
 
+\subsection{Item generation and dimension
+reduction}\label{item-generation-and-dimension-reduction}
+
+In an initial phase of scale construction, we generated 27 statements
+that described various attitudes about parenting and child development
+that we predicted parents might differ on. We selected these items based
+on a literature review of previous parenting research, including
+existing measures and theories such as the Knowledge of Infant
+Development Inventory (KIDI, MacPhee, 2002), Baumrind's parenting
+framework, and theories of attachment parenting (Jones, Cassidy, \&
+Shaver, 2014). Critically, although the present scale is theoretically
+related to existing frameworks, the present scale differs from them in
+that parents are asked about their attitudes, rather than their
+knowledge or behaviors. Items included in the initial set related to
+parents' emotional and physical relationships with their children, their
+beliefs about children's early learning, beliefs about children's
+autonomy, and other topics.
+
+We administered the initial scale to 250 adults on Amazon's Mechanical
+Turk (Mturk). Participants used a 7-point Likert scale to report the
+degree to which they agreed with each statement from 0 (Do not Agree) to
+6 (Strongly Agree). We began by conducting exploratory factor analysis
+(EFA) to assess the dimensionality of the scale. Based on the output of
+a parallel analysis (Horn, 1965), we retained 5 factors in this initial
+model. We subsequently dropped any items that had factor loadings less
+than .40 on the relevant factor, as well as any items that had factor
+loadings greater than .40 on another factor.
+
+We repeated this process a total of 8 times. After several iterations,
+the parallel analysis began returning 3 factors, so we retained 3
+factors in subsequent factor analyses. The first factor appeared to
+corresponded to a theory about affection and attachment and captured the
+idea that emotionally close parent-child relationships are important for
+development. The second factor corresponded to ideas around the
+importance of fostering early learning. The third factor corresponded to
+ideas around rules and respect, including children's autonomy and
+behavioral control. We titled these factors Affection and Attachment
+(AA), Early Learning (EL), and Rules and Respect (RR). Once we had
+identified these categories, we dropped items belonging to each category
+(based on factor loadings) if analyses revealed that Cronbach's alpha
+for that category would be increased by dropping the item. We also added
+new items that were theoretically consistent with the categories that
+had emerged. Some items were rephrased such that half of the items in
+each subscale were negatively worded to control for response sets (e.g.,
+a tendency to rate all items highly, Simms, 2008).
+
+\subsection{Final scale}\label{final-scale}
+
+The final set of items comprising the three subscales is presented in
+Table \ref{tab:items}. For the final sample, which consisted of 250
+participants recruited on Mturk, Chronbach's alpha for the whole scale
+was 0.90, for the AA subscale was 0.82, for the EL subscale was 0.83,
+and for the RR subscale was 0.81. In sum, items within subscales are
+highly correlated, but items across subscales are highly correlated as
+well, which may reflect response biases to rate all items particularly
+high or low.
+
+We next examined the loadings of individual items onto the three factors
+(Figure \ref{fig:loadings}). Items loaded onto the three factors roughly
+consistent with our established subscales, although some items from the
+AA subscale loaded onto both the AA and EL factors, and several items
+from the EL subscale loaded more strongly onto the AA factor. Given the
+partial overlap of the EL and AA factors, it is possible that
+participants' responses on these items were driven to some extent by a
+more general attitude towards more involved parenting.
+
 \section{Survey Validation}\label{survey-validation}
 
-\subsection{External Validity Study 1: Demographic
-Factors}\label{external-validity-study-1-demographic-factors}
+\subsection{Study 1: Variability in parenting attitudes based on
+demographic
+factors}\label{study-1-variability-in-parenting-attitudes-based-on-demographic-factors}
 
 \begin{figure}
 \centering
@@ -211,7 +320,7 @@ Factors}\label{external-validity-study-1-demographic-factors}
 Error bars represent +/-95\% CI computed by non-parametric bootstrap.}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.} 
 \label{tab:demo}
@@ -290,8 +399,8 @@ associated with having a greater number of children (\(\beta\) = 0.15,
 lower agreement with RR attitudes (\(\beta\) = -0.20, 95\% CI = -0.38 -
 -0.01).
 
-\subsection{Study 2: Relation to parenting
-behaviors}\label{study-2-relation-to-parenting-behaviors}
+\subsection{Study 2: Relation of attitudes to parenting
+behaviors}\label{study-2-relation-of-attitudes-to-parenting-behaviors}
 
 \begin{figure}
 \centering
@@ -334,58 +443,49 @@ RR & AA PAQ score & 0.10 & 0.21 & -0.30 & 0.50 \\
 \end{tabular}
 \end{table}
 
-\begin{table}
+\begin{table}[!h]
 
-\caption{\label{tab:behavesents}Behaviors that parents were asked to report on, and their corresponding attitude categories.}
+\caption{\label{tab:behavesents}Frequencies of parenting activities reported by parents.}
 \centering
-\begin{tabular}[t]{l|>{\raggedright\arraybackslash}p{35em}}
-\hline
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{>{\bfseries}l>{\raggedright\arraybackslash}p{40em}}
+\toprule
 Category & In the last month, how often did...\\
-\hline
+\midrule
 AA & you and your child talk about feelings (e.g., when he/she was sad/angry)?\\
-\hline
  & you and your child spend time cuddling?\\
-\hline
  & your child sleep in the same bed as you?\\
-\hline
  & you hug or kiss your child?\\
-\hline
 EL & you read to your child?\\
-\hline
+\addlinespace
  & you practice numbers or letters with your child?\\
-\hline
  & you share facts or observations about the world when you were doing other tasks (e.g., did you know butter comes from cows? while shopping at the grocery store)?\\
-\hline
  & your child watch educational programming (e.g., shows like Sesame Street) or play with educational apps (e.g., apps designed to teach numbers, colors, shapes, etc.) on a tablet or mobile device?\\
-\hline
 RR & you talk sternly to your child when he/she did something you dont want?\\
-\hline
  & you give your child time out or other punishments for acting out?\\
-\hline
+\addlinespace
  & you talk about setting limits with your child (e.g., only 10 minutes of screen time or no hitting)?\\
-\hline
  & your child help or try to help with chores or tasks (including cleaning up his/her toys)?\\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
 Another way of assessing the ecological validity of the PAQ is to ask
-whether the parenting attitudes it assesses are related to actual
+whether the parenting attitudes it measures are related to actual
 parenting behaviors. For example, do parents who strongly agree with
 items on the Early Learning subscale read to their children more often?
 Do parents who strongly endorse items on the Rules and Respect subscale
 give more time-outs? To assess this, we asked a sample of 250 parents on
-Amazon's Mechanical Turk to complete the PAQ and then rate the frequency
-with which they engaged in a number of parenting behaviors, focusing on
-the prior month (Table \ref{tab:behavesents}). We elicited responses
-about 12 different behaviors, with four corresponding to each PAQ
-category. Parents chose between the following frequency options:
-\enquote{Multiple times per day}, \enquote{Most days}, \enquote{Once or
-twice per week,} \enquote{Occasionally,} \enquote{Almost never,}
-\enquote{Never,} and \enquote{My child is too young for this.} Parents
-who did not have children under the age of 5 were excluded from
-analyses, as were any responses of \enquote{My child is too young for
-this.}
+Mturk to complete the PAQ and then rate the frequency with which they
+engaged in a number of parenting behaviors, focusing on the prior month
+(Table \ref{tab:behavesents}). We elicited responses about 12 different
+behaviors, with four corresponding to each PAQ category. Parents chose
+between the following frequency options: \enquote{Multiple times per
+day}, \enquote{Most days}, \enquote{Once or twice per week,}
+\enquote{Occasionally,} \enquote{Almost never,} \enquote{Never,} and
+\enquote{My child is too young for this.} Parents who did not have
+children under the age of 5 were excluded from analyses, as were any
+responses of \enquote{My child is too young for this.}
 
 The distribution of frequencies that parents reported is displayed in
 Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are
@@ -406,8 +506,23 @@ CI = 0.02 - 0.71) and EL attitudes (\(\beta\) = 0.52, 95\% CI = 0.18 -
 stronger RR attitudes (\(\beta\) = 0.34, 95\% CI = 0.05 - 0.63), and to
 a lesser extent, child age (\(\beta\) = 0.03, 95\% CI = 0.01 - 0.05).
 
-\subsection{Study 3: Uptake of new information about parenting and child
-development}\label{study-3-uptake-of-new-information-about-parenting-and-child-development}
+These results suggest that parenting attitudes as assessed by the PAQ
+have a meaningful relation to the actual behaviors parents engage in
+with their children. This suggests that the current scale taps firmly
+held beliefs that drive parents' decisions and behavior. It also
+suggests that intervening on these beliefs may be an effective way of
+promoting behavior change in parents, for example, to promote
+opportunities for early learning. However, it is important to consider
+that the present data are correlational and based on self-report. For
+example, it is possible that participants' self-reported behaviors
+capture their intentions rather than their actual behaviors, which would
+likely be highly correlated with their self-reported attitudes. Future
+work utilizing an intervention approach, and/or a diary method of
+self-report, would help distinguish these possibilities.
+
+\subsection{Study 3: Memory for new information about parenting and
+child
+development}\label{study-3-memory-for-new-information-about-parenting-and-child-development}
 
 Parents' attitudes about parenting and child development may be an
 important consideration for crafting interventions on parenting
@@ -450,19 +565,19 @@ EL Articles & -0.21 & 0.75 & -1.68 & 1.29 \\
 \end{tabular}
 \end{table}
 
-We asked 250 adults on Amazon's Mechanical Turk to fill out the PAQ and
-then read four popular press articles, two of which related to child
-development and two of which related to other science topics. The
-articles were edited for length, and the order in which the articles
-were presented was randomized. Next, participants answered six
-four-alternative forced-choice questions testing their memory and
-understanding of each article (24 total questions). We were specifically
-interested in whether participants who agreed more strongly with EL
-attitudes would better understand and remember the information in the
-child development articles, which we predicted may have been consistent
-with their existing views of development. Participants' accuracy in
-relation to their average AA, EL and RR scores is displayed in Figure
-\ref{fig:uptake}.
+We asked 250 adults on Mturk to fill out the PAQ and then read four
+popular press articles, two of which related to child development
+({\textbf{???}}) and two of which related to other science topics
+({\textbf{???}}). The articles were edited for length, and the order in
+which the articles were presented was randomized. Next, participants
+answered six four-alternative forced-choice questions testing their
+memory and understanding of each article (24 total questions). We were
+specifically interested in whether participants who agreed more strongly
+with EL attitudes would better understand and remember the information
+in the child development articles, which we predicted may have been
+consistent with their existing views of development. Participants'
+accuracy in relation to their average AA, EL and RR scores is displayed
+in Figure \ref{fig:uptake}.
 
 The average accuracy for control questions was 0.76(CI = 0.73 - 0.78)
 and the average accuracy for experimenter questions was 0.81(CI = 0.73 -
@@ -479,7 +594,7 @@ fewer than 15 seconds reading the article, our pre-determined minimum
 reading time.
 
 We found that participants who agreed more strongly with EL attitudes
-were more likely to answer uptake questions correctly overall (\(\beta\)
+were more likely to answer memory questions correctly overall (\(\beta\)
 = 0.82, 95\% CI = 0.52 - 1.14), but there was no interaction between EL
 scores and article type, meaning that there was no advantage for people
 with higher EL scores for understanding child development content in
@@ -487,6 +602,61 @@ particular. However, unexpectedly, there was an interaction between AA
 attitudes and article type (\(\beta\) = 0.42, 95\% CI = 0.11 - 0.73),
 such that people with stronger AA attitudes performed better on
 questions about child development articles compared to control articles.
+Rules and Respect attitudes did not predict memory for the articles.
+
+In sum, our results suggest that people who believe more strongly in the
+importance of early learning (i.e., those with higher EL PAQ scores) are
+more likely to understand and recall details from science articles, but
+they do not have a specific advantage for science articles related to
+cognitive development during infancy. Contrary to our predictions, we
+did find that people with higher AA scores had a specific advantage for
+remembering the EL articles compared to control articles. Although the
+present data cannot speak to why this might be, one possibility is that
+people with higher AA scores have a stronger orientation towards content
+about early childhood (compared to the unrelated content in the control
+article) in general. These results could also reflect the fact that EL
+and AA attitudes may overlap somewhat, as suggested by their respective
+factor loadings, at least in the population we sampled for these
+analyses.
+
+\section{Discussion}\label{discussion}
+
+In the present work, we established a new scale to measure people's
+attitudes about parenting and child development in three categories:
+Rules and Respect, Affection and Attachment, and Early Learning. These
+subscales are meant to capture meaningful differences in how people view
+child development and the relative importance of different parenting
+behaviors. We subjected our new scale to psychometric evaluation, and
+found acceptably high correlations among subscale items, as well as the
+predicted factor structure across subscales. In addition, we found
+meaningful differences in attitudes across demographic groups and we
+observed the expected relations between parenting attitudes and
+behaviors. We also found that PAQ subscale scores predicted
+understanding and memory for new information in science articles, though
+not in the predicted patterns, as people with higher AA scores had an
+advantage for remembering the content of EL articles, but not people
+with higher EL scores.
+
+In sum, this work provides initial evidence that meaningful differences
+in adults' attitudes about child development and parenting can be
+assessed by our new scale.
+
+Although the present studies provide initial evidence for the
+reliability and validity of our parenting measure among the population
+we sampled, which was predominantly White and highly educated, further
+evidence across a broader range of participants would provide additional
+support for the scale. In addition, future work should target predictive
+validity by determining whether subscale scores differentially predict
+parents observable behaviors with their children, such as the quality of
+conversations they engage their child in.
+
+Implicit theories are a powerful driver of human behavior. Sometimes,
+the interaction between interventions and their subjects' underlying
+beliefs can produce powerful, non-linear results ({\textbf{???}}). Thus,
+given both the variability in attitudes towards parenting across
+cultures and the importance of improving parenting outcomes, it behooves
+us to understand implicit theories of parenting. The current work takes
+a first step in this direction.
 
 \newpage
 
@@ -496,6 +666,33 @@ questions about child development articles compared to control articles.
 \setlength{\parindent}{-0.5in} \setlength{\leftskip}{0.5in}
 
 \hypertarget{refs}{}
+\hypertarget{ref-clark1995}{}
+Clark, L. A., \& Watson, D. (1995). Constructing validity: Basic issues
+in objective scale development. \emph{Psychological Assessment},
+\emph{7}(3), 309--319.
+
+\hypertarget{ref-furr2011}{}
+Furr, M. (2011). \emph{Scale Construction and Psychometrics for Social
+and Personality Psychology}. SAGE Publications Ltd.
+
+\hypertarget{ref-horn1965}{}
+Horn, J. L. (1965). A rationale and test for the number of factors in
+factor analysis. \emph{Psychometrika}, \emph{30}(2), 179--185.
+
+\hypertarget{ref-jones2014}{}
+Jones, J. D., Cassidy, J., \& Shaver, P. R. (2014). Parents
+Self-Reported Attachment Styles A Review of Links with Parenting
+Behaviors, Emotions, and Cognitions. \emph{Personality and Social
+Psychology Review}, \emph{19}(1), 1088868314541858--76.
+
+\hypertarget{ref-macphee2002}{}
+MacPhee, D. (2002). \emph{Knowledge of infant development inventory:
+Manual}. Colorado: Colorado State University.
+
+\hypertarget{ref-simms2008}{}
+Simms, L. J. (2008). Classical and Modern Methods of Psychological Scale
+Construction. \emph{Social and Personality Psychology Compass},
+\emph{2}(1), 414--433.
 
 \endgroup
 
