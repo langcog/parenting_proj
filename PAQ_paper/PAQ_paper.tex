@@ -363,14 +363,15 @@ beliefs about children's early learning, beliefs about children's
 autonomy, and other topics.
 
 We administered the initial scale to 250 adults on Amazon's Mechanical
-Turk (Mturk). Participants used a 7-point Likert scale to report the
-degree to which they agreed with each statement from 0 (Do not Agree) to
-6 (Strongly Agree). We began by conducting exploratory factor analysis
-(EFA) to assess the dimensionality of the scale. Based on the output of
-a parallel analysis (Horn, 1965), we retained 5 factors in this initial
-model. We subsequently dropped any items that had factor loadings less
-than .40 on the relevant factor, as well as any items that had factor
-loadings greater than .40 on another factor.
+Turk (Amazon's Mechanical Turk). Participants used a 7-point Likert
+scale to report the degree to which they agreed with each statement from
+0 (Do not Agree) to 6 (Strongly Agree). We began by conducting
+exploratory factor analysis (EFA) to assess the dimensionality of the
+scale. Based on the output of a parallel analysis (Horn, 1965), we
+retained 5 factors in this initial model. We subsequently dropped any
+items that had factor loadings less than .40 on the relevant factor, as
+well as any items that had factor loadings greater than .40 on another
+factor.
 
 We repeated this process a total of 8 times. After several iterations,
 the parallel analysis began returning 3 factors, so we retained 3
@@ -394,12 +395,12 @@ a tendency to rate all items highly, Simms, 2008).
 
 The final set of items comprising the three subscales is presented in
 Table \ref{tab:items}. For the final sample, which consisted of 250
-participants recruited on Mturk, Chronbach's alpha for the whole scale
-was 0.90, for the AA subscale was 0.82, for the EL subscale was 0.83,
-and for the RR subscale was 0.81. In sum, items within subscales are
-highly correlated, but items across subscales are highly correlated as
-well, which may reflect response biases to rate all items particularly
-high or low.
+participants recruited on Amazon's Mechanical Turk, Chronbach's alpha
+for the whole scale was 0.90, for the AA subscale was 0.82, for the EL
+subscale was 0.83, and for the RR subscale was 0.81. In sum, items
+within subscales are highly correlated, but items across subscales are
+highly correlated as well, which may reflect response biases to rate all
+items particularly high or low.
 
 We next examined the loadings of individual items onto the three factors
 (Figure \ref{fig:loadings}). Items loaded onto the three factors roughly
@@ -461,22 +462,57 @@ RR & Parent Age & -0.00 & 0.01 & -0.01 & 0.01 \\
 Approaches to parenting are known to differ across cultures and groups.
 To better understand whether the parenting attitudes captured by our
 survey reflect group differences, we examined average scores on the PAQ
-subscales based on demographic factors. We administered the PAQ to 680
-parents who were members of a local children's museum and subsequently
-asked them to provide information about their gender, level of
-education, age, ethnicity, and the number of children they have. Figure
-\ref{fig:demographics} displays the average PAQ scores for each
-demographic category.
+subscales based on demographic factors.
 
-To quantify any possible group differences, we fit separate Bayesian
-mixed-effects ordinal regression models for each subscale (AA, EL, RR)
-with the following structure, with likert ratings of agreement for each
-item (1-6) entered as dependent measures:
+\section{Methods}\label{methods}
+
+\subsection{Participants and Design}\label{participants-and-design}
+
+Participants were 680 parents who were members of a local children's
+museum. Parents received an email from the museum membership list
+informing them about the opportunity to participate in a study about
+parenting attitudes. If they were interested, they could provide consent
+and fill out the survey via a link in the email.
+
+Participants were 84.60\% female. On average, parents were highly
+educated, with 15\% of participants having a doctorate, 42.80\% having a
+professional degree, 33.70\% having a 4-year-college degree, 3.10\%
+having a 2-year college degree, 4.40\% completing some college, 0.60\%
+completing high school, 0.10\% not completing high school, and 0.30\%
+not reporting their education background. Participants mostly identified
+as White (51.60\%) or Asian (30\%), with 5.10\% identifying as Hispanic
+or Latino, 0.70\% identifying as Black or African American, 0.10\%
+identifying as American Indian or Alaska Native, 0.40\% identifying as
+Native Hawaiian or Pacific Islander, 7.90\% identifying as Multiple
+Ethnicities, 2.90\% reporting their ethnicity as \enquote{Other}, and
+1\% not reporting their ethnicity. Parents were between under 18 years
+(0.10\%), 18-24 years (0.40\%), between 25-34 years (0.10\%), between
+35-44 years (55\%), between 45-54 years (7.40\%), between 55-64 years
+(0.90\%), and between 65-74 years (1.90\%). Parents reported having 1
+child (37.40\%), 2 children (48.20\%), 3 children (10.10\%), 4 children
+(3.10\%), 5 children (0.70\%), and 0.30\% did not report how many
+children they had.
+
+Parents first completed the PAQ, and then provided information about
+their gender, level of education, age, ethnicity, and the number of
+children they have. After completion of the study, parents received a
+report with results of the study through the membership list.
+
+\subsection{Results and Discussion}\label{results-and-discussion}
+
+Figure \ref{fig:demographics} displays the average PAQ scores for each
+demographic category. To quantify any possible group differences, we fit
+separate Bayesian mixed-effects ordinal regression models for each
+subscale (AA, EL, RR) with the following structure, with likert ratings
+of agreement for each item (1-6) entered as dependent measures:
 \texttt{agreement\ rating\ \textasciitilde{}\ age\ +\ education\ +\ ethnicity\ +\ gender\ +\ number\ of\ children\ +\ (1\ \textbar{}\ subject)\ +\ (1\textbar{}\ item)}
 Groups with fewer than 20 cases were removed from plots and analyses to
-avoid overfitting. Although displayed as categorical for visual
-simplicity in Figure \ref{fig:demographics}, parent age and education in
-years were entered as continuous variables in the regression models.
+avoid overfitting. Although parents reported their age in terms of a
+range (e.g., \enquote{25-34}), we treated approximate age as a
+continuous variable in analyses, using the median of the range parents
+selected. We also calculated education in years for each of the
+categories parents reported, so that education could be treated as
+continuous.
 
 Table \ref{tab:demo} displays the results of the regression analyses. We
 found that stronger agreement with AA attitudes was associated with
@@ -501,6 +537,29 @@ associated with having a greater number of children (\(\beta\) = 0.15,
 95\% CI = 0.04 - 0.25), and identifying as White was associated with
 lower agreement with RR attitudes (\(\beta\) = -0.20, 95\% CI = -0.38 -
 -0.01).
+
+These results suggest that parenting attitudes vary based on some
+demographic factors. The strongest effect we observed was of gender on
+AA attitudes, with females reporting stronger agreement with these
+items. This pattern could reflect a cultural expectation for females to
+more readily display affection, and/or theories of attachment parenting
+which often focus on physical closeness between mother and child
+({\textbf{???}}). We also found that Asian parents reported lower AA
+agreement compared to other racial groups, which is consistent with
+previous research showing that ({\textbf{???}} about parenting
+differences in asian groups?). We also found that identifying as White
+or Multiple Ethnicities was associated with greater agreement with EL
+attitudes. This could reflect a contemporary Western focus on
+exploration and play as important learning opportunities in childhood,
+which is captured by the EL subscale ({\textbf{???}} for this??).
+
+It should be noted that the population we sampled was highly educated
+and predominantly female. We also had limited ability to estimate
+attitudes of racial or ethnic identifications other than White, Asian,
+Hispanic or Latino, or Multiple Ethnicities, because they were
+under-sampled. Further investigations with a broader range of education
+and racial and ethnic backgrounds and a greater proportion of fathers
+would provide a clearer picture of demographic variability in attitudes.
 
 \subsection{Study 2: Relation of attitudes to parenting
 behaviors}\label{study-2-relation-of-attitudes-to-parenting-behaviors}
@@ -578,17 +637,28 @@ whether the parenting attitudes it measures are related to actual
 parenting behaviors. For example, do parents who strongly agree with
 items on the Early Learning subscale read to their children more often?
 Do parents who strongly endorse items on the Rules and Respect subscale
-give more time-outs? To assess this, we asked a sample of 250 parents on
-Mturk to complete the PAQ and then rate the frequency with which they
-engaged in a number of parenting behaviors, focusing on the prior month
-(Table \ref{tab:behavesents}). We elicited responses about 12 different
-behaviors, with four corresponding to each PAQ category. Parents chose
-between the following frequency options: \enquote{Multiple times per
-day}, \enquote{Most days}, \enquote{Once or twice per week,}
+give more time-outs? TO assess this, we had parents complete the PAQ and
+then rate the frequency with which they engaged in a number of parenting
+behaviors.
+
+\section{Methods}\label{methods-1}
+
+\subsection{Participants and Design}\label{participants-and-design-1}
+
+Participants were 250 parents recruited through Amazon's Mechanical
+Turk. Parents completed the PAQ and then responded about how often they
+engaged in 12 different parenting behaviors, focusing on the prior
+month. Of the 12 behaviors, four corresponded theoretically to each PAQ
+category (Table \ref{tab:behavesents}). Parents chose between the
+following frequency options: \enquote{Multiple times per day},
+\enquote{Most days}, \enquote{Once or twice per week,}
 \enquote{Occasionally,} \enquote{Almost never,} \enquote{Never,} and
-\enquote{My child is too young for this.} Parents who did not have
-children under the age of 5 were excluded from analyses, as were any
-responses of \enquote{My child is too young for this.}
+\enquote{My child is too young for this.} Parents who reported that they
+did not have children under the age of 5 were excluded from analyses, as
+were any items for which parents responded \enquote{My child is too
+young for this.}
+
+\subsection{Results and Discussion}\label{results-and-discussion-1}
 
 The distribution of frequencies that parents reported is displayed in
 Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are
@@ -629,15 +699,15 @@ development}\label{study-3-memory-for-new-information-about-parenting-and-child-
 
 Parents' attitudes about parenting and child development may be an
 important consideration for crafting interventions on parenting
-behaviors or beliefs. There are frequent efforts to intervene on
-parenting practices, for example, public service announcements telling
-parents to read to their children; courses aimed at helping fathers
-engage with their children; messages aimed at encouraging parents and
-teachers to give children opportunities for free play. There is evidence
-that existing lay theories can interact in surprising ways with this
-type of messaging in other domains. Here we asked whether parents'
-attitudes about parenting and child development would predict how they
-uptake new information about child development versus an unrelated
+behaviors or beliefs. Efforts to intervene on parenting practices are
+common, for example, public service announcements telling parents to
+read to their children; courses aimed at helping fathers engage with
+their children; messages aimed at encouraging parents and teachers to
+give children opportunities for free play. There is evidence that
+existing lay theories can interact in surprising ways with this type of
+messaging in other domains. Here we asked whether parents' attitudes
+about parenting and child development would predict how they understand
+and remember new information about child development versus an unrelated
 topic.
 
 \begin{figure}
@@ -668,29 +738,63 @@ EL Articles & -0.21 & 0.75 & -1.68 & 1.29 \\
 \end{tabular}
 \end{table}
 
-We asked 250 adults on Mturk to fill out the PAQ and then read four
-popular press articles, two of which related to child development
-({\textbf{???}}) and two of which related to other science topics
-({\textbf{???}}). The articles were edited for length, and the order in
-which the articles were presented was randomized. Next, participants
-answered six four-alternative forced-choice questions testing their
-memory and understanding of each article (24 total questions). We were
-specifically interested in whether participants who agreed more strongly
-with EL attitudes would better understand and remember the information
-in the child development articles, which we predicted may have been
-consistent with their existing views of development. Participants'
-accuracy in relation to their average AA, EL and RR scores is displayed
-in Figure \ref{fig:uptake}.
+\section{Methods}\label{methods-2}
+
+\subsection{Participants and Design}\label{participants-and-design-2}
+
+Participants were 250 adults (parents and non-parents) recruited on
+Amazon's Mechanical Turk. Participants first filled out the PAQ, and
+then read four popular press articles, two of which related to early
+learning and cognitive development (one about children's learning from
+spontaneous play; {\textbf{???}}, and one about infants learning from
+events that defy their expectations about physical properties of the
+world ({\textbf{???}})) and two of which related to other science topics
+(one about irridescence in plants; {\textbf{???}}, and one about the
+``island rule,'' which attempts to explain why species on islands tend
+to be smaller than on the mainland, {\textbf{???}}). The articles were
+edited for length, and the order in which the articles were presented
+was randomized.
+
+Next, participants answered six four-alternative forced-choice questions
+testing their memory and understanding of each article (24 total
+questions). For each article, half of the questions focused on specific
+details from the article, and half focused on generalized concepts
+introduced in the article to test whether participants had comprehended
+the overall message of the article. For example, a question testing
+specific details from one of the EL articles was: \enquote{In this
+article, children saw unexpected events including:} with the following
+options: \enquote{A toy car rolling through a solid wall} (the correct
+answer), \enquote{A toy falling off the table}, \enquote{A toy animal
+speaking out loud}, and \enquote{A balloon flying away}. A question
+testing generalization of the concepts in the same article was:
+\enquote{Based on the results of the study described in this article,
+researchers can conclude that:} with the following options:
+\enquote{Babies have trouble processing surprising events and learn by
+paying attention to familiar, predictable events}, \enquote{Babies learn
+by paying attention to surprising events} (the correct
+answer),\enquote{Babies quickly learn new rules about the physical world
+(e.g., cars can go through walls) if they see it happen once}, and
+\enquote{Babies do not know enough about the physical world to be
+surprised by a toy going through a wall}. We were specifically
+interested in whether participants who agreed more strongly with EL
+attitudes would better understand and remember the information in the EL
+articles, which we predicted may have been consistent with their
+existing views of development, or consistent with their interests, and
+thus easier to learn.
+
+\section{Results}\label{results}
 
 The average accuracy for control questions was 0.76(CI = 0.73 - 0.78)
 and the average accuracy for experimenter questions was 0.81(CI = 0.73 -
 0.83). There was no significant difference in accuracy between
 conditions, t = -4.83, p = 0.00.
 
-To assess whether participants who more strongly agreed with EL
-attitudes were at an advantage for understanding and remembering the
-child development articles they read, we fit a bayesian logistic
-mixed-effects regression with the following structure:
+Participants' accuracy in relation to their average AA, EL and RR scores
+is displayed in Figure \ref{fig:uptake}. To quantify whether
+participants who more strongly agreed with EL attitudes were at an
+advantage for understanding and remembering the child development
+articles they read, we fit a bayesian logistic mixed-effects regression
+with the following structure:
 \texttt{accuracy\ \textasciitilde{}\ AA\ PAQ\ score\ *\ article\ type\ +\ EL\ PAQ\ score\ *\ article\ type\ +\ RR\ PAQ\ score\ *\ article\ type\ +\ (article\ type\ \textbar{}\ subject)\ +\ (1\textbar{}\ item)}.
 We excluded 7.70\% of responses from analyses because participants spent
 fewer than 15 seconds reading the article, our pre-determined minimum
