@@ -4,3 +4,8 @@ auth.json
 analysis/*.html
 .R*
 analysis/*files*
+*.fff
+*.DS_Store
+*.log
+*.ttt
+*.tex
