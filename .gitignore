@@ -4,3 +4,4 @@ auth.json
 analysis/*.html
 .R*
 analysis/*files*
+.Rproj.user
