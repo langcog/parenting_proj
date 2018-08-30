@@ -1,52 +1,57 @@
 ---
-title             : "Measuring Lay Theories of Parenting and Child Development"
-shorttitle        : "Measuring Parenting Theories"
+title : "Measuring Implicit Theories of Parenting and Child Development"
+shorttitle : "Measuring Parenting Theories"
 author: 
-  - name          : "Emily Hembacher"
-    affiliation   : "1"
-    corresponding : no    # Define only one corresponding author
-  - name           : "Michael C. Frank"
-    affiliation   : "1"
-    corresponding : yes    # Define only one corresponding author
-    address       : "450 Serra Mall, Stanford, CA 94301"
-    email         : "mcfrank@stanford.edu"
+  - name : "Emily Hembacher"
+    affiliation : "1"
+    corresponding : no # Define only one corresponding author
+  - name : "Michael C. Frank"
+    affiliation : "1"
+    corresponding : yes # Define only one corresponding author
+    address : "450 Serra Mall, Stanford, CA 94305"
+    email : "mcfrank@stanford.edu"
+
 affiliation:
-  - id            : "1"
-    institution   : "Stanford University"
+  - id : "1"
+    institution : "Stanford University"
+
 author_note: |
-  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
-  Enter author note here.
+ This work supported by a gift from Kinedu Inc. We thank Laura Schulz for inspiring this line of inquiry and for generously providing her unpublished materials. 
+
 abstract: |
-  Enter abstract here. Each new line herein must be indented, like this line.
-  
-keywords          : "keywords"
-wordcount         : "X"
-bibliography      : ["paq.bib"]
-figsintext        : yes
-figurelist        : no
-tablelist         : no
-footnotelist      : no
-lineno            : no
-mask              : no
-class             : "man"
-output            : papaja::apa6_pdf
+ Enter abstract here. Each new line herein must be indented, like this line.
+ 
+keywords : "keywords"
+wordcount : "X"
+
+bibliography : ["paq.bib"]
+
+figsintext : yes
+figurelist : no
+tablelist : no
+footnotelist : no
+lineno : no
+
+mask : no
+class : "man"
+output : papaja::apa6_pdf
 editor_options: 
   chunk_output_type: console
 ---
 
 ```{r}
-knitr::opts_chunk$set(fig.width = 8, fig.height = 5, echo = FALSE, warning = FALSE, message = FALSE, cache = TRUE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache = FALSE)
 ```
 
 ```{r load_packages, include = FALSE}
 library(tidyverse)
 library(psych)
 library(langcog) 
-library(ggthemes) #plot themes
-library(rjson) #for json data
-library(lme4) #mixed effects models
-library(lmerTest) #nicer lmer output
-library(tidyboot) #bootstrapped confidence intervals
+library(ggthemes) # plot themes
+library(rjson) # for json data
+library(lme4) # mixed effects models
+library(lmerTest) # nicer lmer output
+library(tidyboot) # bootstrapped confidence intervals
 library(magrittr)
 library(papaja)
 library(xtable)
@@ -58,723 +63,90 @@ library(viridis)
 library(kableExtra)
 library(nFactors)
 select <- dplyr::select # masked by MASS
+
+theme_set(theme_bw() + 
+            theme(strip.background = element_blank(), 
+                  panel.grid = element_blank())) # nice theme with limited extras
 ```
 
-Parents and caregivers play a critical role in forging the early environment that infants and young children develop in. As such, developmentalists have long been interested in variability in parenting behaviors and the effects of those behaviors on the developing child. Historically, variability in approaches to parenting have been described in terms of frameworks such as Baumrind's parenting styles [@baumrind1970], in terms of parents' tendencies to engage in specific parenting behaviors [e.g., reading to children; @suskind2016], and parents' adherence to particular parenting philosophies [e.g., attachment parenting; @jones2014]. In the present series of studies, we add to this body of work by investigating the dimensions along which parents differ in their attitudes about parenting infants and young children. 
+Parents and caregivers play a critical role in forging children's early environment. Thus, developmentalists have long been interested in variability in parenting behaviors and the effects of these behaviors on the developing child. Historically, variability in approaches to parenting have been described through frameworks such as Baumrind's parenting styles [@baumrind1970], through parents' tendencies to engage in specific parenting behaviors [e.g., reading to children; @suskind2016], or through parents' adherence to particular parenting philosophies [e.g., attachment parenting; @jones2014]. In the present series of studies, we add to this body of work by investigating the dimensions along which parents differ in their underlying attitudes about parenting infants and young children. Our contribution is to begin to develop a psychometrically-valid instrument for measuring these attitudes. 
 
-The array of individual parenting behaviors we observe may emerge in part from distinct lay theories that parents hold about parenting and early childhood development [@darling1993]. For example, a parent who strongly believes that their child’s later success will be determined by learning opportunities in infancy may spend more time speaking and reading to their infant or providing opportunities for exploration. Likewise, a parent who believes that building a strong emotional bond with their baby is one of the most important goals of parenting might have more physical contact with their child than a parent who does not hold this theory. These theories may or may not be consciously articulated by parents; even implicit theories have been shown to determine behavior in other domains [@dweck1988 ; @erdley1997]. 
+The array of individual parenting behaviors we observe may emerge in part from distinct intuitive theories that parents hold about parenting and early childhood development [@darling1993]. INTUITIVE THEORIES ARE .... 
 
-Previous research on parenting variability has often focused on a) broad approaches to parenting, largely stemming from Baumrind’s (1970) framework, or b) knowledge about the specifics of early childhood development [e.g., @macphee2002]. While Baumrind’s framework has been hugely influential and useful for understanding links between parenting behaviors and child outcomes, the behaviors it describes generally manifest later in childhood, meaning that it is less useful for describing parenting approaches during infancy and early childhood. And while knowledge about child development likely influences attitudes and behavior, parenting attitudes cannot necessarily be inferred from knowledge alone. Rather, implicit theories about what is best for infants and young children may be a related but distinct construct. 
 
-There are at least two reasons to focus on parents’ lay theories about child development. First, as noted in previous frameworks of parenting variability, parents’ implicit theories might be a driving factor for many of the behaviors parents engage in with their child, which may in turn have implications for developmental outcomes. Relatedly, parents’ attitudes may moderate the uptake of new information about parenting. Previous research has found that interventions on beliefs related to public health are more successful when they take into account people’s existing belief structures in the domain [e.g., @kumar2015; @nyhan2014]. 
+A parent who strongly believes that their child’s later success will be determined by learning opportunities in infancy may spend more time speaking and reading to their infant or providing opportunities for exploration. Likewise, a parent who believes that building a strong emotional bond with their baby is one of the most important goals of parenting might have more physical contact with their child than a parent who does not hold this theory. These theories may or may not be consciously articulated by parents; even implicit theories have been shown to determine behavior in other domains [@dweck1988; @erdley1997]. 
 
-There is some evidence supporting the notion that parents’ behaviors towards their infants and young children are mediated by implicit lay theories about child development, which vary by SES and across cultures. For example, cross-cultural studies have found profound differences in how parents interact with infants. @richman1992 found that mothers in the Gusii community of Kenya primarily engaged with their children to soothe them when upset, but did not often speak to them with the goal of engaging or stimulating them, as did Caucasian parents in the United States. The authors attribute this behavior to cultural conventions stemming from the belief that there is no purpose in speaking to infants, as they will not understand what is being said [@richman1992;@levine2004]. 
+Previous research on parenting variability has often focused on a) broad approaches to parenting, largely stemming from Baumrind’s (1970) framework, or b) knowledge about the specifics of early childhood development [e.g., @macphee2002]. Baumrind’s framework -- delineating permissive, authoritative, and authoritarian styles of parenting -- has been hugely influential and useful for understanding links between parenting behaviors and child outcomes. But the behaviors it describes generally manifest later in childhood, meaning that it is less useful for describing parenting approaches during infancy and early childhood. And while specific knowledge about the science of child development likely influences attitudes and behavior, parenting attitudes cannot necessarily be inferred from knowledge alone. Instead, an implicit theory of how to parent is likely distinct construct. 
 
-There is of course also variability in how parents within Western cultures interact with their children. A number of studies have identified SES disparities in the amount that parents talk to their children, which in turn has been found to predict children’s language and academic outcomes [@hoff2003;@huttenlocher2002, although more recent research has revealed that the quality of parent-child interactions may play a greater role in language outcomes compared to mere quantity of speech, @hirsh-pasek2015]. With regard to the source of the SES “word-gap”, @rowe2008 found that parents’ knowledge of child development (based on the Knowledge of Infant Development Inventory; KIDI; @macphee2002) predicted their child-directed language, with more knowledgeable parents speaking to their children more, even when controlling for the amount of speech directed at another adult. In sum, people’s knowledge about child development seems to have consequences for their interactions with their children and children’s outcomes. 
+There are at least two reasons to focus on parents’ intuitive theories about child development. First, as noted in previous frameworks of parenting variability, parents’ implicit theories might be a driving factor for many of the behaviors parents engage in with their child, which may in turn have implications for developmental outcomes. Relatedly, parents’ attitudes may moderate the uptake of new information about parenting. Previous research has found that interventions on beliefs related to public health are more successful when they take into account people’s existing belief structures in the domain [e.g., @kumar2015; @nyhan2014]. 
 
-However, it is still unknown how the constellation of knowledge and beliefs people have about child development and parenting might organize into discrete lay theories. If there is a systematic structure to parents’ beliefs, this could be useful for understanding the links between beliefs, behavior, and outcomes. As suggested above, it would also be informative for crafting interventions on beliefs. In an attempt to estimate that structure, we had groups of adults report their agreement with a series of propositions about parenting and early child development, and conducted exploratory and then confirmatory factor analysis on people’s responses [@clark1995;@furr2011;@simms2008]. By iterating on this process, we identified 3 dimensions of parenting attitudes on which parents differ, which we term “affection and attachment,”, “early learning,” and “rules and respect.” The propositions we retained after removing those with low factor loadings or low intercorrelations within subscale form a new scale, the Parenting Attitudes Questionnaire (PAQ).   
+There is some evidence supporting the notion that parents’ behaviors towards their infants and young children are mediated by implicit theories about child development, which vary by SES and across cultures. Cross-cultural studies in particular have found profound differences in how parents interact with infants and have invoked inplicit theories of parenting in interpreting these differences. For example, @richman1992 found that mothers in the Gusii community of Kenya primarily engaged with their children to soothe them when upset, but did not often speak to them with the goal of engaging or stimulating them, as did Caucasian parents in the United States. The authors attribute this behavior to cultural conventions stemming from the belief that there is no purpose in speaking to infants, as they will not understand what is being said [@richman1992;@levine2004]. 
 
-We then conducted a series of studies aimed at estimating ecological validity for the scale. Specifically, we asked whether people's parenting attitudes as assessed by the PAQ varied based on demographic factors, whether people's attitudes were related to their self-reported parenting behaviors, and whether attitudes mediated people's understanding of and memory for new information about parenting and child development. In the following sections, we describe the process of generating scale items, determining the factor structure of the beliefs we measured, and initial steps towards validating the scale in more detail.
+There is of course also variability in how parents within Western cultures interact with their children. One prominent example of this variation is in the amount and type of speech that is directed to young children. A number of studies have identified SES disparities in the amount that parents talk, which in turn has been found to be related to children’s language and academic outcomes [e.g., @hoff2003;@huttenlocher2002].^[More recent research has revealed that the quality of parent-child interactions may be more related to language outcomes compared to mere quantity of speech [@hirsh-pasek2015].] In an attempt to explain this variability, @rowe2008 found that parents’ knowledge of child development (based on the Knowledge of Infant Development Inventory; KIDI; @macphee2002) related to the amount of child-directed language produced. More knowledgeable parents spoke to their children more, even when controlling for the amount of speech they produced that was directed at another adult. 
+
+It is still unknown, however, how the constellation of knowledge and beliefs about child development and parenting might be organized into intuitive theories. If there is a systematic structure to parents’ beliefs, this structure could be useful for understanding the links between beliefs, behavior, and outcomes. As suggested above, it would also be informative for crafting interventions on beliefs. 
+
+In the current work, in an attempt to estimate the structure of beliefs of parenting, we had groups of adults report their agreement with a series of propositions about parenting and early child development, and conducted exploratory and then confirmatory factor analysis on people’s responses [@clark1995;@furr2011;@simms2008]. By iterating on this process, we identified 3 dimensions of parenting attitudes on which parents differ, which we term “affection and attachment,” “early learning,” and “rules and respect.” The propositions we retained after removing questions with low factor loadings or low intercorrelations form a new scale, the Parenting Attitudes Questionnaire (PAQ). 
+
+We next conducted a series of studies aimed at estimating ecological validity for the scale. Specifically, we asked whether people's parenting attitudes as assessed by the PAQ varied based on demographic factors, whether people's attitudes were related to their self-reported parenting behaviors, and whether attitudes mediated people's understanding of and memory for new information about parenting and child development. In the following sections, we describe the process of generating scale items, determining the factor structure of the beliefs we measured, and initial steps towards validating the scale in more detail.
 
 # Scale Construction 
 
-```{r}
-files <- dir("../production-results/e9/")
-d.raw <- data.frame()
-
-for (f in files) {
-  jf <- paste("../production-results/e9/",f,sep="")
-  jd <- fromJSON(paste(readLines(jf), collapse=""))
-  
-  # clean up different tasks
-  trial_type <- jd$answer$data$trial_type
-  
-  #parenting questionnaire 
-  sent <- jd$answers$data$sentence
-  rating <- as.numeric(jd$answers$data$rating)
-                       
-  sent <- sent[sent != ""]
-  # sent <- sent[trial_type != "priorities_instruct"]
-  rating <- rating[sent != ""] 
-  # rating <- rating[trial_type != "priorities_instruct"] 
-  
-  #demographics
-  race1 <- as.character(jd$answers$data$race[1])
-  race2 <- as.character(jd$answers$data$race[2])  
-  
-  id <- data.frame(workerid = jd$WorkerId, 
-                   sent = sent,
-                   rating = rating,
-                   children = jd$answers$data$children,
-                   language = jd$answers$data$homelang,
-                   ses = jd$answers$data$ladder,
-                   gender = jd$answers$data$gender,
-                   age = jd$answers$data$age,
-                   education = jd$answers$data$education,
-                   ethnicity = jd$answers$data$ethnicity,
-                   childAgeYoung = jd$answers$data$childAgeYoung,
-                   childAgeOld = jd$answers$data$childAgeOld,
-                   race1 = race1,
-                   race2 = race2,
-                   duplicate = jd$WorkerId %in% d.raw$workerid)
-  d.raw <- bind_rows(d.raw, id)
-}
-#remove duplicates from workers who did the study twice
-
-d.raw%<>%
-  filter(duplicate == FALSE)
+```{r scale-ana, child="scale.Rmd"}
 ```
 
-```{r}
-#Map on question short forms so that we can use these instead. 
-labels <- read.csv("../analysis/sent_forms_e9.csv")
-labels$sent <- as.character(labels$sent)
-```
-
-```{r}
-#Clean up labels.
-d.raw$sent <- as.character(d.raw$sent)
-d.raw$sent <- stringr::str_replace_all(d.raw$sent, "'", "")
-d.raw$sent <- stringr::str_replace_all(d.raw$sent, "’", "")
-d.raw$sent <- stringr::str_replace_all(d.raw$sent, "“", "")
-d.raw$sent <- stringr::str_replace_all(d.raw$sent, "”", "")
-d.raw$sent <- stringr::str_replace_all(d.raw$sent, "‘", "")
-d.raw$sent <- stringr::str_replace_all(d.raw$sent, "â", "")
-```
-
-```{r}
-d <- left_join(d.raw, labels)
-d$rating[d$reverse_code == 1] <- 6 - d$rating[d$reverse_code == 1]
-```
-
-```{r}
-#Plot demographic info.
-subinfo <- d %>% 
-  select(workerid, age, gender, children, ses, education, language, 
-         ethnicity, childAgeYoung, childAgeOld, race1, race2) %>%
-  distinct
-
-subinfo$race <- subinfo$race1
-subinfo$race[!is.na(subinfo$race2)]<- "Multiple Races"
-subinfo$race <- as.factor(subinfo$race)
-
-subinfo$race <- recode(subinfo$race, "amInd" = "American Indian or Alaska Native", "asian" = "Asian", "black" = "Black", "natHaw" = "Native Hawaiian or US Pacific Islander", "other" = "Other", "white"= "White")
-
-subinfo$education <- factor(subinfo$education, levels = c("highSchool","someCollege","4year","someGrad","Grad"))
-subinfo$education <- recode(subinfo$education, "highSchool" = "High school","someCollege" = "Some college","4year" = "4 year","someGrad" = "Some grad school","Grad" = "Grad school")
-
-subinfo$gender <- str_replace_all(subinfo$gender, "woman|female|FEMALE|F$|f$|Femal$|Females|Females","Female")
-subinfo$gender <- str_replace_all(subinfo$gender, "man|^male|^Male|^MALE|^M$|^m$|^Maleq|Make", "Male")
-subinfo$gender[subinfo$gender != "Female" & subinfo$gender != "Male"] <- NA
-
-subinfo$language <- str_replace_all(subinfo$language, "english|eNGLISH|Engliah|ENGLISH|^eng$|Enlgish", "English")
-subinfo$language <- str_replace_all(subinfo$language," ", "")
-subinfo$language <- str_replace_all(subinfo$language,"arabic", "Arabic")
-subinfo$language <- str_replace_all(subinfo$language,"chinese", "Chinese")
-subinfo$language <- str_replace_all(subinfo$language,"german", "German")
-subinfo$language <- str_replace_all(subinfo$language,"tagalog", "Tagalog")
-
-subinfo$childAgeYoung <- factor(subinfo$childAgeYoung, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
-
-subinfo$childAgeOld <- factor(subinfo$childAgeOld, levels = c("","0to6mo","7to12mo","1y","2y","3y","4y","5y","6y","7y","8y","9y","10y","olderthan10"))
-
-subinfo$ses <- factor(subinfo$ses, levels = c("1","2","3","4","5","6","7","8","9","10"))
-
-subinfo$children <- factor(subinfo$children)
-subinfo$children <- recode(subinfo$children, "morethan5"= ">5")
-
-subinfo$ethnicity[subinfo$ethnicity == "" | subinfo$ethnicity == "NA"] <- NA
-subinfo$ethnicity <- recode(subinfo$ethnicity, "NonHispanic"= "Non-Hispanic")
-```
-
-```{r}
-#demographics plots
-ses_plot <- ggplot(filter(subinfo, !is.na(ses)), aes(ses))+
-  geom_histogram(stat = "count") +
-  xlab("SES") + 
-  ylab("Count") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE) +
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-  
-gender_plot <- ggplot(filter(subinfo, !is.na(gender)), aes(gender))+
-  geom_histogram(stat = "count") +
-  xlab("Gender") + 
-  ylab("Count") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE) +
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-
-education_plot <- ggplot(filter(subinfo, !is.na(education)), aes(stringr::str_wrap(education, 10)))+
-  geom_histogram(stat = "count") +
-  xlab("Education") + 
-  ylab("Count") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE) +
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-
-age_plot <- ggplot(filter(subinfo, !is.na(age)), aes(age))+
-  geom_histogram(stat = "count") +
-  xlab("Age") + 
-  ylab("Count") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE) +
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-
-ethnicity_plot <- ggplot(filter(subinfo, !is.na(ethnicity)), aes(ethnicity))+
-  geom_histogram(stat = "count") +
-  xlab("Ethnicity") + 
-  ylab("Count") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE) +
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-
-race_plot <- ggplot(filter(subinfo, !is.na(race)), aes(stringr::str_wrap(race, 10)))+
-  geom_histogram(stat = "count") +
-  xlab("Race") + 
-  ylab("Count") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE) +
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-```
-
-```{r normdemo,  fig.width=12, fig.height=8, fig.cap= "Demographic information for participants in the final norming sample."}
-grid.arrange(ses_plot, age_plot, gender_plot, education_plot, ethnicity_plot, race_plot, nrow = 3)
-```
-
-```{r}
-#look at mean ratings across sentences.
-ms <- d %>%
-  filter(instrument == "attitudes")%>%
-  group_by(category, short_sent, reverse_code) %>%
-  multi_boot_standard(col = "rating") %>%
-  arrange(category, desc(mean)) 
-
-ms$short_sent_ord <- factor(ms$short_sent, 
-                             levels = ms$short_sent)
-
-ms$reverse_code <- recode(ms$reverse_code, "0" = "No", "1" = "Yes")
-
-ms%<>%
-  mutate(`Reverse coded` = factor(reverse_code),
-         `PAQ category` = factor(category))
-```
-
-```{r sentratings,  fig.width=10, fig.height=8, fig.cap= "Average ratings for individual PAQ items."}
-ggplot(ms, aes(short_sent_ord, mean, colour = `PAQ category`, shape = `Reverse coded`)) +
-  geom_point(size = 3.5)+
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9))+
-  xlab("") + 
-  ylab("Mean Rating") + 
-  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  theme_base()+
-  scale_color_viridis(discrete=TRUE)+
-  theme(axis.text.y = element_text(size = 12),
-        axis.text.x = element_text(angle=90, hjust = 1, vjust =.5),
-        legend.position="bottom",
-        legend.text = element_text(size = 14)) 
-```
-
-```{r}
-wide_all <- d %>% 
-  filter(instrument == "attitudes") %>%
-  select(workerid, short_sent, rating) %>% 
-  arrange(workerid)%>%
-  spread(short_sent, rating)
-
-alpha.mat <- as.matrix(select(wide_all, -workerid))
-alpha_whole <- alpha(x = alpha.mat)
-
-wide_aa <- d %>% 
-  filter(category == "AA") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-
-alpha.aa <- as.matrix(select(wide_aa, -workerid))
-alpha_aa <- alpha(x = alpha.aa)
-
-wide_el <- d %>% 
-  filter(category == "EL") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-
-alpha.el <- as.matrix(select(wide_el, -workerid))
-alpha_el <- alpha(x = alpha.el)
-
-wide_rr <- d %>% 
-  filter(category == "RR") %>%
-  select(workerid, short_sent, rating) %>% 
-  spread(short_sent, rating)
-
-alpha.rr <- as.matrix(select(wide_rr, -workerid))
-alpha_rr <- alpha(x = alpha.rr)
-```
-
-```{r itemstab, results = "asis"}
-items <- labels %>%
-  filter(instrument == "attitudes")%>%
-  select(category, sent, reverse_code)%>%
-  arrange(category)
-
-items$sent[items$reverse_code == 1] <- paste(items$sent[items$reverse_code == 1], "*", sep = "")
-
-cat <- c("AA", "", "", "", "", "", "", "", 
-         "EL", "", "", "", "", "", "", "",
-         "RR", "", "", "", "", "", "", "")
-
-items%<>%
-  transmute(Category = cat,
-            Item = sent)
-  
-kable(items,caption = "Parenting Attitudes Scale items.", "latex", booktabs = T) %>%
-kable_styling(font_size = 9, 
-              latex_options = c("hold_position")) %>%
-column_spec(1, bold = T) %>%
-column_spec(2, width = "40em")%>%  
-footnote(general = "*Indicates reverse coded items.")
-```
-
-```{r}
-#Get eigenvalues for determining number of factors. 
-att.mat <- select(wide_all, -workerid)
-
-ev <- eigen(cor(x=att.mat)) # get eigenvalues
-
-ap <- parallel(subject=nrow(att.mat), var=ncol(att.mat),
-               rep=100,cent=.05)
-
-nS <- nScree(x=ev$values, aparallel=ap$eigen$qevpea)
-#plotnScree(nS)
-```
-
-```{r}
-#Now plot factor analysis
-n.factors <- 3
-
-af <- factanal(x=att.mat, factors = n.factors, scores = "regression")
-
-loadings <- data.frame(af$loadings[,1:n.factors]) %>%
-  mutate(item = rownames(af$loadings)) %>%
-  gather(factor, loading, starts_with("Factor"))
-loadings$item <- factor(loadings$item)
-
-labels$item <- labels$short_sent
-loadings <- left_join(loadings, labels, by = "item")
-```
-
-```{r factors,  fig.width=10, fig.height=8, fig.cap= "Factor loadings on individual PAQ questions."}
-qplot(factor, item, fill=loading, geom="tile", data = loadings) + 
-  scale_fill_viridis() + 
-  facet_grid(category ~ ., scales = "free_y") +
-  theme_base() +        
-  theme(axis.title.x=element_blank(),
-        axis.title.y=element_blank())
-```
-
-##Item generation and dimension reduction
-
-In an initial phase of scale construction, we generated 27 statements that described various attitudes about parenting and child development that we predicted parents might differ on. We selected these items based on a literature review of previous parenting research, including existing measures and theories such as the Knowledge of Infant Development Inventory [KIDI, @macphee2002], Baumrind's parenting framework, and theories of attachment parenting [@jones2014]. Items included in the initial set related to parents' emotional and physical relationships with their children, their beliefs about children's early learning, beliefs about children's autonomy, and other topics. 
+In the initial phase of project, we attempted to construct a set of questions that could be used to measure variation in implicit theories of parenting.  We generated statements that described various attitudes about parenting and child development that we predicted parents might differ on. We selected these items based on a literature review of previous parenting research, including existing measures and theories such as the Knowledge of Infant Development Inventory [KIDI, @macphee2002], Baumrind's parenting framework, and theories of attachment parenting [@jones2014]. Items included in the initial set related to parents' emotional and physical relationships with their children, their beliefs about children's early learning, beliefs about children's autonomy, and other topics. 
 
 <!-- initial scale corresponds to e2 in repo, e1 was mostly knowledge questions and questions from Schulz study, so I'm not considering it as part of the norming process --> 
 
-We administered the initial scale to 250 adults on Amazon's Mechanical Turk (Amazon's Mechanical Turk).  Participants used a 7-point Likert scale to report the degree to which they agreed with each statement from 0 (Do not Agree) to 6 (Strongly Agree). We began by conducting exploratory factor analysis (EFA) to assess the dimensionality of the scale. Based on the output of a parallel analysis [@horn1965], we retained 5 factors in this initial model. We subsequently dropped any items that had factor loadings less than .40 on the relevant factor, as well as any items that had factor loadings greater than .40 on another factor. 
+We administered the initial scale to 250 adults on Amazon Mechanical Turk. Participants used a 7-point Likert scale to report the degree to which they agreed with each statement from 0 (Do not Agree) to 6 (Strongly Agree). We began by conducting exploratory factor analysis (EFA) to assess the dimensionality of the scale. Based on the output of a parallel analysis [@horn1965], we retained 5 factors in this initial model. We subsequently dropped any items that had factor loadings less than .40 on the relevant factor, as well as any items that had factor loadings greater than .40 on another factor.
 
-We repeated this process a total of 8 times. After several iterations, the parallel analysis began returning 3 factors, so we retained 3 factors in subsequent factor analyses. The first factor appeared to corresponded to a theory about affection and attachment and captured the idea that emotionally close parent-child relationships are important for development. The second factor corresponded to ideas around the importance of fostering early learning. The third factor corresponded to ideas around rules and respect, including children's autonomy and behavioral control. We titled these factors Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR). Once we had identified these categories, we dropped items belonging to each category (based on factor loadings) if analyses revealed that Cronbach’s alpha for that category would be increased by dropping the item. We also added new items that were theoretically consistent with the categories that had emerged. Some items were rephrased such that half of the items in each subscale were negatively worded to control for response sets [e.g., a tendency to rate all items highly, @simms2008].
+We repeated this process a total of 8 times. After several iterations, the parallel analysis began returning 3 factors, so we retained 3 factors in subsequent factor analyses. The first factor appeared to corresponded to a theory about affection and attachment and captured the idea that emotionally close parent-child relationships are important for development. The second factor corresponded to ideas around the importance of fostering early learning. The third factor corresponded to ideas around rules and respect, including children's autonomy and behavioral control. We titled these factors Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR). Once we had identified these categories, we dropped items belonging to each category (based on factor loadings) if analyses revealed that Cronbach’s alpha for that category would be increased by dropping the item. We also added new items that were theoretically consistent with the categories that had emerged. Some items were rephrased such that half of the items in each subscale were negatively worded to control for response sets [e.g., a tendency to rate all items highly; @simms2008].
 
-##Final scale
+# Study 1 
 
-The final set of items comprising the three subscales is presented in Table \ref{tab:items}. For the final sample, which consisted of 250 participants recruited on Amazon's Mechanical Turk, Chronbach's alpha for the whole scale was `r round(alpha_whole$total$raw_alpha, digits = 2)`, for the AA subscale was `r round(alpha_aa$total$raw_alpha, digits = 2)`, for the EL subscale was `r round(alpha_el$total$raw_alpha, digits = 2)`, and for the RR subscale was `r round(alpha_rr$total$raw_alpha, digits = 2)`. In sum, items within subscales are highly correlated, but items across subscales are highly correlated as well, which may reflect response biases to rate all items particularly high or low. 
+Our first study was a confirmatory factor analysis of the factors recovered in the previous scale-construction effort. Our goal was to ensure that the factor decomposition we observed in previous exploratory efforts was a good description of the full scale. 
 
-We next examined the loadings of individual items onto the three factors (Figure \ref{fig:loadings}). Items loaded onto the three factors roughly consistent with our established subscales, although some items from the AA subscale loaded onto both the AA and EL factors, and several items from the EL subscale loaded more strongly onto the AA factor. Given the partial overlap of the EL and AA factors, it is possible that participants’ responses on these items were driven to some extent by a more general attitude towards more involved parenting. 
+## Methods 
 
-# Survey Validation
+### Participants
 
-##Study 1: Variability in parenting attitudes based on demographic factors
+Our final sample consisted of 250 participants recruited on Amazon Mechanical Turk. 
 
-```{r}
-#get dataframe with subject responses
-responses_demo <- read.csv("../cdm_paq.csv", header = TRUE)%>%
-  filter(Finished == 1) %>%
-  mutate(sid = ResponseId) %>%
-  select(sid, Q1:Q28) %>%
-  gather("item", "rating", Q1:Q28)
+### Materials
+
+The final set of items comprising the three subscales is presented in Table \ref{tab:items}. 
+
+## Results and Discussion
+
+Chronbach's alpha for the whole scale was `r round(alpha_whole$total$raw_alpha, digits = 2)`, for the AA subscale was `r round(alpha_aa$total$raw_alpha, digits = 2)`, for the EL subscale was `r round(alpha_el$total$raw_alpha, digits = 2)`, and for the RR subscale was `r round(alpha_rr$total$raw_alpha, digits = 2)`. Items within subscales were highly correlated, but items across subscales are highly correlated as well, which may reflect response biases to rate all items particularly high or low. 
+
+We next examined the loadings of individual items onto the three factors (Figure \ref{fig:loadings}). Items loaded onto the three factors in a way that was roughly consistent with our established subscales, but the factors did not pull apart completely. In particular, some items from the AA subscale loaded onto both the AA and EL factors, and several items from the EL subscale loaded more strongly onto the AA factor. Given the partial overlap of the EL and AA factors, it is possible that participants’ responses on these items were driven to some extent by a more general attitude towards more involved parenting. HIGHLIGHT PARTICULAR ITEMS.
+
+MORE HERE ON THE DECISION TO MOVE FORWARD
+
+We next conducted a set of studies aimed at validating the PAQ. We report three studies using convenience populations to examine the relationships of demographic, behavioral, and memory variables to PAQ-measured attitudes. While each of these is only a first step, together they suggest some validity for the PAQ in measuring attitudes regarding early childhood.  
+
+# Study 2: Variability in parenting attitudes based on demographic factors
+
+```{r demo-ana, child="demographics.Rmd"}
 ```
 
-```{r}
-#get dataframe with survey questions
-questions <- read.csv("../cdm_paq.csv", header = TRUE)%>%
-  filter(Status == "Response Type") %>%
-  select(Q1:Q28) %>%
-  gather("item", "sent", Q1:Q28)%>%  
-  mutate(sent = stringr::str_replace_all(sent, "’", ""))
-```
+Approaches to parenting are known to differ across cultures and groups. To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors. The population being queried in this study was a convenience sample of families that belonged as members to a local children's museum; it is likely that this sample restricted the range of parenting attitudes. Further, our sample consists only of respondents to an email solicitation; thus selection biases (e.g., parents curious about parenting) likely further narrow the distribution of attitudes in the sample. 
 
-```{r}
-#get dataframe with short sentences
-labels_demo <-  read.csv("../analysis/sent_forms_cdm.csv")%>%
-  mutate(sent = as.character(sent))
-```
+## Methods
 
-```{r}
-responses_demo%<>%
-  left_join(questions)%>%
-  left_join(labels_demo)
+## Participants 
 
-#rescore reverse coded items
-responses_demo$rating <- as.numeric(responses_demo$rating)
-responses_demo$rating[responses_demo$reverse_code == 1] <- 8 -responses_demo$rating[responses_demo$reverse_code == 1]
-responses_demo$rating <- responses_demo$rating - 1
-```
-
-```{r}
-#get dataframe with demographic info
-subinfo <- read.csv("../cdm_paq_dem.csv", header = TRUE)%>%
-  filter(Finished == "True") %>%
-  transmute(sid = ResponseId, ethnicity = Q25.1, parent_ed = Q26.1, parent_age = Q27.1, parent_gender = Q28.1, num_kids = Q29, oldest_kid = Q30, youngest_kid = Q32, only_kid = Q33)%>%
-  mutate(parent_age_approx = parent_age,
-         parent_ed_years = parent_ed)
-
-#recode parent age to be continuous
-subinfo$parent_age_approx <- recode(subinfo$parent_age_approx, "Under 18" = "18", "18 - 24" = "21", "25 - 34" = "30", "35 - 44" = "40", "45 - 54" = "50", "55 - 64" = "60", "65 - 74" = "70")
-subinfo$parent_age_approx <- as.numeric(as.character(subinfo$parent_age_approx))
-
-#recode parent ed to be continuous (num years)
-subinfo$parent_ed_years <- recode(subinfo$parent_ed_years, "Less than high school" = "12", "High school graduate" = "12", "Some college" = "14", "2 year degree" = "14", "4 year degree" = "16", "Professional degree" = "19", "Doctorate" = "23")
-subinfo$parent_ed_years <- as.numeric(as.character(subinfo$parent_ed_years))
-
-subinfo$ethnicity <- as.character(subinfo$ethnicity)
-subinfo$ethnicity[str_detect(subinfo$ethnicity, ",")] <- "Multiple Ethnicities"
-```
-
-```{r}
-#merge questionnaire data with labels and demo info
-d_demo <- responses_demo%>%
-  left_join(subinfo)
-```
-
-```{r}
-#create a dataframe that has mean subject scores and demographics
-ss <- d_demo %>%
-  group_by(sid, category) %>%
-  summarise(rating = mean(rating))%>%
-  left_join(subinfo)
-```
-
-```{r}
-#only plot groups that have at least 20 observations
-genders <- c("Male", "Female")
-
-ethnicities <- ss%>%
-  group_by(ethnicity) %>%
-  filter(n() > 20)%>%
-  select(ethnicity)%>%
-  filter(ethnicity !="",
-         ethnicity != "Other")%>%
-  unique
-ethnicities <- ethnicities$ethnicity
-
-ages <- ss%>%
-  group_by(parent_age) %>%
-  filter(n() > 20)%>%
-  select(parent_age)%>%
-  unique
-ages <- ages$parent_age
-
-parent_eds <- ss%>%
-  group_by(parent_ed) %>%
-  filter(n() > 20)%>%
-  select(parent_ed)%>%
-  unique
-parent_eds <- parent_eds$parent_ed
-
-nums_kids <- ss%>%
-  group_by(num_kids) %>%
-  filter(n() > 20)%>%
-  select(num_kids)%>%
-  unique
-nums_kids <- nums_kids$num_kids
-```
-
-```{r}
-ms_gender <- d_demo %>% 
-  filter(parent_gender %in% genders) %>%
-  group_by(parent_gender, category) %>%
-  tidyboot_mean(col = rating, na.rm = TRUE)
-```
-
-```{r}
-p_gender <- ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  xlab("PAQ Subscale") + 
-  ylab("PAQ Score") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE, name="Parent Gender") +
-  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.title.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-```
-
-```{r}
-ms_age <- d_demo %>% 
-  filter(parent_age %in% ages) %>%
-  group_by(parent_age, category) %>%
-  tidyboot_mean(col = rating)
-```
-
-```{r}
-p_age <- ggplot(ms_age, aes(category, mean, fill=parent_age)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  xlab("PAQ Subscale") + 
-  ylab("PAQ Score") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE, name="Parent Age") +
-  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.title.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-```
-
-```{r}
-ss$parent_ed <- factor(ss$parent_ed, levels = c("Less than high school","High school graduate","Some college","2 year degree","4 year degree", "Professional degree", "Doctorate"))
-
-ms_ed <- d_demo %>% 
-  group_by(parent_ed, category) %>%
-  filter(parent_ed %in% parent_eds) %>%
-  tidyboot_mean(col = rating)
-```
-
-```{r}
-p_ed <- ggplot(ms_ed, aes(category, mean, fill=parent_ed)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  xlab("PAQ Subscale") + 
-  ylab("PAQ Score") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE, name="Parent Education") +
-  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.title.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-```
-
-```{r}
-ms_ethnic <- d_demo %>% 
-  group_by(ethnicity, category) %>%
-  filter(ethnicity %in% ethnicities) %>%
-  tidyboot_mean(col = rating)
-```
-
-```{r}
-p_ethnic <- ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  xlab("PAQ Subscale") + 
-  ylab("PAQ Score") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE, name="Parent Ethnicity") +
-  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.title.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-```
-
-```{r}
-ms_numkids <- d_demo %>% 
-  group_by(num_kids, category) %>%
-  filter(num_kids %in% nums_kids) %>%
-  tidyboot_mean(col = rating)
-```
-
-```{r}
-p_numkids <- ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
-  geom_bar(stat="identity", position = "dodge") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-             position = position_dodge(width = .9)) + 
-  xlab("PAQ Subscale") + 
-  ylab("PAQ Score") +
-  theme_base()+
-  scale_fill_viridis(discrete = TRUE, name="Number of Children") +
-  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
-  theme(legend.title = element_text(size=10), 
-        legend.text = element_text(size=10), 
-        axis.title.x=element_blank(),
-        axis.text.y  = element_text(vjust=0.5, size=10),
-        axis.title.y = element_text(size=12))
-```
-
-```{r demographics,  fig.width=10, fig.height=8, fig.cap= "Demographic variability in PAQ scores. Error bars represent +/-95% CI computed by non-parametric bootstrap."}
-grid.arrange(p_age, p_ed, p_ethnic, p_gender, p_numkids, nrow = 3)
-```
-
-```{r}
-#make a new dataframe for regression models
-d_demo_mods <- d_demo%>%
-  transmute(sid = sid,
-            rating = ordered(factor(rating)),
-            item = short_sent,
-            category = category,
-            parent_age = as.numeric(parent_age_approx),
-            parent_ed_years = as.numeric(parent_ed_years),
-            num_kids = as.numeric(num_kids),
-            ethnicity = as.factor(ethnicity),
-            parent_gender = as.factor(parent_gender))
-
-d_demo_mods$ethnicity[!d_demo_mods$ethnicity %in% ethnicities] <- NA
-d_demo_mods$parent_gender[!d_demo_mods$parent_gender %in% genders] <- NA
-```
-
-```{r eval = FALSE}
-#bayes ordinal logistic
-#takes a long time to run
-aa_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
-                       (1|sid), 
-     data=filter(d_demo_mods , category == "AA"),
-              family=cumulative("logit"), control = list(adapt_delta = .99))
-
-save(aa_demo_mod, file = "saved_mods/aa_demo_mod.Rdata")
-```
-
-```{r eval = FALSE}
-#bayes ordinal logistic
-#takes a long time to run
-el_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
-                       (1|sid), 
-     data=filter(d_demo_mods , category == "EL"),
-              family=cumulative("logit"), control = list(adapt_delta = .99))
-
-save(el_demo_mod, file = "saved_mods/el_demo_mod.Rdata")
-```
-
-```{r eval = FALSE}
-#bayes ordinal logistic
-#takes a long time to run
-rr_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
-                       (1|sid), 
-     data=filter(d_demo_mods, category == "RR"),
-              family=cumulative("logit"), control = list(adapt_delta = .99))
-
-save(rr_demo_mod, file = "saved_mods/rr_demo_mod.Rdata")
-```
-
-```{r}
-#load saved ordinal logistic regression models
-load ("saved_mods/aa_demo_mod.Rdata")
-load ("saved_mods/el_demo_mod.Rdata")
-load ("saved_mods/rr_demo_mod.Rdata")
-
-aa_d <- summary(aa_demo_mod)
-aa_demo <- data.frame(aa_d$fixed)
-
-el_d <- summary(el_demo_mod)
-el_demo <- data.frame(el_d$fixed)
-
-rr_d <- summary(rr_demo_mod)
-rr_demo <- data.frame(rr_d$fixed)
-```
-
-```{r demo_tab, results = "asis"}
-factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male")
-
-subscales <- c("AA", "", "", "", "", "", "", 
-               "EL", "", "", "", "", "", "", 
-               "RR", "", "", "", "", "", "")
-
-tab_demo_lm <- aa_demo%>%
-  bind_rows(el_demo)%>%
-  bind_rows(rr_demo)%>%
-  mutate(Factor = factors)%>%
-  filter(!str_detect(Factor,"Intercept"))%>%  
-  mutate(Subscale = subscales)
-  
-tab_demo_lm  <- tab_demo_lm [,c(8,7,1:4)]
-
-colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
-
-demo_tab <- xtable(tab_demo_lm, label = "tab:demo", caption = "Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.")
-
-print(demo_tab, type="latex", comment = F, table.placement = "H", hline.after = c(-1, 0, 7, 14, 21), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
-```
-
-```{r}
-#get demographic means
-parent_ed_summ <- d_demo%>%
-  distinct(sid, parent_ed)%>%
-  group_by(parent_ed) %>%
-  summarise (n = n()) %>%
-  mutate(freq = n / sum(n)*100)
-
-parent_age_summ <- d_demo%>%
-  distinct(sid, parent_age)%>%
-  group_by(parent_age) %>%
-  summarise (n = n()) %>%
-  mutate(freq = n / sum(n)*100)
-
-num_kids_summ <- d_demo%>%
-  distinct(sid, num_kids)%>%
-  group_by(num_kids) %>%
-  summarise (n = n()) %>%
-  mutate(freq = n / sum(n)*100)
-
-parent_gender_summ <- d_demo%>%
-  distinct(sid, parent_gender)%>%
-  group_by(parent_gender) %>%
-  summarise (n = n()) %>%
-  mutate(freq = n / sum(n)*100)
-
-parent_ethnicity_summ <- d_demo%>%
-  distinct(sid, ethnicity)%>%
-  group_by(ethnicity) %>%
-  summarise (n = n()) %>%
-  mutate(freq = n / sum(n)*100)
-```
-
-Approaches to parenting are known to differ across cultures and groups. To better understand whether the parenting attitudes captured by our survey reflect group differences, we examined average scores on the PAQ subscales based on demographic factors. 
-
-#Methods
-
-##Participants and Design
-
-Participants were 680 parents who were members of a local children’s museum. Parents received an email from the museum membership list informing them about the opportunity to participate in a study about parenting attitudes. If they were interested, they could provide consent and fill out the survey via a link in the email.  
+Participants were 680 parents who were members of a local children’s museum. Parents received an email from the museum membership list informing them about the opportunity to participate in a study about parenting attitudes. If they were interested, they could provide consent and fill out the survey via a link in the email. 
 
 Participants were `r round(parent_gender_summ$freq[parent_gender_summ$parent_gender == "Female"], digits = 1)`% female. On average, parents were highly educated, with `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == "Doctorate"], digits = 1)`% of participants having a doctorate, `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == "Professional degree"], digits = 1)`% having a professional degree, `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == "4 year degree"], digits = 1)`% having a 4-year-college degree, `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == "2 year degree"], digits = 1)`% having a 2-year college degree, `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == "Some college"], digits = 1)`% completing some college, `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == "High school graduate"], digits = 1)`% completing high school, `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == "Less than high school"], digits = 1)`% not completing high school, and `r round(parent_ed_summ$freq[parent_ed_summ$parent_ed == ""], digits = 1)`% not reporting their education background. Participants mostly identified as White (`r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "White"], digits = 1)`%) or Asian (`r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "Asian"], digits = 1)`%), with `r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "Hispanic or Latino"], digits = 1)`% identifying as Hispanic or Latino, `r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "Black or African American"], digits = 1)`% identifying as Black or African American, `r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "American Indian or Alaska Native"], digits = 1)`% identifying as American Indian or Alaska Native, `r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "Native Hawaiian or Pacific Islander"], digits = 1)`% identifying as Native Hawaiian or Pacific Islander, `r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "Multiple Ethnicities"], digits = 1)`% identifying as Multiple Ethnicities, `r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == "Other"], digits = 1)`% reporting their ethnicity as "Other", and `r round(parent_ethnicity_summ$freq[parent_ethnicity_summ$ethnicity == ""], digits = 1)`% not reporting their ethnicity. Parents were between under 18 years (`r round(parent_age_summ$freq[parent_age_summ$parent_age == "Under 18"], digits = 1)`%), 18-24 years (`r round(parent_age_summ$freq[parent_age_summ$parent_age == "18 - 24"], digits = 1)`%), between 25-34 years (`r round(parent_age_summ$freq[parent_age_summ$parent_age == "Under 18"], digits = 1)`%), between 35-44 years (`r round(parent_age_summ$freq[parent_age_summ$parent_age == "35 - 44"], digits = 1)`%), between 45-54 years (`r round(parent_age_summ$freq[parent_age_summ$parent_age == "45 - 54"], digits = 1)`%), between 55-64 years (`r round(parent_age_summ$freq[parent_age_summ$parent_age == "55 - 64"], digits = 1)`%), and between 65-74 years (`r round(parent_age_summ$freq[parent_age_summ$parent_age == "65 - 74"], digits = 1)`%). Parents reported having 1 child (`r round(num_kids_summ$freq[num_kids_summ$num_kids == "1"], digits = 1)`%), 2 children (`r round(num_kids_summ$freq[num_kids_summ$num_kids == "2"], digits = 1)`%), 3 children (`r round(num_kids_summ$freq[num_kids_summ$num_kids == "3"], digits = 1)`%), 4 children (`r round(num_kids_summ$freq[num_kids_summ$num_kids == "4"], digits = 1)`%), 5 children (`r round(num_kids_summ$freq[num_kids_summ$num_kids == "5"], digits = 1)`%), and `r round(num_kids_summ$freq[num_kids_summ$num_kids == ""], digits = 1)`% did not report how many children they had.
 
+## Procedure 
+
 Parents first completed the PAQ, and then provided information about their gender, level of education, age, ethnicity, and the number of children they have. After completion of the study, parents received a report with results of the study through the membership list. 
 
-##Results and Discussion
+## Results and Discussion
 
 Figure \ref{fig:demographics} displays the average PAQ scores for each demographic category. To quantify any possible group differences, we fit separate Bayesian mixed-effects ordinal regression models for each subscale (AA, EL, RR) with the following structure, with likert ratings of agreement for each item (1-6) entered as dependent measures: `agreement rating ~ age + education + ethnicity + gender + number of children + (1 | subject) + (1| item)` Groups with fewer than 20 cases were removed from plots and analyses to avoid overfitting. Although parents reported their age in terms of a range (e.g., "25-34"), we treated approximate age as a continuous variable in analyses, using the median of the range parents selected. We also calculated education in years for each of the categories parents reported, so that education could be treated as continuous. 
 
@@ -788,509 +160,63 @@ These results suggest that parenting attitudes vary based on some demographic fa
 
 It should be noted that the population we sampled was highly educated and predominantly female. We also had limited ability to estimate attitudes of racial or ethnic identifications other than White, Asian, Hispanic or Latino, or Multiple Ethnicities, because they were under-sampled. Further investigations with a broader range of education and racial and ethnic backgrounds and a greater proportion of fathers would provide a clearer picture of demographic variability in attitudes. 
 
-## Study 2: Relation of attitudes to parenting behaviors
+# Study 3: Relation of attitudes to parenting behaviors
 
-```{r}
-files <- dir("../production-results/parenting_behaviors_e2/")
-attitudes <- data.frame()
-behaviors <- data.frame()
-subinfo <- data.frame()
-
-for (f in files) {
-  jf <- paste("../production-results/parenting_behaviors_e2/",f,sep="")
-  jd <- fromJSON(paste(readLines(jf), collapse=""))
-  
-  #paq answers
-  attitudes_id <- data.frame(sid = as.factor(jd$WorkerId), 
-               sent = jd$answers$data$sentence[1:24],
-               rating = as.numeric(jd$answers$data$rating[1:24]))
-                   
-  attitudes <- bind_rows(attitudes, attitudes_id)
-  
-  #behaviors
-  behaviors_id <- data.frame(sid = as.factor(jd$WorkerId),
-                sent = jd$answers$data$sentence[25:36],
-                rating = as.numeric(jd$answers$data$rating[25:36]))
-                          
-  behaviors <- bind_rows(behaviors, behaviors_id)
-  
-  #demographics
-  subinfo_id <- data.frame(sid = as.factor(jd$WorkerId),
-                   behave_age = jd$answers$data$behaveAge,
-                   children = jd$answers$data$children)
-  subinfo <- bind_rows(subinfo, subinfo_id)
-}
-
-#Clean up labels.
-attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
-behaviors$sent <- str_replace_all(as.character(behaviors$sent), "[â‘”“’']", "")
+```{r behavior-ana, child="behaviors.Rmd"}
 ```
 
-```{r}
-#Read in trial info and questionnaire labels.
-labels <- read.csv("../analysis/sent_forms.csv")
-labels$sent <- as.character(labels$sent)
-behave <- read.csv("../analysis/behaviors_e2.csv")
-```
+Another way of assessing the ecological validity of the PAQ is to ask whether the parenting attitudes it measures are related to actual parenting behaviors. For example, do parents who strongly agree with items on the Early Learning subscale read to their children more often? Do parents who strongly endorse items on the Rules and Respect subscale give more time-outs? To assess this question, we had parents complete the PAQ and then rate the frequency with which they engaged in a number of parenting behaviors. 
 
-```{r}
-dq <- attitudes %>%
-  left_join(labels)%>%
-  mutate(category_paq = category)%>%
-  select(-category)
+## Methods
 
-db <- behaviors%>%
-  left_join(behave)%>%
-  left_join(subinfo)%>%
-  filter(behave_age != "older")%>%
-  mutate(category_bev = category)%>%
-  select(-category)
+## Participants 
 
-#remove items that parents marked as "my child is too young"
-db$rating[db$rating == 0] <- NA
+Participants were 250 parents recruited through Amazon's Mechanical Turk. 
 
-#rescore reverse coded items
-dq$rating <- as.numeric(dq$rating)
-dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
-```
+## Procedure
 
-```{r}
-#Get means by category.
-atts <- dq %>%
-  group_by(sid, category_paq) %>% 
-  summarise(rating_paq = mean(rating))
+Parents completed the PAQ and then responded about how often they engaged in 12 different parenting behaviors, focusing on the prior month. Of the 12 behaviors, four corresponded theoretically to each PAQ category (Table \ref{tab:behavesents}). Parents chose between the following frequency options: "Multiple times per day", "Most days", "Once or twice per week," "Occasionally," "Almost never," "Never," and "My child is too young for this." Parents who reported that they did not have children under the age of 5 were excluded from analyses, as were any items for which parents responded "My child is too young for this."
 
-bevs <- db %>%
-  group_by(sid, category_bev) %>% 
-  summarise(rating_bev = mean(rating))
-
-all <- atts %>%
-  left_join(bevs)%>%
-  left_join(subinfo)%>%
-  filter(!children == "0")
-```
-
-```{r}
-#Recode variables for plotting.
-bev <- behaviors %>%
-  left_join(behave)%>%
-  group_by(category)
-
-bev$rating[bev$rating=="1"] <- "Never"
-bev$rating[bev$rating=="2"] <- "Almost never"
-bev$rating[bev$rating=="3"] <- "Occasionally"
-bev$rating[bev$rating=="4"] <- "Once or twice per week"
-bev$rating[bev$rating=="5"] <- "Most days"
-bev$rating[bev$rating=="6"] <- "Multiple times every day"
-
-bev$rating <- factor(bev$rating, levels = c("My child is too young", "Never", "Almost never","Occasionally","Once or twice per week","Most days","Multiple times every day"))
-
-bev$short_sent <- factor(bev$short_sent, levels = c("read","practice numbers and letters","make observations", "educational programming","talk about feelings","spend time cuddling","sleep in the same bed","hug and kiss","talk sternly","give time out or punishments","talk about setting limits","help with chores"))
-
-subinfo$behave_age[subinfo$behave_age == "0-6"] <- "0-6 months"
-subinfo$behave_age[subinfo$behave_age == "7-12"] <- "7-12 months"
-
-subinfo$behave_age <- factor(subinfo$behave_age, levels = c("0-6 months", "7-12 months", "1-1.5","1.5-2","2-2.5","2.5-3","3-3.5","3.5-4", "4-4.5","4.5-5", "older"))
-```
-
-```{r behavefreq, echo = FALSE, fig.width=10, fig.height=6, fig.cap= "Frequencies of parenting activities reported by parents."}
-ggplot(filter(bev, !is.na(rating)), aes(short_sent, fill = rating, shape = category)) + 
-  geom_bar(position = "fill")+
-  ylab("Proportion responding") +
-  theme_base()+
-  scale_fill_viridis(name="Frequency", discrete = TRUE, breaks=c("Multiple times every day","Most days","Once or twice per week","Occasionally", "Almost never", "Never"))+
-  coord_flip()+
-  theme(axis.title.y=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        axis.text.y = element_text(size = 12),
-        legend.position="bottom",
-        legend.text = element_text(size = 14),
-        legend.title=element_blank()) 
-```
-
-```{r}
-#descriptive labels for behavior categories
-all$category_bev <- factor(all$category_bev,
-levels = c("AA", "EL", "RR"),
-labels = c("AA Behaviors", "EL Behaviors", "RR Behaviors"))
-```
-
-```{r behavepaq, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the frequency of parenting behaviors divided into the same categories."}
-ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
-  geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .3) +
-  geom_smooth(method="lm", se=TRUE) +
-  facet_grid(~category_bev) + 
-  xlab("Frequency of behavior") + 
-  ylab("PAQ score") + 
-  labs(colour="PAQ subscale")+
-  theme_base()+
-  scale_color_viridis(discrete = TRUE) +
-  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))
-```
-
-```{r}
-#Set up dataframes for analyses.
-d <- db %>%
-  left_join(atts)%>%
-  left_join(subinfo)%>%
-  filter(!is.na(rating))%>%
-  filter(children != 0)%>%
-  filter(behave_age != "older")%>%
-  filter(behave_age != "")%>%
-  select(sid, short_sent, rating, category_paq, category_bev, rating_paq, behave_age)%>%
-  spread(category_paq, rating_paq)
-
-d$behave_age <- as.character(d$behave_age)
-
-d$behave_age[d$behave_age == "0-6 months"] <- 1
-d$behave_age[d$behave_age == "7-12 months"] <- 7
-d$behave_age[d$behave_age == "1-1.5"] <- 13
-d$behave_age[d$behave_age == "1.5-2"] <- 19 
-d$behave_age[d$behave_age == "2-2.5"] <- 25
-d$behave_age[d$behave_age == "2.5-3"] <- 31
-d$behave_age[d$behave_age == "3-3.5"] <- 37
-d$behave_age[d$behave_age == "3.5-4"] <- 43
-d$behave_age[d$behave_age == "4-4.5"] <- 49
-d$behave_age[d$behave_age == "4.5-5"] <- 55
-
-d$behave_age <- as.numeric(d$behave_age)
-
-d<- d%>%
-  mutate(child_age = behave_age)%>%
-  select(-behave_age)%>%
-  mutate(rating_bin = rating)
-
-d_aa <- d%>%
-  filter(category_bev == "AA")%>%
-  filter(!is.na(rating), !is.na(rating_bin))
-
-d_el <- d%>%
-  filter(category_bev == "EL")%>%
-  filter(!is.na(rating),!is.na(rating_bin))
-
-d_rr <- d%>%
-  filter(category_bev == "RR")%>%
-  filter(!is.na(rating),!is.na(rating_bin))
-
-d_aa$rating_bin <- as.factor(d_aa$rating_bin)
-d_el$rating_bin <- as.factor(d_el$rating_bin)
-d_rr$rating_bin <- as.factor(d_rr$rating_bin)
-```
-
-```{r}
-d$rating <- factor(d$rating,
-levels = c(1, 2, 3, 4, 5, 6),
-labels = c("1-never", "2-almost-never", "3-occasionally", "4-once-or-twice-per-week", "5-most-days", "6-multiple-times-every-day"))
-```
-
-```{r eval = FALSE}
-d_aa%<>%
-  mutate(rating = ordered(as.factor(rating)))
-
-aa_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
-              (1|sid) + 
-              (1|short_sent), data=filter(d_aa, !is.na(rating)),
-              family=cumulative("logit"), control = list(adapt_delta = .99))
-
-save(aa_behave_mod, file = "saved_mods/aa_mod_behave.Rdata")
-```
-
-```{r eval = FALSE}
-d_el%<>%
-  mutate(rating = ordered(as.factor(rating)))
-
-el_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
-              (1|sid) + 
-              (1|short_sent), data=filter(d_el, !is.na(rating)),
-              family=cumulative("logit"), control = list(adapt_delta = .99))
-
-save(el_behave_mod, file = "saved_mods/el_mod_behave.Rdata")
-```
-
-```{r eval = FALSE}
-d_rr%<>%
-  mutate(rating = ordered(as.factor(rating)))
-
-rr_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
-              (1|sid) + 
-              (1|short_sent), data=filter(d_rr, !is.na(rating)),
-              family=cumulative("logit"), control = list(adapt_delta = .99))
-
-save(rr_behave_mod, file = "saved_mods/rr_mod_behave.Rdata")
-```
-
-```{r}
-#load saved ordinal logistic regression models
-load ("saved_mods/aa_mod_behave.Rdata")
-load ("saved_mods/el_mod_behave.Rdata")
-load ("saved_mods/rr_mod_behave.Rdata")
-
-aa_b <- summary(aa_behave_mod)
-aa_behave <- data.frame(aa_b$fixed)
-
-el_b <- summary(el_behave_mod)
-el_behave <- data.frame(el_b$fixed)
-
-rr_b <- summary(rr_behave_mod)
-rr_behave <- data.frame(rr_b$fixed)
-```
-
-```{r behavetab, results = "asis"}
-factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age")
-
-behaviors <- c("AA", "", "", "", 
-               "EL", "", "", "", 
-               "RR", "", "", "")
-
-tab_behave_lm <- aa_behave%>%
-  bind_rows(el_behave)%>%
-  bind_rows(rr_behave)%>%
-  mutate(Factor = factors)%>%
-  filter(!str_detect(Factor,"Intercept"))%>%  
-  mutate(`Behavior Category` = behaviors)
-  
-tab_behave_lm  <- tab_behave_lm [,c(8,7,1:4)]
-
-colnames(tab_behave_lm) <- c("Behavior Category","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
-
-behave_tab <- xtable(tab_behave_lm, label = "tab:behavetab", caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
-
-print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 4, 8, 12), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
-```
-
-```{r behavesents, results = "asis"}
-cat <- c("AA", "", "", "", "EL", "","", "", "RR", "","","")
-behaviors_sents <- behave%>%
-  arrange(category)%>%
-  transmute(Category=cat, `In the last month, how often did...` = str_replace(sent, "In the last month, how often did", ""))
-
-kable(behaviors_sents ,caption = "Frequencies of parenting activities reported by parents.", "latex", booktabs = T) %>%
-kable_styling(font_size = 9, 
-              latex_options = c("hold_position")) %>%
-column_spec(1, bold = T) %>%
-column_spec(2, width = "40em")
-```
-
-Another way of assessing the ecological validity of the PAQ is to ask whether the parenting attitudes it measures are related to actual parenting behaviors. For example, do parents who strongly agree with items on the Early Learning subscale read to their children more often? Do parents who strongly endorse items on the Rules and Respect subscale give more time-outs? TO assess this, we had parents complete the PAQ and then rate the frequency with which they engaged in a number of parenting behaviors. 
-
-#Methods
-
-##Participants and Design
-
-Participants were 250 parents recruited through Amazon's Mechanical Turk. Parents completed the PAQ and then responded about how often they engaged in 12 different parenting behaviors, focusing on the prior month. Of the 12 behaviors, four corresponded theoretically to each PAQ category (Table \ref{tab:behavesents}). Parents chose between the following frequency options: "Multiple times per day", "Most days", "Once or twice per week," "Occasionally," "Almost never," "Never," and "My child is too young for this." Parents who reported that they did not have children under the age of 5 were excluded from analyses, as were any items for which parents responded "My child is too young for this."
-
-##Results and Discussion
+## Results and Discussion
 
 The distribution of frequencies that parents reported is displayed in Figure \ref{fig:behavefreq}. To assess whether parenting behaviors are associated with parenting attitudes, we calculated participants' average PAQ subscale scores and fit separate bayesian ordinal logistic mixed-effects regressions for the three cateogories of behaviors with the following structure: `behavior frequency ~ AA PAQ score + EL PAQ score + RR PAQ score + child age + (1 | subject) + (1| item)` (Table \ref{tab:behavetab}). The relation between PAQ scores and behavior frequencies are presented in Figure \ref{fig:behavepaq}.
 
 We found that the frequency of AA behaviors was positively associated with AA attitudes ($\beta$ = `r round(aa_behave$Estimate[6], digits = 2)`, 95% CI = `r round(aa_behave$l.95..CI[6], digits = 2)` - `r round(aa_behave$u.95..CI[6], digits = 2)`), but not RR or EL attitudes or child age. Frequency of EL behaviors was positively associated with stronger agreement with both AA ($\beta$ = `r round(el_behave$Estimate[6], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[6], digits = 2)` - `r round(el_behave$u.95..CI[6], digits = 2)`) and EL attitudes ($\beta$ = `r round(el_behave$Estimate[8], digits = 2)`, 95% CI = `r round(el_behave$l.95..CI[8], digits = 2)` - `r round(el_behave$u.95..CI[8], digits = 2)`). The frequency of RR behaviors was positively associated with stronger RR attitudes ($\beta$ = `r round(rr_behave$Estimate[7], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[7], digits = 2)` - `r round(rr_behave$u.95..CI[7], digits = 2)`), and to a lesser extent, child age ($\beta$ = `r round(rr_behave$Estimate[9], digits = 2)`, 95% CI = `r round(rr_behave$l.95..CI[9], digits = 2)` - `r round(rr_behave$u.95..CI[9], digits = 2)`). 
 
-These results suggest that parenting attitudes as assessed by the PAQ have a meaningful relation to the actual behaviors parents engage in with their children. This suggests that the current scale taps firmly held beliefs that drive parents' decisions and behavior. It also suggests that intervening on these beliefs may be an effective way of promoting behavior change in parents, for example, to promote opportunities for early learning. However, it is important to consider that the present data are correlational and based on self-report. For example, it is possible that participants' self-reported behaviors capture their intentions rather than their actual behaviors, which would likely be highly correlated with their self-reported attitudes. Future work utilizing an intervention approach, and/or a diary method of self-report, would help distinguish these possibilities.
+These results suggest that parenting attitudes as assessed by the PAQ have a meaningful relationship to the actual behaviors parents report engaging in with their children. Lne interpretation is that the PAQ measures beliefs that drive parents' decisions and behavior. If this were true, intervening on these beliefs could be an effective way of promoting behavior change in parents, for example, to promote opportunities for early learning. 
 
-## Study 3: Memory for new information about parenting and child development
+The current study is only a preliminary step towards evaluating the relation between beliefs and action in the domain of early parenting. There are two primary limitations to our study. First, data are correlational rather than the result of an explicit intervention; thus, any observed pattern is consistent with multiple causal hypotheses. For example, reflection on recent behaviors could lead to particular answers on attitude questions (rather than the other way around). Or both could be a consequence of cultural or socioeconomic variables beyond those we measured, with no direct relationship between beliefs and attitudes. In addition, it is possible that participants' self-reported behaviors capture their intentions rather than their actual behaviors. Future work using an intervention approach, and/or a diary method of self-report -- while both far more difficult to implement than the current study -- would help distinguish these possibilities.
 
-Parents’ attitudes about parenting and child development may be an important consideration for crafting interventions on parenting behaviors or beliefs. Efforts to intervene on parenting practices are common, for example, public service announcements telling parents to read to their children; courses aimed at helping fathers engage with their children; messages aimed at encouraging parents and teachers to give children opportunities for free play. There is evidence that existing lay theories can interact in surprising ways with this type of messaging in other domains. Here we asked whether parents' attitudes about parenting and child development would predict how they understand and remember new information about child development versus an unrelated topic. 
+# Study 4: Memory for new information about parenting and child development
 
-```{r}
-files <- dir("../production-results/uptake_e4/")
-answers <- data.frame()
-attitudes <- data.frame()
-subinfo <- data.frame()
+Parents’ attitudes about parenting and child development may be an important consideration for crafting interventions on parenting behaviors or beliefs. Efforts to intervene on parenting practices are common, for example, public service announcements telling parents to read to their children; courses aimed at helping fathers engage with their children; messages aimed at encouraging parents and teachers to give children opportunities for free play. Existing intuitive theories can interact in surprising ways with this type of messaging in other domains [CITATIONS?]. Here we asked whether parents' attitudes about parenting and child development would predict how they understand and remember new information about child development versus an unrelated topic. 
 
-for (f in files) {
-  jf <- paste("../production-results/uptake_e4/",f,sep="")
-  jd <- fromJSON(paste(readLines(jf), collapse=""))
-
-  #uptake responses
-  answers_id <- data.frame(
-    answer= jd$answers$data$answer,
-    item = jd$answers$data$item[jd$answers$data$trial_type =="uptake"],
-    sid = jd$WorkerId)
-  
-  answers <- bind_rows(answers, answers_id)
-  
-  attitudes_id <- data.frame(sid = jd$WorkerId, 
-                   sent = jd$answers$data$sentence[jd$answers$data$trial_type=="attitudes"],
-                   rating = as.numeric(jd$answers$data$rating[jd$answers$data$trial_type=="attitudes"])) 
-                   
-  attitudes <- bind_rows(attitudes, attitudes_id)
-  
-  #questionnaire and demo
-  subinfo_id <- data.frame(sid = jd$WorkerId, 
-                   children = jd$answers$data$children,
-                   language = jd$answers$data$homelang,
-                   ses = jd$answers$data$ladder,
-                   gender = jd$answers$data$gender,
-                   age = jd$answers$data$age,
-                   education = jd$answers$data$education,
-                   ethnicity = jd$answers$data$ethnicity,
-                   race = as.character(jd$answers$data$race[1]),
-                   rt_exp1 = jd$answers$data$target1_rt,
-                   rt_exp2 = jd$answers$data$target2_rt,
-                   rt_con1 = jd$answers$data$control1_rt,
-                   rt_con2 = jd$answers$data$control2_rt)
-  subinfo <- bind_rows(subinfo, subinfo_id)
-}
+```{r uptake-ana, child="uptake.Rmd"}
 ```
 
-```{r}
-#Read in trial info and questionnaire labels.
-labels <- read.csv("../analysis/sent_forms_uptake_e4.csv")
-labels$sent <- as.character(labels$sent)
+## Methods
 
-answer_key <- read.csv("../analysis/uptake_key_e4.csv")
-```
+### Participants
 
-```{r}
-#Clean up labels.
-attitudes$sent <- stringr::str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
-```
+Participants were 250 adults (parents and non-parents) recruited on Amazon Mechanical Turk. 
 
-```{r}
-#Questionnaire attitude means.
-dq <- attitudes %>%
-  left_join(labels) 
+### Procedure 
 
-dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+Participants first filled out the PAQ, and then read four popular press articles, two of which related to early learning and cognitive development [one about children's learning from spontaneous play; @refs, and one about infants learning from events that defy their expectations about physical properties of the world @ref] and two of which related to other science topics [one about irridescence in plants; @ref, and one about the "island rule," which attempts to explain why species on islands tend to be smaller than on the mainland; @refs]. The articles were edited for length, and the order in which the articles were presented was randomized. 
 
-atts <- dq %>%
-  group_by(sid, category) %>% 
-  summarise(rating = mean(rating))
-```
+Next, participants answered six four-alternative forced-choice questions testing their memory and understanding of each article (24 total questions). For each article, half of the questions focused on specific details from the article, and half focused on generalized concepts introduced in the article to test whether participants had comprehended the overall message of the article. For example, a question testing specific details from one of the EL articles was: "In this article, children saw unexpected events including:" with the following options: "A toy car rolling through a solid wall" (the correct answer), "A toy falling off the table," "A toy animal speaking out loud," and "A balloon flying away". A question testing generalization of the concepts in the same article was: "Based on the results of the study described in this article, researchers can conclude that:" with the following options: "Babies have trouble processing surprising events and learn by paying attention to familiar, predictable events," "Babies learn by paying attention to surprising events" (the correct answer), "Babies quickly learn new rules about the physical world (e.g., cars can go through walls) if they see it happen once," and "Babies do not know enough about the physical world to be surprised by a toy going through a wall". We were specifically interested in whether participants who agreed more strongly with EL attitudes would better understand and remember the information in the EL articles, which we predicted may have been consistent with their existing views of development, or consistent with their interests, and thus easier to learn. 
 
-```{r}
-#Setting up exclusion based on reading time. Exclude for less than 15s. 
-exclusions <- as_tibble(subinfo) %>%
-  select(sid, starts_with("rt")) %>%
-  gather(article, rt, rt_exp1, rt_exp2, rt_con1, rt_con2) %>%
-  mutate(article = stringr::str_replace(stringr::str_replace(stringr::str_replace(article,"rt_", ""), "exp", "e"), "con","c"),
-         exclude = rt <15)
-```
+## Results and Discussion
 
-```{r}
-#Get accuracy data. 
-answers$answer <- as.character(answers$answer)
-answer_key$answer_cor <- as.character(answer_key$answer_cor)
-
-uptake <- answers %>%
-  left_join(answer_key) %>%
-  mutate(acc = (answer == answer_cor)) %>%
-  select(sid, item, acc, q_type, article) %>%
-  left_join(exclusions) %>%
-  filter(!exclude)
-
-mss <- uptake %>%
-  group_by(sid, q_type) %>% 
-  summarise(acc = mean(acc))
-
-ms <- mss %>%
-  group_by(q_type) %>%
-  multi_boot_standard(col = "acc")
-```
-
-```{r}
-mss_wide <- spread(mss, q_type, acc) %>%
-  filter(!is.na(con) & !is.na(exp))
-
-t_acc_q_type <- t.test(mss_wide$con, mss_wide$exp, paired=TRUE)
-```
-
-
-```{r}
-d <- mss %>%
-  left_join(atts) %>%
-  left_join(subinfo) %>%
-  mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"))
-```
-
-```{r uptake, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the uptake of information in experimental (child development-related) and control articles."}
-ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
- geom_jitter(height = .02, width = 0, alpha= .3) +
-  geom_smooth(method="lm") + 
-  facet_grid(.~category) + 
-  ylab("Accuracy") +
-  xlab("PAQ Rating") + 
-  theme(legend.position = "bottom",
-        legend.title = element_text(size=16), 
-        legend.text = element_text(size=14), 
-        axis.text.x  = element_text(vjust=0.5, size=14),
-        axis.title.x = element_text(size=16), 
-        axis.text.y  = element_text(vjust=0.5, size=14),
-        axis.title.y = element_text(size=16),
-        strip.text = element_text(size=14))+
-  theme_base()+
-  scale_color_viridis(name="Condition", discrete = TRUE) 
-```
-
-```{r}
-#Set up a dataframe for analysis with exclusions.
-d_reg <- atts %>%
-  left_join(uptake)%>%
-  group_by(sid, category, acc, q_type, item, article)%>%
-  summarise(rating = mean(rating))%>%
-  spread(category, rating)
-
-d_reg_excl <- d_reg %>%
-  left_join(exclusions) %>%
-  filter(!exclude)
-```
-
-```{r eval = FALSE}
-uptake_mod <- brm(acc ~ q_type * AA +  
-                q_type * RR + 
-                q_type * EL +
-                (q_type | sid) +
-                (1 | item), 
-              data = d_reg_excl,
-              family = bernoulli())
-
-save(uptake_mod, file ="saved_mods/uptake_mod.Rdata")
-```
-
-```{r}
-#load saved ordinal logistic regression models
-load ("saved_mods/uptake_mod.Rdata")
-
-up <- summary(uptake_mod)
-uptake <- data.frame(up$fixed)
-```
-
-```{r uptake_tab, results = "asis"}
-factors <- c("Intercept", "EL Articles", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * EL Articles", "RR PAQ score * EL Articles", "EL PAQ score * EL Articles")
-
-tab_uptake <- uptake%>%
-  mutate(Factor = factors)%>%
-  filter(!str_detect(Factor,"Intercept"))
-  
-tab_uptake <- tab_uptake [,c(7,1:4)]
-
-colnames(tab_uptake) <- c("Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
-
-tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a bayesian logistic regression of PAQ scores and article topic (EL vs. control) on memory for information in articles.")
-
-print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"), caption.placement = "top")
-```
-
-#Methods
-
-##Participants and Design
-
-Participants were 250 adults (parents and non-parents) recruited on Amazon's Mechanical Turk. Participants first filled out the PAQ, and then read four popular press articles, two of which related to early learning and cognitive development [one about children's learning from spontaneous play; @refs, and one about infants learning from events that defy their expectations about physical properties of the world @ref] and two of which related to other science topics [one about irridescence in plants; @ref, and one about the "island rule," which attempts to explain why species on islands tend to be smaller than on the mainland; @refs]. The articles were edited for length, and the order in which the articles were presented was randomized. 
-
-Next, participants answered six four-alternative forced-choice questions testing their memory and understanding of each article (24 total questions). For each article, half of the questions focused on specific details from the article, and half focused on generalized concepts introduced in the article to test whether participants had comprehended the overall message of the article. For example, a question testing specific details from one of the EL articles was: 'In this article, children saw unexpected events including:' with the following options: 'A toy car rolling through a solid wall' (the correct answer), 'A toy falling off the table', 'A toy animal speaking out loud', and 'A balloon flying away'. A question testing generalization of the concepts in the same article was: 'Based on the results of the study described in this article, researchers can conclude that:' with the following options: 'Babies have trouble processing surprising events and learn by paying attention to familiar, predictable events', 'Babies learn by paying attention to surprising events' (the correct answer),'Babies quickly learn new rules about the physical world (e.g., cars can go through walls) if they see it happen once', and 'Babies do not know enough about the physical world to be surprised by a toy going through a wall'. We were specifically interested in whether participants who agreed more strongly with EL attitudes would better understand and remember the information in the EL articles, which we predicted may have been consistent with their existing views of development, or consistent with their interests, and thus easier to learn. 
-
-#Results
-
-The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)`(CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
+The average accuracy for control questions was `r signif(ms$mean[ms$q_type == "con"], digits = 2)` (CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "con"], digits = 2)`) and the average accuracy for experimenter questions was `r signif(ms$mean[ms$q_type == "exp"], digits = 2)` (CI = `r signif(ms$ci_lower[ms$q_type == "con"], digits = 2)` - `r signif(ms$ci_upper[ms$q_type == "exp"], digits = 2)`). There was no significant difference in accuracy between conditions, t = `r t_acc_q_type$statistic`, p = `r t_acc_q_type$p.value`.
 
 Participants' accuracy in relation to their average AA, EL and RR scores is displayed in Figure \ref{fig:uptake}. To quantify whether participants who more strongly agreed with EL attitudes were at an advantage for understanding and remembering the child development articles they read, we fit a bayesian logistic mixed-effects regression with the following structure: `accuracy ~ AA PAQ score * article type + EL PAQ score * article type + RR PAQ score * article type + (article type | subject) + (1| item)`. We excluded `r signif(mean(exclusions$exclude*100), digits = 2)`% of responses from analyses because participants spent fewer than 15 seconds reading the article, our pre-determined minimum reading time.
 
-We found that participants who agreed more strongly with EL attitudes were more likely to answer memory questions correctly overall ($\beta$ = `r round(uptake$Estimate[5], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[5], digits = 2)` - `r round(uptake$u.95..CI[5], digits = 2)`), but there was no interaction between EL scores and article type, meaning that there was no advantage for people with higher EL scores for understanding child development content in particular. However, unexpectedly, there was an interaction between AA attitudes and article type ($\beta$ = `r round(uptake$Estimate[6], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[6], digits = 2)` - `r round(uptake$u.95..CI[6], digits = 2)`), such that people with stronger AA attitudes performed better on questions about child development articles compared to control articles. Rules and Respect attitudes did not predict memory for the articles.
+We found that participants who agreed more strongly with EL attitudes were more likely to answer memory questions correctly overall ($\beta$ = `r round(uptake$Estimate[5], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[5], digits = 2)` - `r round(uptake$u.95..CI[5], digits = 2)`), but there was no interaction between EL scores and article type, meaning that there was no differential advantage for people with higher EL scores for understanding child development content in particular. However, unexpectedly, there was an interaction between Affection and Attachment attitudes and article type ($\beta$ = `r round(uptake$Estimate[6], digits = 2)`, 95% CI = `r round(uptake$l.95..CI[6], digits = 2)` - `r round(uptake$u.95..CI[6], digits = 2)`), such that people with stronger AA attitudes performed better on questions about child development articles compared to control articles. Rules and Respect attitudes did not predict memory for the articles.
 
-In sum, our results suggest that people who believe more strongly in the importance of early learning (i.e., those with higher EL PAQ scores) are more likely to understand and recall details from science articles, but they do not have a specific advantage for science articles related to cognitive development during infancy. Contrary to our predictions, we did find that people with higher AA scores had a specific advantage for remembering the EL articles compared to control articles. Although the present data cannot speak to why this might be, one possibility is that people with higher AA scores have a stronger orientation towards content about early childhood (compared to the unrelated content in the control article) in general.  These results could also reflect the fact that EL and AA attitudes may overlap somewhat, as suggested by their respective factor loadings, at least in the population we sampled for these analyses.
+In sum, our results suggest that people who believe more strongly in the importance of early learning (i.e., those with higher EL PAQ scores) are more likely to understand and recall details from science articles, but they do not have a specific advantage for science articles related to cognitive development during infancy. Contrary to our predictions, we did find that people with higher AA scores had a specific advantage for remembering the EL articles compared to control articles. Although the present data cannot speak to why this might be, one possibility is that people with higher AA scores have a stronger orientation towards content about early childhood (compared to the unrelated content in the control article) in general. These results could also reflect the fact that EL and AA attitudes overlap, as suggested by their respective factor loadings in Study 1 (at least in the population we sampled for these analyses).
 
-#Discussion
+# General Discussion
 
 In the present work, we established a new scale to measure attitudes about parenting and child development. We found that peoples beliefs were organized into three apparent categories: Rules and Respect, Affection and Attachment, and Early Learning. These subscales capture meaningful differences in how people view child development and the relative importance of different parenting behaviors. In addition, we found meaningful differences in attitudes across demographic groups and we observed the expected relations between parenting attitudes and behaviors. We also found that PAQ subscale scores predicted understanding and memory for new information in science articles, though not in the predicted patterns, as individuals with higher AA scores had an advantage for remembering the content of EL articles, but not individuals with higher EL scores. In sum, this work provides initial evidence that meaningful differences in adults’ attitudes about child development and parenting can be assessed by our new scale. 
 
@@ -1301,6 +227,7 @@ Implicit theories are thought to be a powerful driver of human behavior. The cur
 \newpage
 
 # References
+
 ```{r create_r-references}
 r_refs(file = "r-references.bib")
 ```

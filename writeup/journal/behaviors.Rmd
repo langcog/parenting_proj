@@ -1,0 +1,282 @@
+
+```{r}
+files <- dir("../../data/parenting_behaviors_e2/")
+attitudes <- data.frame()
+behaviors <- data.frame()
+subinfo <- data.frame()
+
+for (f in files) {
+ jf <- paste("../../data/parenting_behaviors_e2/",f,sep="")
+ jd <- fromJSON(paste(readLines(jf), collapse=""))
+ 
+ #paq answers
+ attitudes_id <- data.frame(sid = as.factor(jd$WorkerId), 
+ sent = jd$answers$data$sentence[1:24],
+ rating = as.numeric(jd$answers$data$rating[1:24]))
+ 
+ attitudes <- bind_rows(attitudes, attitudes_id)
+ 
+ #behaviors
+ behaviors_id <- data.frame(sid = as.factor(jd$WorkerId),
+ sent = jd$answers$data$sentence[25:36],
+ rating = as.numeric(jd$answers$data$rating[25:36]))
+ 
+ behaviors <- bind_rows(behaviors, behaviors_id)
+ 
+ #demographics
+ subinfo_id <- data.frame(sid = as.factor(jd$WorkerId),
+ behave_age = jd$answers$data$behaveAge,
+ children = jd$answers$data$children)
+ subinfo <- bind_rows(subinfo, subinfo_id)
+}
+
+#Clean up labels.
+attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
+behaviors$sent <- str_replace_all(as.character(behaviors$sent), "[â‘”“’']", "")
+```
+
+```{r}
+#Read in trial info and questionnaire labels.
+labels <- read.csv("../../analysis/sent_forms.csv")
+labels$sent <- as.character(labels$sent)
+behave <- read.csv("../../analysis/behaviors_e2.csv")
+```
+
+```{r}
+dq <- attitudes %>%
+ left_join(labels)%>%
+ mutate(category_paq = category)%>%
+ select(-category)
+
+db <- behaviors%>%
+ left_join(behave)%>%
+ left_join(subinfo)%>%
+ filter(behave_age != "older")%>%
+ mutate(category_bev = category)%>%
+ select(-category)
+
+#remove items that parents marked as "my child is too young"
+db$rating[db$rating == 0] <- NA
+
+#rescore reverse coded items
+dq$rating <- as.numeric(dq$rating)
+dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+```
+
+```{r}
+#Get means by category.
+atts <- dq %>%
+ group_by(sid, category_paq) %>% 
+ summarise(rating_paq = mean(rating))
+
+bevs <- db %>%
+ group_by(sid, category_bev) %>% 
+ summarise(rating_bev = mean(rating))
+
+all <- atts %>%
+ left_join(bevs)%>%
+ left_join(subinfo)%>%
+ filter(!children == "0")
+```
+
+```{r}
+#Recode variables for plotting.
+bev <- behaviors %>%
+ left_join(behave)%>%
+ group_by(category)
+
+bev$rating[bev$rating=="1"] <- "Never"
+bev$rating[bev$rating=="2"] <- "Almost never"
+bev$rating[bev$rating=="3"] <- "Occasionally"
+bev$rating[bev$rating=="4"] <- "Once or twice per week"
+bev$rating[bev$rating=="5"] <- "Most days"
+bev$rating[bev$rating=="6"] <- "Multiple times every day"
+
+bev$rating <- factor(bev$rating, levels = c("My child is too young", "Never", "Almost never","Occasionally","Once or twice per week","Most days","Multiple times every day"))
+
+bev$short_sent <- factor(bev$short_sent, levels = c("read","practice numbers and letters","make observations", "educational programming","talk about feelings","spend time cuddling","sleep in the same bed","hug and kiss","talk sternly","give time out or punishments","talk about setting limits","help with chores"))
+
+subinfo$behave_age[subinfo$behave_age == "0-6"] <- "0-6 months"
+subinfo$behave_age[subinfo$behave_age == "7-12"] <- "7-12 months"
+
+subinfo$behave_age <- factor(subinfo$behave_age, levels = c("0-6 months", "7-12 months", "1-1.5","1.5-2","2-2.5","2.5-3","3-3.5","3.5-4", "4-4.5","4.5-5", "older"))
+```
+
+```{r behavefreq, echo = FALSE, fig.width=10, fig.height=6, fig.cap= "Frequencies of parenting activities reported by parents."}
+ggplot(filter(bev, !is.na(rating)), aes(short_sent, fill = rating, shape = category)) + 
+ geom_bar(position = "fill")+
+ ylab("Proportion responding") +
+ 
+ scale_fill_viridis(name="Frequency", discrete = TRUE, breaks=c("Multiple times every day","Most days","Once or twice per week","Occasionally", "Almost never", "Never"))+
+ coord_flip()+
+ theme(axis.title.y=element_blank(),
+ axis.text.x=element_blank(),
+ axis.ticks.x=element_blank(),
+ axis.text.y = element_text(size = 12),
+ legend.position="bottom",
+ legend.text = element_text(size = 14),
+ legend.title=element_blank()) 
+```
+
+```{r}
+#descriptive labels for behavior categories
+all$category_bev <- factor(all$category_bev,
+levels = c("AA", "EL", "RR"),
+labels = c("AA Behaviors", "EL Behaviors", "RR Behaviors"))
+```
+
+```{r behavepaq, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the frequency of parenting behaviors divided into the same categories."}
+ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
+ geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .3) +
+ geom_smooth(method="lm", se=TRUE) +
+ facet_grid(~category_bev) + 
+ xlab("Frequency of behavior") + 
+ ylab("PAQ score") + 
+ labs(colour="PAQ subscale")+
+ 
+ scale_color_viridis(discrete = TRUE) +
+ scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))
+```
+
+```{r}
+#Set up dataframes for analyses.
+d <- db %>%
+ left_join(atts)%>%
+ left_join(subinfo)%>%
+ filter(!is.na(rating))%>%
+ filter(children != 0)%>%
+ filter(behave_age != "older")%>%
+ filter(behave_age != "")%>%
+ select(sid, short_sent, rating, category_paq, category_bev, rating_paq, behave_age)%>%
+ spread(category_paq, rating_paq)
+
+d$behave_age <- as.character(d$behave_age)
+
+d$behave_age[d$behave_age == "0-6 months"] <- 1
+d$behave_age[d$behave_age == "7-12 months"] <- 7
+d$behave_age[d$behave_age == "1-1.5"] <- 13
+d$behave_age[d$behave_age == "1.5-2"] <- 19 
+d$behave_age[d$behave_age == "2-2.5"] <- 25
+d$behave_age[d$behave_age == "2.5-3"] <- 31
+d$behave_age[d$behave_age == "3-3.5"] <- 37
+d$behave_age[d$behave_age == "3.5-4"] <- 43
+d$behave_age[d$behave_age == "4-4.5"] <- 49
+d$behave_age[d$behave_age == "4.5-5"] <- 55
+
+d$behave_age <- as.numeric(d$behave_age)
+
+d<- d%>%
+ mutate(child_age = behave_age)%>%
+ select(-behave_age)%>%
+ mutate(rating_bin = rating)
+
+d_aa <- d%>%
+ filter(category_bev == "AA")%>%
+ filter(!is.na(rating), !is.na(rating_bin))
+
+d_el <- d%>%
+ filter(category_bev == "EL")%>%
+ filter(!is.na(rating),!is.na(rating_bin))
+
+d_rr <- d%>%
+ filter(category_bev == "RR")%>%
+ filter(!is.na(rating),!is.na(rating_bin))
+
+d_aa$rating_bin <- as.factor(d_aa$rating_bin)
+d_el$rating_bin <- as.factor(d_el$rating_bin)
+d_rr$rating_bin <- as.factor(d_rr$rating_bin)
+```
+
+```{r}
+d$rating <- factor(d$rating,
+levels = c(1, 2, 3, 4, 5, 6),
+labels = c("1-never", "2-almost-never", "3-occasionally", "4-once-or-twice-per-week", "5-most-days", "6-multiple-times-every-day"))
+```
+
+```{r eval = FALSE}
+d_aa%<>%
+ mutate(rating = ordered(as.factor(rating)))
+
+aa_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
+ (1|sid) + 
+ (1|short_sent), data=filter(d_aa, !is.na(rating)),
+ family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(aa_behave_mod, file = "saved_mods/aa_mod_behave.Rdata")
+```
+
+```{r eval = FALSE}
+d_el%<>%
+ mutate(rating = ordered(as.factor(rating)))
+
+el_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
+ (1|sid) + 
+ (1|short_sent), data=filter(d_el, !is.na(rating)),
+ family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(el_behave_mod, file = "saved_mods/el_mod_behave.Rdata")
+```
+
+```{r eval = FALSE}
+d_rr%<>%
+ mutate(rating = ordered(as.factor(rating)))
+
+rr_behave_mod <- brm(rating ~ AA + RR + EL + child_age + 
+ (1|sid) + 
+ (1|short_sent), data=filter(d_rr, !is.na(rating)),
+ family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(rr_behave_mod, file = "saved_mods/rr_mod_behave.Rdata")
+```
+
+```{r}
+#load saved ordinal logistic regression models
+load ("saved_mods/aa_mod_behave.Rdata")
+load ("saved_mods/el_mod_behave.Rdata")
+load ("saved_mods/rr_mod_behave.Rdata")
+
+aa_b <- summary(aa_behave_mod)
+aa_behave <- data.frame(aa_b$fixed)
+
+el_b <- summary(el_behave_mod)
+el_behave <- data.frame(el_b$fixed)
+
+rr_b <- summary(rr_behave_mod)
+rr_behave <- data.frame(rr_b$fixed)
+```
+
+```{r behavetab, results = "asis"}
+factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age")
+
+behaviors <- c("AA", "", "", "", 
+ "EL", "", "", "", 
+ "RR", "", "", "")
+
+tab_behave_lm <- aa_behave%>%
+ bind_rows(el_behave)%>%
+ bind_rows(rr_behave)%>%
+ mutate(Factor = factors)%>%
+ filter(!str_detect(Factor,"Intercept"))%>% 
+ mutate(`Behavior Category` = behaviors)
+ 
+tab_behave_lm <- tab_behave_lm [,c(8,7,1:4)]
+
+colnames(tab_behave_lm) <- c("Behavior Category","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+
+behave_tab <- xtable(tab_behave_lm, label = "tab:behavetab", caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
+
+print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 4, 8, 12), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
+```
+
+```{r behavesents, results = "asis"}
+cat <- c("AA", "", "", "", "EL", "","", "", "RR", "","","")
+behaviors_sents <- behave%>%
+ arrange(category)%>%
+ transmute(Category=cat, `In the last month, how often did...` = str_replace(sent, "In the last month, how often did", ""))
+
+kable(behaviors_sents ,caption = "Frequencies of parenting activities reported by parents.", "latex", booktabs = T) %>%
+kable_styling(font_size = 9, 
+ latex_options = c("hold_position")) %>%
+column_spec(1, bold = T) %>%
+column_spec(2, width = "40em")
+```

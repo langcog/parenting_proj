@@ -14,16 +14,18 @@ output:
 Preliminaries.
 
 ```{r echo=FALSE}
-knitr::opts_chunk$set(fig.width=8, fig.height=5, 
-                      echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
-suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
+knitr::opts_chunk$set(
+  fig.width = 8, fig.height = 5,
+  echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE
+)
+suppressPackageStartupMessages(c("langcog", "lme4"))
+
 library(psych)
 library(langcog)
 library(tidyverse)
 library(ggthemes)
 library(rjson)
 library(forcats)
-library(tibble)
 library(lme4)
 library(lmerTest)
 library(lavaan)
@@ -47,11 +49,11 @@ questions <- data %>%
   gather("item", "sent", Q1:Q28)
 
 d <- data %>%
-  filter(Finished == 1)%>%
-  mutate(sid = ResponseId)%>%
-  select(-Status, -StartDate, - EndDate, - IPAddress, -Progress, -Duration..in.seconds., -Finished, - ResponseId, - RecordedDate, -RecipientLastName, -RecipientFirstName, - RecipientEmail, -ExternalReference, -LocationLatitude, -LocationLongitude, - DistributionChannel)%>%
-  select(sid, Q1:Q28)%>%
-  gather("item", "rating", Q1:Q28)%>%
+  filter(Finished == 1) %>%
+  mutate(sid = ResponseId) %>%
+  select(-Status, -StartDate, -EndDate, -IPAddress, -Progress, -Duration..in.seconds., -Finished, -ResponseId, -RecordedDate, -RecipientLastName, -RecipientFirstName, -RecipientEmail, -ExternalReference, -LocationLatitude, -LocationLongitude, -DistributionChannel) %>%
+  select(sid, Q1:Q28) %>%
+  gather("item", "rating", Q1:Q28) %>%
   left_join(questions)
 
 subinfo <- dem %>%
@@ -78,7 +80,7 @@ Test for normality.
 
 ```{r}
 dq_wide <- dq %>%
-  select(sid, short_sent, rating)%>%
+  select(sid, short_sent, rating) %>%
   spread(short_sent, rating)
 
 x_vars <- dq_wide %>%
@@ -93,22 +95,22 @@ uniPlot(x_vars[21:24], type = "histogram")
  #get subset for plotting
  hist_items <- c("Q8", "Q22", "Q12", "Q16") 
 
- hist <- d %>%
-   select(sid, item, rating)%>%
-   filter(item %in% hist_items)%>%
-   spread(item, rating)
- 
- ggplot(hist, aes(Q8, fill = Q8)) +
-  geom_histogram(stat = "count") 
+hist <- d %>%
+  select(sid, item, rating) %>%
+  filter(item %in% hist_items) %>%
+  spread(item, rating)
 
- ggplot(hist, aes(Q22, fill = Q22)) +
-  geom_histogram(stat = "count") 
- 
-  ggplot(hist, aes(Q12, fill = Q12)) +
-  geom_histogram(stat = "count") 
-  
-   ggplot(hist, aes(Q16, fill = Q16)) +
-  geom_histogram(stat = "count") 
+ggplot(hist, aes(Q8, fill = Q8)) +
+  geom_histogram(stat = "count")
+
+ggplot(hist, aes(Q22, fill = Q22)) +
+  geom_histogram(stat = "count")
+
+ggplot(hist, aes(Q12, fill = Q12)) +
+  geom_histogram(stat = "count")
+
+ggplot(hist, aes(Q16, fill = Q16)) +
+  geom_histogram(stat = "count")
  
 #get highest and lowest rated items   
 d$sent <- stringr::str_replace_all(d$sent, "’", "")
@@ -130,10 +132,11 @@ dq$rating <- dq$rating - 1
 ms <- dq %>%
   group_by(category, short_sent, reverse_code) %>%
   multi_boot_standard(col = "rating", na.rm = TRUE) %>%
-  arrange(category, desc(mean)) 
+  arrange(category, desc(mean))
 
-ms$short_sent_ord <- factor(ms$short_sent, 
-                             levels = ms$short_sent)
+ms$short_sent_ord <- factor(ms$short_sent,
+  levels = ms$short_sent
+)
 
 short_sent_ord <- ms$short_sent_ord
 ```
@@ -141,14 +144,16 @@ short_sent_ord <- ms$short_sent_ord
 Plot responses to individual questionnaire items.
 
 ```{r}
-qplot(short_sent_ord, mean, col = category,
-      ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
-      geom = "pointrange",
-      data = ms) +
+qplot(short_sent_ord, mean,
+  col = category,
+  ymin = ci_lower, ymax = ci_upper, pch = factor(reverse_code),
+  geom = "pointrange",
+  data = ms
+) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5)) +
-  xlab("") + 
-  ylab("Mean Rating") + 
-  ylim(c(0,6)) + 
+  xlab("") +
+  ylab("Mean Rating") +
+  ylim(c(0, 6)) +
   scale_colour_solarized()
 ```
 

@@ -24,10 +24,10 @@ library(langcog)
 library(tidyverse)
 library(ggthemes)
 library(rjson)
-library(stringr)
 library(lme4)
 library(forcats)
 library(tibble)
+library(knitr)
 
 select <- dplyr::select # masked by MASS
 
@@ -90,7 +90,7 @@ answer_key <- read.csv("uptake_key_e4.csv")
 Clean up labels.
 
 ```{r}
-attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
+attitudes$sent <- stringr::str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
 ```
 
 Plot demographic info.
@@ -142,7 +142,7 @@ Setting up exclusion based on reading time.
 exclusions <- as_tibble(subinfo) %>%
   select(workerid, starts_with("rt")) %>%
   gather(article, rt, rt_exp1, rt_exp2, rt_con1, rt_con2) %>%
-  mutate(article = str_replace(str_replace(str_replace(article,"rt_", ""), 
+  mutate(article = stringr::str_replace(stringr::str_replace(stringr::str_replace(article,"rt_", ""), 
                                            "exp", "e"), "con","c"))
 
 ggplot(exclusions, aes(x = rt)) + 
@@ -322,7 +322,6 @@ ggplot(ms, aes(x = q_type, y = mean, fill = race)) +
   scale_fill_solarized()
 ```
 
-
 # Plots
 
 # Main plot
@@ -331,10 +330,7 @@ ggplot(ms, aes(x = q_type, y = mean, fill = race)) +
 d <- mss %>%
   left_join(atts) %>%
   left_join(subinfo) %>%
-  mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"), 
-         category = fct_recode(category, "Affection/Attachment" = "AA", 
-                               "Early Learning" = "EL", 
-                               "Rules/Respect" = "RR"))
+  mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"))
 
 ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
  geom_jitter(height = .02, width = 0, alpha= .3) +
@@ -345,7 +341,15 @@ ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
   ylab("Accuracy") +
   xlab("Subscale Rating") + 
   scale_color_solarized(name="Condition") +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom")+ 
+  ggthemes::theme_few()+ 
+  theme(legend.title = element_text(size=16), 
+        legend.text = element_text(size=14), 
+        axis.text.x  = element_text(vjust=0.5, size=14),
+        axis.title.x = element_text(size=16), 
+        axis.text.y  = element_text(vjust=0.5, size=14),
+        axis.title.y = element_text(size=16),
+        strip.text = element_text(size=14))
 ```
 
 ## Subgroup plots
@@ -362,7 +366,6 @@ ggplot(filter(d, gender %in% c("Man","Woman")),
   ylab("Accuracy") +
   xlab("Subscale Rating") 
 ```
-
 
 # Stats 
 
@@ -382,7 +385,7 @@ d_reg_excl <- d_reg %>%
 
 Model with affection and attachment. 
 
-```{r eval = FALSE}
+```{r eval = TRUE}
 mod <- glmer(acc ~ q_type * scale(AA) +  
                 q_type * scale(RR) + 
                 q_type * scale(EL) +
@@ -391,10 +394,10 @@ mod <- glmer(acc ~ q_type * scale(AA) +
               data = d_reg_excl,  
               family = "binomial")
 
-summary(mod)
+knitr::kable(summary(mod)$coefficients, digits = 3)
+```
 
-
-
+```{r eval = FALSE}
 # run optimizer for longer
 ss <- getME(mod,c("theta","fixef"))
 mod2 <- update(mod,start=ss,control=glmerControl(optCtrl=list(maxfun=2e4)))
