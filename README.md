@@ -29,20 +29,20 @@ Studying parenting attitudes and beliefs. Initial study of parent attitudes/beli
 * Removed 1 item from Attitudes scale- unsupervised play
 * Included additional demographic info- education, gender, age group
 
-#Experiment 4
+# Experiment 4
 * 12-16-15
 * Restructured and re-wrote items to correspond to 3 scales: Rules and Respect, Responsiveness and Affection, Active Learning
 * 24 items (8 per scale)
 * 2 items per scale are negatively worded
 * Added demographic questions: # and ages of children; ethnicity and race
 
-#Experiment 5
+# Experiment 5
 * 12-17-15
 * Same as Experiment 4, with 2afc instead of Likert
 * Included knowledge questions for comparison
 * Knowledge questions came after attitudes questions so attitudes can be compared across Experiments 4 and 5 (Likert vs. 2afc)
 
-#Experiment 6
+# Experiment 6
 * 1-8-16
 * Added additional items to all scales, removed items that had low correlations with subscales in e4. 
 * Re-anchored scale from Do not Agree- Agree Somewhat - Completely Agree

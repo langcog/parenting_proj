@@ -4,4 +4,12 @@ auth.json
 analysis/*.html
 .R*
 analysis/*files*
+<<<<<<< HEAD
 .Rproj.user
+=======
+*.fff
+*.DS_Store
+*.log
+*.ttt
+*.tex
+>>>>>>> 6ab7fe0aa22e86188e119221b342582bf0f2d24f
