@@ -1,0 +1,360 @@
+
+```{r}
+#get dataframe with subject responses
+responses_demo <- read.csv("../../data/cdm_paq.csv", header = TRUE)%>%
+ filter(Finished == 1) %>%
+ mutate(sid = ResponseId) %>%
+ select(sid, Q1:Q28) %>%
+ gather("item", "rating", Q1:Q28)
+```
+
+```{r}
+#get dataframe with survey questions
+questions <- read.csv("../../data/cdm_paq.csv", header = TRUE) %>%
+ filter(Status == "Response Type") %>%
+ select(Q1:Q28) %>%
+ gather("item", "sent", Q1:Q28) %>% 
+ mutate(sent = stringr::str_replace_all(sent, "’", ""))
+```
+
+```{r}
+#get dataframe with short sentences
+labels_demo <- read.csv("../../analysis/sent_forms_cdm.csv") %>%
+ mutate(sent = as.character(sent))
+```
+
+```{r}
+responses_demo%<>%
+ left_join(questions)%>%
+ left_join(labels_demo)
+
+#rescore reverse coded items
+responses_demo$rating <- as.numeric(responses_demo$rating)
+responses_demo$rating[responses_demo$reverse_code == 1] <- 8 -responses_demo$rating[responses_demo$reverse_code == 1]
+responses_demo$rating <- responses_demo$rating - 1
+```
+
+```{r}
+#get dataframe with demographic info
+subinfo <- read.csv("../../data/cdm_paq_dem.csv", header = TRUE) %>%
+ filter(Finished == "True") %>%
+ transmute(sid = ResponseId, ethnicity = Q25.1, parent_ed = Q26.1, parent_age = Q27.1, parent_gender = Q28.1, num_kids = Q29, oldest_kid = Q30, youngest_kid = Q32, only_kid = Q33)%>%
+ mutate(parent_age_approx = parent_age,
+ parent_ed_years = parent_ed)
+
+#recode parent age to be continuous
+subinfo$parent_age_approx <- recode(subinfo$parent_age_approx, 
+ "Under 18" = "18", 
+ "18 - 24" = "21", 
+ "25 - 34" = "30", 
+ "35 - 44" = "40", 
+ "45 - 54" = "50", 
+ "55 - 64" = "60", 
+ "65 - 74" = "70")
+subinfo$parent_age_approx <- as.numeric(as.character(subinfo$parent_age_approx))
+
+#recode parent ed to be continuous (num years)
+subinfo$parent_ed_years <- recode(subinfo$parent_ed_years, "Less than high school" = "12", "High school graduate" = "12", "Some college" = "14", "2 year degree" = "14", "4 year degree" = "16", "Professional degree" = "19", "Doctorate" = "23")
+subinfo$parent_ed_years <- as.numeric(as.character(subinfo$parent_ed_years))
+
+subinfo$ethnicity <- as.character(subinfo$ethnicity)
+subinfo$ethnicity[str_detect(subinfo$ethnicity, ",")] <- "Multiple Ethnicities"
+```
+
+```{r}
+#merge questionnaire data with labels and demo info
+d_demo <- responses_demo%>%
+ left_join(subinfo)
+```
+
+```{r}
+#create a dataframe that has mean subject scores and demographics
+ss <- d_demo %>%
+ group_by(sid, category) %>%
+ summarise(rating = mean(rating))%>%
+ left_join(subinfo)
+```
+
+```{r}
+#only plot groups that have at least 20 observations
+genders <- c("Male", "Female")
+
+ethnicities <- ss%>%
+ group_by(ethnicity) %>%
+ filter(n() > 20)%>%
+ select(ethnicity)%>%
+ filter(ethnicity !="",
+ ethnicity != "Other")%>%
+ unique
+ethnicities <- ethnicities$ethnicity
+
+ages <- ss%>%
+ group_by(parent_age) %>%
+ filter(n() > 20)%>%
+ select(parent_age)%>%
+ unique
+ages <- ages$parent_age
+
+parent_eds <- ss%>%
+ group_by(parent_ed) %>%
+ filter(n() > 20)%>%
+ select(parent_ed)%>%
+ unique
+
+parent_eds <- parent_eds$parent_ed
+
+nums_kids <- ss%>%
+ group_by(num_kids) %>%
+ filter(n() > 20)%>%
+ select(num_kids)%>%
+ unique
+nums_kids <- nums_kids$num_kids
+```
+
+```{r}
+ms_gender <- d_demo %>% 
+ filter(parent_gender %in% genders) %>%
+ group_by(parent_gender, category) %>%
+ tidyboot_mean(col = rating, na.rm = TRUE)
+```
+
+```{r}
+p_gender <- ggplot(ms_gender, aes(category, mean, fill=parent_gender)) +
+ geom_bar(stat="identity", position = "dodge") + 
+ geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+ position = position_dodge(width = .9)) + 
+ xlab("PAQ Subscale") + 
+ ylab("PAQ Score") +
+ 
+ scale_fill_viridis(discrete = TRUE, name="Parent Gender") +
+ scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+ theme(legend.title = element_text(size=10), 
+ legend.text = element_text(size=10), 
+ axis.title.x=element_blank(),
+ axis.text.y = element_text(vjust=0.5, size=10),
+ axis.title.y = element_text(size=12))
+```
+
+```{r}
+ms_age <- d_demo %>% 
+ filter(parent_age %in% ages) %>%
+ group_by(parent_age, category) %>%
+ tidyboot_mean(col = rating)
+```
+
+```{r}
+p_age <- ggplot(ms_age, aes(category, mean, fill=parent_age)) +
+ geom_bar(stat="identity", position = "dodge") + 
+ geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+ position = position_dodge(width = .9)) + 
+ xlab("PAQ Subscale") + 
+ ylab("PAQ Score") +
+ 
+ scale_fill_viridis(discrete = TRUE, name="Parent Age") +
+ scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+ theme(legend.title = element_text(size=10), 
+ legend.text = element_text(size=10), 
+ axis.title.x=element_blank(),
+ axis.text.y = element_text(vjust=0.5, size=10),
+ axis.title.y = element_text(size=12))
+```
+
+```{r}
+ss$parent_ed <- factor(ss$parent_ed, levels = c("Less than high school","High school graduate","Some college","2 year degree","4 year degree", "Professional degree", "Doctorate"))
+
+ms_ed <- d_demo %>% 
+ group_by(parent_ed, category) %>%
+ filter(parent_ed %in% parent_eds) %>%
+ tidyboot_mean(col = rating)
+```
+
+```{r}
+p_ed <- ggplot(ms_ed, aes(category, mean, fill=parent_ed)) +
+ geom_bar(stat="identity", position = "dodge") + 
+ geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+ position = position_dodge(width = .9)) + 
+ xlab("PAQ Subscale") + 
+ ylab("PAQ Score") +
+ 
+ scale_fill_viridis(discrete = TRUE, name="Parent Education") +
+ scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+ theme(legend.title = element_text(size=10), 
+ legend.text = element_text(size=10), 
+ axis.title.x=element_blank(),
+ axis.text.y = element_text(vjust=0.5, size=10),
+ axis.title.y = element_text(size=12))
+```
+
+```{r}
+ms_ethnic <- d_demo %>% 
+ group_by(ethnicity, category) %>%
+ filter(ethnicity %in% ethnicities) %>%
+ tidyboot_mean(col = rating)
+```
+
+```{r}
+p_ethnic <- ggplot(ms_ethnic, aes(category, mean, fill=ethnicity)) +
+ geom_bar(stat="identity", position = "dodge") + 
+ geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+ position = position_dodge(width = .9)) + 
+ xlab("PAQ Subscale") + 
+ ylab("PAQ Score") +
+ 
+ scale_fill_viridis(discrete = TRUE, name="Parent Ethnicity") +
+ scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+ theme(legend.title = element_text(size=10), 
+ legend.text = element_text(size=10), 
+ axis.title.x=element_blank(),
+ axis.text.y = element_text(vjust=0.5, size=10),
+ axis.title.y = element_text(size=12))
+```
+
+```{r}
+ms_numkids <- d_demo %>% 
+ group_by(num_kids, category) %>%
+ filter(num_kids %in% nums_kids) %>%
+ tidyboot_mean(col = rating)
+```
+
+```{r}
+p_numkids <- ggplot(ms_numkids, aes(category, mean, fill=num_kids)) +
+ geom_bar(stat="identity", position = "dodge") + 
+ geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+ position = position_dodge(width = .9)) + 
+ xlab("PAQ Subscale") + 
+ ylab("PAQ Score") +
+ 
+ scale_fill_viridis(discrete = TRUE, name="Number of Children") +
+ scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))+ 
+ theme(legend.title = element_text(size=10), 
+ legend.text = element_text(size=10), 
+ axis.title.x=element_blank(),
+ axis.text.y = element_text(vjust=0.5, size=10),
+ axis.title.y = element_text(size=12))
+```
+
+```{r demographics, fig.width=10, fig.height=8, fig.cap= "Demographic variability in PAQ scores. Error bars represent +/-95% CI computed by non-parametric bootstrap."}
+grid.arrange(p_age, p_ed, p_ethnic, p_gender, p_numkids, nrow = 3)
+```
+
+```{r}
+#make a new dataframe for regression models
+d_demo_mods <- d_demo%>%
+ transmute(sid = sid,
+ rating = ordered(factor(rating)),
+ item = short_sent,
+ category = category,
+ parent_age = as.numeric(parent_age_approx),
+ parent_ed_years = as.numeric(parent_ed_years),
+ num_kids = as.numeric(num_kids),
+ ethnicity = as.factor(ethnicity),
+ parent_gender = as.factor(parent_gender))
+
+d_demo_mods$ethnicity[!d_demo_mods$ethnicity %in% ethnicities] <- NA
+d_demo_mods$parent_gender[!d_demo_mods$parent_gender %in% genders] <- NA
+```
+
+```{r eval = FALSE}
+#bayes ordinal logistic
+#takes a long time to run
+aa_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
+ (1|sid), 
+ data=filter(d_demo_mods , category == "AA"),
+ family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(aa_demo_mod, file = "saved_mods/aa_demo_mod.Rdata")
+```
+
+```{r eval = FALSE}
+#bayes ordinal logistic
+#takes a long time to run
+el_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
+ (1|sid), 
+ data=filter(d_demo_mods , category == "EL"),
+ family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(el_demo_mod, file = "saved_mods/el_demo_mod.Rdata")
+```
+
+```{r eval = FALSE}
+#bayes ordinal logistic
+#takes a long time to run
+rr_demo_mod <- brm(rating ~ parent_age + ethnicity + parent_ed_years + num_kids + parent_gender +
+ (1|sid), 
+ data=filter(d_demo_mods, category == "RR"),
+ family=cumulative("logit"), control = list(adapt_delta = .99))
+
+save(rr_demo_mod, file = "saved_mods/rr_demo_mod.Rdata")
+```
+
+```{r}
+#load saved ordinal logistic regression models
+load ("saved_mods/aa_demo_mod.Rdata")
+load ("saved_mods/el_demo_mod.Rdata")
+load ("saved_mods/rr_demo_mod.Rdata")
+
+aa_d <- summary(aa_demo_mod)
+aa_demo <- data.frame(aa_d$fixed)
+
+el_d <- summary(el_demo_mod)
+el_demo <- data.frame(el_d$fixed)
+
+rr_d <- summary(rr_demo_mod)
+rr_demo <- data.frame(rr_d$fixed)
+```
+
+```{r demo_tab, results = "asis"}
+factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male")
+
+subscales <- c("AA", "", "", "", "", "", "", 
+ "EL", "", "", "", "", "", "", 
+ "RR", "", "", "", "", "", "")
+
+tab_demo_lm <- aa_demo%>%
+ bind_rows(el_demo)%>%
+ bind_rows(rr_demo)%>%
+ mutate(Factor = factors)%>%
+ filter(!str_detect(Factor,"Intercept"))%>% 
+ mutate(Subscale = subscales)
+ 
+tab_demo_lm <- tab_demo_lm [,c(8,7,1:4)]
+
+colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+
+demo_tab <- xtable(tab_demo_lm, label = "tab:demo", caption = "Results of separate bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.")
+
+print(demo_tab, type="latex", comment = F, table.placement = "H", hline.after = c(-1, 0, 7, 14, 21), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
+```
+
+```{r}
+#get demographic means
+parent_ed_summ <- d_demo%>%
+ distinct(sid, parent_ed)%>%
+ group_by(parent_ed) %>%
+ summarise (n = n()) %>%
+ mutate(freq = n / sum(n)*100)
+
+parent_age_summ <- d_demo%>%
+ distinct(sid, parent_age)%>%
+ group_by(parent_age) %>%
+ summarise (n = n()) %>%
+ mutate(freq = n / sum(n)*100)
+
+num_kids_summ <- d_demo%>%
+ distinct(sid, num_kids)%>%
+ group_by(num_kids) %>%
+ summarise (n = n()) %>%
+ mutate(freq = n / sum(n)*100)
+
+parent_gender_summ <- d_demo%>%
+ distinct(sid, parent_gender)%>%
+ group_by(parent_gender) %>%
+ summarise (n = n()) %>%
+ mutate(freq = n / sum(n)*100)
+
+parent_ethnicity_summ <- d_demo%>%
+ distinct(sid, ethnicity)%>%
+ group_by(ethnicity) %>%
+ summarise (n = n()) %>%
+ mutate(freq = n / sum(n)*100)
+```

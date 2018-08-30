@@ -3,9 +3,12 @@ auth.json
 *.json
 analysis/*.html
 .R*
-analysis/*files*
+*files*
+*files*
 *.fff
 *.DS_Store
 *.log
 *.ttt
 *.tex
+.Rproj.user
+rsconnect

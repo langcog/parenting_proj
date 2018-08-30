@@ -1,0 +1,180 @@
+
+```{r}
+files <- dir("../../data/uptake_e4/")
+answers <- data.frame()
+attitudes <- data.frame()
+subinfo <- data.frame()
+
+for (f in files) {
+ jf <- paste("../../data/uptake_e4/",f,sep="")
+ jd <- fromJSON(paste(readLines(jf), collapse=""))
+
+ #uptake responses
+ answers_id <- data.frame(
+ answer= jd$answers$data$answer,
+ item = jd$answers$data$item[jd$answers$data$trial_type =="uptake"],
+ sid = jd$WorkerId)
+ 
+ answers <- bind_rows(answers, answers_id)
+ 
+ attitudes_id <- data.frame(sid = jd$WorkerId, 
+ sent = jd$answers$data$sentence[jd$answers$data$trial_type=="attitudes"],
+ rating = as.numeric(jd$answers$data$rating[jd$answers$data$trial_type=="attitudes"])) 
+ 
+ attitudes <- bind_rows(attitudes, attitudes_id)
+ 
+ #questionnaire and demo
+ subinfo_id <- data.frame(sid = jd$WorkerId, 
+ children = jd$answers$data$children,
+ language = jd$answers$data$homelang,
+ ses = jd$answers$data$ladder,
+ gender = jd$answers$data$gender,
+ age = jd$answers$data$age,
+ education = jd$answers$data$education,
+ ethnicity = jd$answers$data$ethnicity,
+ race = as.character(jd$answers$data$race[1]),
+ rt_exp1 = jd$answers$data$target1_rt,
+ rt_exp2 = jd$answers$data$target2_rt,
+ rt_con1 = jd$answers$data$control1_rt,
+ rt_con2 = jd$answers$data$control2_rt)
+ subinfo <- bind_rows(subinfo, subinfo_id)
+}
+```
+
+```{r}
+#Read in trial info and questionnaire labels.
+labels <- read.csv("../../analysis/sent_forms_uptake_e4.csv")
+labels$sent <- as.character(labels$sent)
+
+answer_key <- read.csv("../../analysis/uptake_key_e4.csv")
+```
+
+```{r}
+#Clean up labels.
+attitudes$sent <- stringr::str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
+```
+
+```{r}
+#Questionnaire attitude means.
+dq <- attitudes %>%
+ left_join(labels) 
+
+dq$rating[dq$reverse_code == 1] <- 6 - dq$rating[dq$reverse_code == 1]
+
+atts <- dq %>%
+ group_by(sid, category) %>% 
+ summarise(rating = mean(rating))
+```
+
+```{r}
+#Setting up exclusion based on reading time. Exclude for less than 15s. 
+exclusions <- as_tibble(subinfo) %>%
+ select(sid, starts_with("rt")) %>%
+ gather(article, rt, rt_exp1, rt_exp2, rt_con1, rt_con2) %>%
+ mutate(article = stringr::str_replace(stringr::str_replace(stringr::str_replace(article,"rt_", ""), "exp", "e"), "con","c"),
+ exclude = rt <15)
+```
+
+```{r}
+#Get accuracy data. 
+answers$answer <- as.character(answers$answer)
+answer_key$answer_cor <- as.character(answer_key$answer_cor)
+
+uptake <- answers %>%
+ left_join(answer_key) %>%
+ mutate(acc = (answer == answer_cor)) %>%
+ select(sid, item, acc, q_type, article) %>%
+ left_join(exclusions) %>%
+ filter(!exclude)
+
+mss <- uptake %>%
+ group_by(sid, q_type) %>% 
+ summarise(acc = mean(acc))
+
+ms <- mss %>%
+ group_by(q_type) %>%
+ multi_boot_standard(col = "acc")
+```
+
+```{r}
+mss_wide <- spread(mss, q_type, acc) %>%
+ filter(!is.na(con) & !is.na(exp))
+
+t_acc_q_type <- t.test(mss_wide$con, mss_wide$exp, paired=TRUE)
+```
+
+
+```{r}
+d <- mss %>%
+ left_join(atts) %>%
+ left_join(subinfo) %>%
+ mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"))
+```
+
+```{r uptake, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the uptake of information in experimental (child development-related) and control articles."}
+ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
+ geom_jitter(height = .02, width = 0, alpha= .3) +
+ geom_smooth(method="lm") + 
+ facet_grid(.~category) + 
+ ylab("Accuracy") +
+ xlab("PAQ Rating") + 
+ theme(legend.position = "bottom",
+ legend.title = element_text(size=16), 
+ legend.text = element_text(size=14), 
+ axis.text.x = element_text(vjust=0.5, size=14),
+ axis.title.x = element_text(size=16), 
+ axis.text.y = element_text(vjust=0.5, size=14),
+ axis.title.y = element_text(size=16),
+ strip.text = element_text(size=14))+
+ 
+ scale_color_viridis(name="Condition", discrete = TRUE) 
+```
+
+```{r}
+#Set up a dataframe for analysis with exclusions.
+d_reg <- atts %>%
+ left_join(uptake)%>%
+ group_by(sid, category, acc, q_type, item, article)%>%
+ summarise(rating = mean(rating))%>%
+ spread(category, rating)
+
+d_reg_excl <- d_reg %>%
+ left_join(exclusions) %>%
+ filter(!exclude)
+```
+
+```{r eval = FALSE}
+uptake_mod <- brm(acc ~ q_type * AA + 
+ q_type * RR + 
+ q_type * EL +
+ (q_type | sid) +
+ (1 | item), 
+ data = d_reg_excl,
+ family = bernoulli())
+
+save(uptake_mod, file ="saved_mods/uptake_mod.Rdata")
+```
+
+```{r}
+#load saved ordinal logistic regression models
+load ("saved_mods/uptake_mod.Rdata")
+
+up <- summary(uptake_mod)
+uptake <- data.frame(up$fixed)
+```
+
+```{r uptake_tab, results = "asis"}
+factors <- c("Intercept", "EL Articles", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * EL Articles", "RR PAQ score * EL Articles", "EL PAQ score * EL Articles")
+
+tab_uptake <- uptake%>%
+ mutate(Factor = factors)%>%
+ filter(!str_detect(Factor,"Intercept"))
+ 
+tab_uptake <- tab_uptake [,c(7,1:4)]
+
+colnames(tab_uptake) <- c("Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
+
+tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a bayesian logistic regression of PAQ scores and article topic (EL vs. control) on memory for information in articles.")
+
+print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"), caption.placement = "top")
+```
