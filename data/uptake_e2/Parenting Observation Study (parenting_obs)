@@ -1,0 +1,96 @@
+Parenting Observation Study (parenting_obs)
+
+Planned n = 40 per age group (120 total)
+
+Videos by age group:
+6-11.9: “A recoger”; “ruidos de animales”
+12-17.9 -- “give me the toy”; “clasificando mis jugetes”
+18-23.9 -- “orchestra”; “mis jugetes II”
+
+Props by video:
+6-12 A/a recoger:
+pillowcase, horse, sheep, elephant, car
+6-12 B/ruidos:
+sheep, horse, frog, cow
+12-18 A/give me the toy:
+boat, frog, elephant, bus
+12-18 B/classificando:
+2 cars, 2 horses
+18-24 A/mis jugetes:
+2 cars, 2 horses
+18-24 B/orchestra:
+maracas, drum, tamborine, clapper
+
+Procedure:
+
+Setup:
+ 
+1)    Consent form + Demographics form
+2)    Foam mat on floor; 3x4 square rectangle
+3)    Have tablet open with:
+a.     Parenting Questionnaire
+b.     Kinedu videos (google drive)
+c.     Follow-up form (google drive)
+4)    Have headphones connected to tablet; test volume with Kinedu videos
+5)    Have box of toys/crayons/coloring books available to entertain children prior to study
+6)    Position video equipment:
+a.     Video camera on tripod near door facing mat
+b.     iPad with fisheye lens attachment; placed inside cardboard box facing mat
+7)    Prepare sound equipment:
+a.     Laptop, mixer, receiver connected and plugged in
+b.     Wireless transmitter on and set to same channel as receiver
+c.     Garageband open with new recording set up
+
+
+Procedure:
+
+1)    Briefly explain study to parent as follows:
+ 
+“We are interested in how parents and children communicate and play together. We have some toys for you and your child to play with, and we’d like to record a video of you playing together for 3 minutes. Does that sound okay? We will also have you fill out a questionnaire about your beliefs about child development.” 
+ 
+2)    Have parent sign consent form and fill out demographics form
+3)    Have parent fill out Parenting Questionnaire https://langcog.stanford.edu/expts/parenting_proj/questionnaire_CDM.html
+4)    If parent is in “video” group, have them watch the video for their age group and condition (see counterbalance spreadsheet).
+ 
+“We are going to show you a quick video about an activity you can do with the toys. We want to make sure you are able to watch the video, so feel free to pause it if there’s an interruption.”
+ 
+**Make sure parent is able to watch video without too much distraction. This might mean having the child sit in her/his lap, or making sure child is playing elsewhere.**
+ 
+5)    Begin play session:
+ 
+Video group: “We would like you and your child to do the activity you saw in the video.”
+No video group: “We would like you and your child to play with the toys we have provided.”
+ 
+a.     Have parent and child sit on mat
+b.     Turn on video camera and ipad video; make sure parent and child are in frame
+c.     Have parent attach microphone to shirt and place transmitter on floor
+d.     Turn on recording in Garageband
+e.     Set timer or stopwatch to 3 minutes and tell parent to begin play
+f.      After three minutes, tell parent and child they can stop playing, and turn of sound and video equipment.
+ 
+6)    Have parent fill out Follow-up form
+7)    Thank parent and debrief:
+ 
+“Thank you so much for participating! For this study, we are interested in how videos like the one you watched affect parent-child interactions, so we don’t necessarily endorse these particular videos or activities.”
+
+
+
+Debriefing Script:
+
+“Thank you so much for participating! For this study we were interested in whether videos that suggest specific activities help parents engage more with their child. We don’t necessarily endorse these specific videos, we are just interested in the effects of watching a video.”
+
+Audio Editing Procedure
+
+When first opening GarageBand file save as SubID_cut. Put in time mode (not measures)
+Find where RA says to parent “We’re going to start” & drag navigation arrow. Select Cut feature
+Delete first chunk--Time will reset: at 3 minutes select cut feature again and delete remaining audio.
+Save and export to disk-->AAC Encoder/ Highest Quality
+Upload to server (system preferences/network for VPN then connect using Finder on Mac)
+
+
+
+
+
+
+
+
