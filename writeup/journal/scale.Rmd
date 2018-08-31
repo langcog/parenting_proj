@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 
 ```{r}
 files <- dir("../../data/e9/")
@@ -257,7 +262,7 @@ alpha.rr <- as.matrix(select(wide_rr, -workerid))
 alpha_rr <- alpha(x = alpha.rr)
 ```
 
-```{r itemstab, results = "asis"}
+```{r items, results = "asis"}
 items <- labels %>%
   filter(instrument == "attitudes") %>%
   select(category, sent, reverse_code) %>%
@@ -273,7 +278,7 @@ items%<>%
   transmute(Category = cat,
             Item = sent)
 
-kable(items,caption = "Parenting Attitudes Scale items.", "latex", booktabs = T) %>%
+kable(items, caption = "Parenting Attitudes Scale items.", "latex", booktabs = T) %>%
   kable_styling(font_size = 9, 
                 latex_options = c("hold_position")) %>%
   column_spec(1, bold = T) %>%
