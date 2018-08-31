@@ -19,9 +19,9 @@ author_note: |
  This work supported by a gift from Kinedu Inc. We thank Laura Schulz for inspiring this line of inquiry and for generously providing her unpublished materials. 
 
 abstract: |
- Enter abstract here. Each new line herein must be indented, like this line.
+ Parenting behaviors and decisions play an important role in determining children’s early environment. Are these behaviors driven by an intuitive theory of parenting – a coherent set of beliefs about child development and parent-child relationships? We asked participants to endorse a set of propositions about parenting and conducted exploratory factor analyses of their responses. Three distinct factors appeared in responses: an Affection and Attachment factor, an Early Learning factor, and a Rules and Respect factor. In an iterative process, we created a scale of items with subscales designed to measure these factors, which we call the Early Parenting Attitudes Questionnaire (EPAQ). We conducted a series of studies to estimate the validity of the new scale, asking whether the predicted factor structure emerged from subsequent confirmatory factor analysis on a new sample, whether agreement with each subscale varied based on demographic factors, whether intuitive theories predicted self-reported parenting behaviors, and whether theories predicted memory for new theory-consistent information. The present scale provides an instrument to assess attitudes about parenting and child development, facilitating investigation and intervention on parenting behaviors. 
  
-keywords : "keywords"
+keywords : "intuitive theories; parenting; attitude change"
 wordcount : "X"
 
 bibliography : ["paq.bib"]
@@ -171,7 +171,7 @@ Another way of assessing the ecological validity of the PAQ is to ask whether th
 
 ## Participants 
 
-Participants were 250 parents recruited through Amazon's Mechanical Turk. 
+Participants were 250 adults recruited through Amazon's Mechanical Turk. To identify parents in our sample, we requested that only parents complete the survey, and then followed up by asking how many children participants had at the end of the survey. Ten participants responded "0" and were dropped from analyses, leaving 240 parents in the final sample. 
 
 ## Procedure
 
