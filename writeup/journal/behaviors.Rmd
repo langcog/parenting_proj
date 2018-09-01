@@ -125,14 +125,14 @@ levels = c("AA", "EL", "RR"),
 labels = c("AA Behaviors", "EL Behaviors", "RR Behaviors"))
 ```
 
-```{r behavepaq, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the frequency of parenting behaviors divided into the same categories."}
+```{r behavepaq, fig.cap= "Relations between EPAQ subscale scores (Affection and Attachment, Early Learning, and Rules and Respect) and the frequency of parenting behaviors divided into the same categories."}
 ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
  geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .3) +
  geom_smooth(method="lm", se=TRUE) +
  facet_grid(~category_bev) + 
  xlab("Frequency of behavior") + 
- ylab("PAQ score") + 
- labs(colour="PAQ subscale")+
+ ylab("EPAQ score") + 
+ labs(colour="EPAQ subscale")+
  
  scale_color_viridis(discrete = TRUE) +
  scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))
@@ -246,7 +246,7 @@ rr_behave <- data.frame(rr_b$fixed)
 ```
 
 ```{r behavetab, results = "asis"}
-factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA PAQ score", "RR PAQ score", "EL PAQ score", "Child Age")
+factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA EPAQ score", "RR EPAQ score", "EL EPAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA EPAQ score", "RR EPAQ score", "EL EPAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA EPAQ score", "RR EPAQ score", "EL EPAQ score", "Child Age")
 
 behaviors <- c("AA", "", "", "", 
  "EL", "", "", "", 
@@ -263,7 +263,7 @@ tab_behave_lm <- tab_behave_lm [,c(8,7,1:4)]
 
 colnames(tab_behave_lm) <- c("Behavior Category","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
 
-behave_tab <- xtable(tab_behave_lm, label = "tab:behavetab", caption = "Results of separate bayesian ordinal logistic regressions of PAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
+behave_tab <- xtable(tab_behave_lm, label = "tab:behavetab", caption = "Results of separate Bayesian ordinal logistic regressions of EPAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
 
 print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 4, 8, 12), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
 ```
@@ -274,9 +274,9 @@ behaviors_sents <- behave%>%
  arrange(category)%>%
  transmute(Category=cat, `In the last month, how often did...` = str_replace(sent, "In the last month, how often did", ""))
 
-kable(behaviors_sents ,caption = "Frequencies of parenting activities reported by parents.", "latex", booktabs = T) %>%
+kable(behaviors_sents ,caption = "Parenting activities reported on by parents.", "latex", booktabs = T) %>%
 kable_styling(font_size = 9, 
  latex_options = c("hold_position")) %>%
 column_spec(1, bold = T) %>%
-column_spec(2, width = "40em")
+column_spec(2, width = "45em")
 ```

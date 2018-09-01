@@ -111,13 +111,13 @@ d <- mss %>%
  mutate(q_type = fct_recode(q_type, "Control" = "con", "Experimental" = "exp"))
 ```
 
-```{r uptake, fig.cap= "Relations between PAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the uptake of information in experimental (child development-related) and control articles."}
+```{r uptake, fig.cap= "Relations between EPAQ scores (Affection and Attachment, Early Learning, and Rules and Respect) and the uptake of information in experimental (child development-related) and control articles."}
 ggplot(d, aes(x = rating, y = acc, colour = q_type)) +
  geom_jitter(height = .02, width = 0, alpha= .3) +
  geom_smooth(method="lm") + 
  facet_grid(.~category) + 
  ylab("Accuracy") +
- xlab("PAQ Rating") + 
+ xlab("EPAQ Rating") + 
  theme(legend.position = "bottom",
  legend.title = element_text(size=16), 
  legend.text = element_text(size=14), 
@@ -164,7 +164,7 @@ uptake <- data.frame(up$fixed)
 ```
 
 ```{r uptake_tab, results = "asis"}
-factors <- c("Intercept", "EL Articles", "AA PAQ score", "RR PAQ score", "EL PAQ score", "AA PAQ score * EL Articles", "RR PAQ score * EL Articles", "EL PAQ score * EL Articles")
+factors <- c("Intercept", "EL Articles", "AA EPAQ score", "RR EPAQ score", "EL EPAQ score", "AA EPAQ score * EL Articles", "RR EPAQ score * EL Articles", "EL EPAQ score * EL Articles")
 
 tab_uptake <- uptake%>%
  mutate(Factor = factors)%>%
@@ -174,7 +174,7 @@ tab_uptake <- tab_uptake [,c(7,1:4)]
 
 colnames(tab_uptake) <- c("Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
 
-tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a bayesian logistic regression of PAQ scores and article topic (EL vs. control) on memory for information in articles.")
+tab_uptake_ <- xtable(tab_uptake, label = "tab:uptake", caption = "Results of a bayesian logistic regression of EPAQ scores and article topic (EL vs. control) on memory for information in articles.")
 
 print(tab_uptake_, type="latex", comment = F, table.placement = "h", include.rownames=FALSE, align = c("l","r","r","r","r"), caption.placement = "top")
 ```

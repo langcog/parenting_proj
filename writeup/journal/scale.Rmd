@@ -207,11 +207,11 @@ ms$reverse_code <- recode(ms$reverse_code, "0" = "No", "1" = "Yes")
 
 ms%<>%
   mutate(`Reverse coded` = factor(reverse_code),
-         `PAQ category` = factor(category))
+         `EPAQ category` = factor(category))
 ```
 
-```{r sentratings, fig.width=10, fig.height=8, fig.cap= "Average ratings for individual PAQ items."}
-ggplot(ms, aes(short_sent_ord, mean, colour = `PAQ category`, 
+```{r sentratings, fig.width=10, fig.height=8, fig.cap= "Average ratings for individual EPAQ items."}
+ggplot(ms, aes(short_sent_ord, mean, colour = `EPAQ category`, 
                shape = `Reverse coded`)) +
   geom_point(size = 3.5) +
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
@@ -278,11 +278,11 @@ items%<>%
   transmute(Category = cat,
             Item = sent)
 
-kable(items, caption = "Parenting Attitudes Scale items.", "latex", booktabs = T) %>%
+kable(items, caption = "Early Parenting Attitudes Questionnaire items.", "latex", booktabs = T) %>%
   kable_styling(font_size = 9, 
                 latex_options = c("hold_position")) %>%
   column_spec(1, bold = T) %>%
-  column_spec(2, width = "40em")%>% 
+  column_spec(2, width = "45em")%>% 
   footnote(general = "*Indicates reverse coded items.")
 ```
 
@@ -314,7 +314,7 @@ labels$item <- labels$short_sent
 loadings <- left_join(loadings, labels, by = "item")
 ```
 
-```{r factors, fig.width=10, fig.height=8, fig.cap= "Factor loadings on individual PAQ questions."}
+```{r factors, fig.width=10, fig.height=8, fig.cap= "Factor loadings on individual EPAQ questions."}
 
 qplot(factor, item, fill = loading, geom = "tile", data = loadings) + 
   scale_fill_viridis() + 
