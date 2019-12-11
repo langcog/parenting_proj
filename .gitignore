@@ -10,3 +10,4 @@ analysis/*.html
 *.ttt
 *.tex
 rsconnect
+*.json

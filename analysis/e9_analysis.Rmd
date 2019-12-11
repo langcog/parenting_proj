@@ -27,9 +27,6 @@ Data analysis of basic parenting values/attitudes survey.
 Preliminaries.
 
 ```{r echo=FALSE}
-
-rm(list=ls())
-setwd("~/Desktop/parenting_proj/analysis")
 knitr::opts_chunk$set(fig.width=8, fig.height=5, 
                       echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 suppressPackageStartupMessages(c("dplyr","langcog","tidyr","ggplot2","lme4"))
@@ -49,12 +46,12 @@ theme_set(theme_bw())
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("../production-results/e9/")
+files <- dir("../data/e9/")
 d.raw <- data.frame()
 
 
 for (f in files) {
-  jf <- paste("../production-results/e9/",f,sep="")
+  jf <- paste("../data/e9/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   
   # clean up different tasks
@@ -124,7 +121,7 @@ Plot demographic info.
 ```{r}
 subinfo <- d %>% 
   group_by(workerid) %>%
-  select(workerid, age, gender, children, ses, education, language, 
+  select(workerid, age, gender, children, ses, education, language,
          ethnicity, childAgeYoung, childAgeOld) %>%
   summarise(age = age[1],
             gender = gender[1],

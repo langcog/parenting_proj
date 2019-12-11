@@ -10,28 +10,22 @@ author:
     corresponding : yes # Define only one corresponding author
     address : "450 Serra Mall, Stanford, CA 94305"
     email : "mcfrank@stanford.edu"
-
 affiliation:
   - id : "1"
     institution : "Stanford University"
-
 author_note: |
  This work supported by a gift from Kinedu Inc. We thank Laura Schulz for inspiring this line of inquiry and for generously providing her unpublished materials. 
-
 abstract: |
- Parenting behaviors and decisions play an important role in determining children’s early environment. Are these behaviors driven by an intuitive theory of parenting – a coherent set of beliefs about child development and parent-child relationships? We asked participants to endorse a set of propositions about parenting and conducted exploratory factor analyses of their responses. Three distinct factors appeared in responses: an Affection and Attachment factor, an Early Learning factor, and a Rules and Respect factor. In an iterative process, we created a scale of items with subscales designed to measure these factors, which we call the Early Parenting Attitudes Questionnaire (EPAQ). We conducted a series of studies to estimate the validity of the new scale, asking whether the predicted factor structure emerged from subsequent confirmatory factor analysis on a new sample, whether agreement with each subscale varied based on demographic factors, whether intuitive theories predicted self-reported parenting behaviors, and whether theories predicted memory for new theory-consistent information. The present scale provides an instrument to assess attitudes about parenting and child development, facilitating investigation and intervention on parenting behaviors. 
  
+ Parenting behaviors and decisions play an important role in determining children’s early environment. Are these behaviors driven by an intuitive theory of parenting – a coherent set of beliefs about child development and parent-child relationships? We asked participants to endorse a set of propositions about parenting and conducted exploratory factor analyses of their responses. Three distinct factors appeared in responses: an Affection and Attachment factor, an Early Learning factor, and a Rules and Respect factor. In an iterative process, we created a scale of items with subscales designed to measure these factors, which we call the Early Parenting Attitudes Questionnaire (EPAQ). We conducted a series of studies to estimate the validity of the new scale, asking whether the predicted factor structure emerged from subsequent confirmatory factor analysis on a new sample, whether agreement with each subscale varied based on demographic factors, whether intuitive theories predicted self-reported parenting behaviors, and whether theories predicted memory for new theory-consistent information. The present scale provides an instrument to assess attitudes about parenting and child development, facilitating investigation and intervention on parenting behaviors. 
 keywords : "intuitive theories; parenting; child development"
 wordcount : "5189"
-
 bibliography : ["paq.bib"]
-
 figsintext : no
 figurelist : no
 tablelist : no
 footnotelist : no
 lineno : no
-
 mask : no
 class : "man"
 output : papaja::apa6_pdf

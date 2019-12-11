@@ -49,11 +49,11 @@ theme_set(theme_bw())
 Read in files and consolidate to the same directory. 
 
 ```{r}
-files <- dir("../production-results/e5/")
+files <- dir("../data/e5/")
 d.raw <- data.frame()
 
 for (f in files) {
-  jf <- paste("../production-results/e5/",f,sep="")
+  jf <- paste("../data/e5/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   
   # clean up instruction trial
@@ -158,7 +158,7 @@ Now look at mean ratings across sentences.
 Need to look at which items were associated with DU.
 
 ```{r}
-rating_count <- table(d$rating[instrument=="attitudes"]) 
+rating_count <- table(d$rating[d$instrument=="attitudes"]) 
 rating_count
 prop.table(rating_count) 
 
