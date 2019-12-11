@@ -5,11 +5,11 @@ editor_options:
 ---
 
 ```{r}
-files <- dir("../../data/e9/")
+files <- dir(here("data/e9/"), pattern = "anon*")
 d.raw <- data_frame()
 
 for (f in files) {
-  jf <- paste("../../data/e9/",f,sep="")
+  jf <- paste(here("data/e9/",f))
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   
   # clean up different tasks
@@ -50,8 +50,8 @@ d.raw %<>%
 ```
 
 ```{r}
-#Map on question short forms so that we can use these instead. 
-labels <- read_csv("../../analysis/sent_forms_e9.csv")
+# Map on question short forms so that we can use these instead. 
+labels <- read_csv(here("analysis/sent_forms_e9.csv"))
 labels$sent <- as.character(labels$sent)
 ```
 
@@ -125,9 +125,9 @@ subinfo$ethnicity <- recode(subinfo$ethnicity, "NonHispanic" = "Non-Hispanic")
 ```{r}
 
 #demographics plots
-ses_plot <- ggplot(filter(subinfo, !is.na(ses)), aes(ses))+
+ses_plot <- ggplot(filter(subinfo, !is.na(ses)), aes(ses)) +
   geom_histogram(stat = "count") +
-  xlab("SES") + 
+  xlab("Subective Socioeconomic Status") + 
   ylab("Count") +
   scale_fill_viridis(discrete = TRUE) +
   theme(legend.title = element_text(size=10), 
@@ -145,7 +145,14 @@ gender_plot <- ggplot(filter(subinfo, !is.na(gender)), aes(gender))+
         axis.text.y = element_text(vjust=0.5, size=10),
         axis.title.y = element_text(size=12))
 
-education_plot <- ggplot(filter(subinfo, !is.na(education)), aes(stringr::str_wrap(education, 10)))+
+education_plot <- ggplot(filter(subinfo, !is.na(education)) %>%
+                           mutate(education = fct_relevel(str_wrap(education, 10), 
+                                                          c("High\nschool",
+                                                            "Some\ncollege", 
+                                                            "4 year",
+                                                            "Some grad\nschool",
+                                                            "Grad\nschool"))), 
+                         aes(education)) +
   geom_histogram(stat = "count") +
   xlab("Education") + 
   ylab("Count") +
@@ -186,11 +193,7 @@ race_plot <- ggplot(filter(subinfo, !is.na(race)), aes(stringr::str_wrap(race, 1
         axis.title.y = element_text(size=12))
 ```
 
-```{r normdemo, fig.width=12, fig.height=8, fig.cap= "Demographic information for participants in the final norming sample."}
-grid.arrange(ses_plot, age_plot, gender_plot, 
-             education_plot, ethnicity_plot, race_plot, 
-             nrow = 3)
-```
+
 
 ```{r}
 #look at mean ratings across sentences.

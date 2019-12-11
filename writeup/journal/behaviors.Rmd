@@ -1,13 +1,14 @@
 
 ```{r}
-files <- dir("../../data/parenting_behaviors_e2/")
+files <- dir(here("data/parenting_behaviors_e2/"), pattern = "anon*")
 attitudes <- data.frame()
 behaviors <- data.frame()
 subinfo <- data.frame()
 
 for (f in files) {
- jf <- paste("../../data/parenting_behaviors_e2/",f,sep="")
- jd <- fromJSON(paste(readLines(jf), collapse=""))
+ jf <- paste(here("data/parenting_behaviors_e2/",f))
+ jd <- fromJSON(paste(readLines(jf), collapse = ""))
+ 
  
  #paq answers
  attitudes_id <- data.frame(sid = as.factor(jd$WorkerId), 
@@ -24,9 +25,15 @@ for (f in files) {
  behaviors <- bind_rows(behaviors, behaviors_id)
  
  #demographics
- subinfo_id <- data.frame(sid = as.factor(jd$WorkerId),
- behave_age = jd$answers$data$behaveAge,
- children = jd$answers$data$children)
+ subinfo_id <- data.frame(sid = jd$WorkerId,
+                          behave_age = jd$answers$data$behaveAge,
+                          children = jd$answers$data$children,
+                          gender = jd$answers$data$gender,
+                          SES = jd$answers$data$ladder,
+                          race = ifelse(length(jd$answers$data$race) == 0,
+                                        NA, jd$answers$data$race),
+                          age = jd$answers$data$age,
+                          ethnicity = jd$answers$data$ethnicity)
  subinfo <- bind_rows(subinfo, subinfo_id)
 }
 
@@ -34,6 +41,11 @@ for (f in files) {
 attitudes$sent <- str_replace_all(as.character(attitudes$sent), "[â‘”“’']", "")
 behaviors$sent <- str_replace_all(as.character(behaviors$sent), "[â‘”“’']", "")
 ```
+
+```{r}
+nsubs <- nrow(subinfo)
+```
+
 
 ```{r}
 #Read in trial info and questionnaire labels.
@@ -126,7 +138,8 @@ labels = c("AA Behaviors", "EL Behaviors", "RR Behaviors"))
 ```
 
 ```{r behavepaq, fig.cap= "Relations between EPAQ subscale scores (Affection and Attachment, Early Learning, and Rules and Respect) and the frequency of parenting behaviors divided into the same categories."}
-ggplot(filter(all, !is.na(category_bev)), aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
+ggplot(filter(all, !is.na(category_bev)), 
+       aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
  geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .3) +
  geom_smooth(method="lm", se=TRUE) +
  facet_grid(~category_bev) + 
@@ -144,7 +157,7 @@ d <- db %>%
  left_join(atts)%>%
  left_join(subinfo)%>%
  filter(!is.na(rating))%>%
- filter(children != 0)%>%
+ filter(children != 0) %>%
  filter(behave_age != "older")%>%
  filter(behave_age != "")%>%
  select(sid, short_sent, rating, category_paq, category_bev, rating_paq, behave_age)%>%
