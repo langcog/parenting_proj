@@ -1,5 +1,18 @@
-
 ```{r}
+rm(list = ls())
+theme_set(theme_bw() + 
+            theme(strip.background = element_blank(), 
+                  panel.grid = element_blank())) # nice theme with limited extras
+select <- dplyr::select # masked by MASS
+Round <- function (x, digits = 1) {
+  if (digits == 1) {
+    sprintf("%.1f", round(x, digits = 1))
+  } else if (digits == 2) {
+    sprintf("%.2f", round(x, digits = 2))
+  }
+}
+
+
 files <- dir(here("data/parenting_behaviors_e2/"), pattern = "anon*")
 attitudes <- data.frame()
 behaviors <- data.frame()
@@ -112,22 +125,14 @@ subinfo$behave_age[subinfo$behave_age == "0-6"] <- "0-6 months"
 subinfo$behave_age[subinfo$behave_age == "7-12"] <- "7-12 months"
 
 subinfo$behave_age <- factor(subinfo$behave_age, levels = c("0-6 months", "7-12 months", "1-1.5","1.5-2","2-2.5","2.5-3","3-3.5","3.5-4", "4-4.5","4.5-5", "older"))
-```
 
-```{r behavefreq, echo = FALSE, fig.width=10, fig.height=6, fig.cap= "Frequencies of parenting activities reported by parents."}
-ggplot(filter(bev, !is.na(rating)), aes(short_sent, fill = rating, shape = category)) + 
- geom_bar(position = "fill")+
- ylab("Proportion responding") +
- 
- scale_fill_viridis(name="Frequency", discrete = TRUE, breaks=c("Multiple times every day","Most days","Once or twice per week","Occasionally", "Almost never", "Never"))+
- coord_flip()+
- theme(axis.title.y=element_blank(),
- axis.text.x=element_blank(),
- axis.ticks.x=element_blank(),
- axis.text.y = element_text(size = 12),
- legend.position="bottom",
- legend.text = element_text(size = 14),
- legend.title=element_blank()) 
+n_0 <- sum(subinfo$children == 0, na.rm=TRUE) / nrow(subinfo)
+n_older <- sum(subinfo$behave_age == "older", na.rm=TRUE) / nrow(subinfo)
+
+subinfo <- subinfo %>%
+        filter(children != 0) %>%
+        filter(behave_age != "older") %>%
+        filter(behave_age != "") 
 ```
 
 ```{r}
@@ -137,19 +142,6 @@ levels = c("AA", "EL", "RR"),
 labels = c("AA Behaviors", "EL Behaviors", "RR Behaviors"))
 ```
 
-```{r behavepaq, fig.cap= "Relations between EPAQ subscale scores (Affection and Attachment, Early Learning, and Rules and Respect) and the frequency of parenting behaviors divided into the same categories."}
-ggplot(filter(all, !is.na(category_bev)), 
-       aes(x= rating_bev, y = rating_paq, colour = category_paq)) +
- geom_jitter(aes(color = category_paq), height = .02, width = 0, alpha= .3) +
- geom_smooth(method="lm", se=TRUE) +
- facet_grid(~category_bev) + 
- xlab("Frequency of behavior") + 
- ylab("EPAQ score") + 
- labs(colour="EPAQ subscale")+
- 
- scale_color_viridis(discrete = TRUE) +
- scale_y_continuous(limits=c(0,6), breaks=c(0,2,4,6))
-```
 
 ```{r}
 #Set up dataframes for analyses.
@@ -158,8 +150,8 @@ d <- db %>%
  left_join(subinfo)%>%
  filter(!is.na(rating))%>%
  filter(children != 0) %>%
- filter(behave_age != "older")%>%
- filter(behave_age != "")%>%
+ filter(behave_age != "older") %>%
+ filter(behave_age != "") %>%
  select(sid, short_sent, rating, category_paq, category_bev, rating_paq, behave_age)%>%
  spread(category_paq, rating_paq)
 
@@ -258,28 +250,6 @@ rr_b <- summary(rr_behave_mod)
 rr_behave <- data.frame(rr_b$fixed)
 ```
 
-```{r behavetab, results = "asis"}
-factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA EPAQ score", "RR EPAQ score", "EL EPAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA EPAQ score", "RR EPAQ score", "EL EPAQ score", "Child Age","Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "AA EPAQ score", "RR EPAQ score", "EL EPAQ score", "Child Age")
-
-behaviors <- c("AA", "", "", "", 
- "EL", "", "", "", 
- "RR", "", "", "")
-
-tab_behave_lm <- aa_behave%>%
- bind_rows(el_behave)%>%
- bind_rows(rr_behave)%>%
- mutate(Factor = factors)%>%
- filter(!str_detect(Factor,"Intercept"))%>% 
- mutate(`Behavior Category` = behaviors)
- 
-tab_behave_lm <- tab_behave_lm [,c(8,7,1:4)]
-
-colnames(tab_behave_lm) <- c("Behavior Category","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
-
-behave_tab <- xtable(tab_behave_lm, label = "tab:behavetab", caption = "Results of separate Bayesian ordinal logistic regressions of EPAQ scores and child age on frequency of parenting behaviors in Affection and Attachment (AA), Early Learning (EL), and Rules and Respect (RR) categories.")
-
-print(behave_tab, type="latex", comment = F, table.placement = "h", hline.after = c(-1, 0, 4, 8, 12), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
-```
 
 ```{r behavesents, results = "asis"}
 cat <- c("AA", "", "", "", "EL", "","", "", "RR", "","","")

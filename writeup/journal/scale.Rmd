@@ -5,6 +5,20 @@ editor_options:
 ---
 
 ```{r}
+rm(list = ls())
+select <- dplyr::select # masked by MASS
+theme_set(theme_bw() + 
+            theme(strip.background = element_blank(), 
+                  panel.grid = element_blank())) # nice theme with limited extras
+Round <- function (x, digits = 1) {
+  if (digits == 1) {
+    sprintf("%.1f", round(x, digits = 1))
+  } else if (digits == 2) {
+    sprintf("%.2f", round(x, digits = 2))
+  }
+}
+
+
 files <- dir(here("data/e9/"), pattern = "anon*")
 d.raw <- data_frame()
 
@@ -317,11 +331,3 @@ labels$item <- labels$short_sent
 loadings <- left_join(loadings, labels, by = "item")
 ```
 
-```{r factors, fig.width=10, fig.height=8, fig.cap= "Factor loadings on individual EPAQ questions."}
-
-qplot(factor, item, fill = loading, geom = "tile", data = loadings) + 
-  scale_fill_viridis() + 
-  facet_grid(category ~ ., scales = "free_y") +
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank())
-```

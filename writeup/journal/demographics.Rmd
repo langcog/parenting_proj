@@ -1,20 +1,34 @@
-
 ```{r}
+rm(list = ls())
+select <- dplyr::select # masked by MASS
+Round <- function(x, digits = 1) {
+  if (digits == 1) {
+    sprintf("%.1f", round(x, digits = 1))
+  } else if(digits == 2) {
+    sprintf("%.2f", round(x, digits = 2))
+  }
+}
+
+
+theme_set(theme_bw() + 
+            theme(strip.background = element_blank(), 
+                  panel.grid = element_blank())) # nice theme with limited extras
+
 #get dataframe with subject responses
 responses_demo <- read.csv(here("data/cdm_paq.csv"), header = TRUE) %>%
-        slice(-(1:2)) %>%
+        # slice(-(1:2)) %>%
         filter(Finished == 1) %>%
         mutate(sid = ResponseId) %>%
-        select(sid, Q1:Q28) %>%
+        dplyr::select(sid, Q1:Q28) %>%
         gather("item", "rating", Q1:Q28)
 ```
 
 ```{r}
 #get dataframe with survey questions
 questions <- read.csv(here("data/cdm_paq.csv"), header = TRUE) %>%
-        slice(-(1:2)) %>%
+        # slice(-(1:2)) %>%
         filter(Status == "Response Type") %>%
-        select(Q1:Q28) %>%
+        dplyr::select(Q1:Q28) %>%
         gather("item", "sent", Q1:Q28) %>% 
         mutate(sent = stringr::str_replace_all(sent, "’", ""))
 ```
@@ -318,33 +332,12 @@ rr_d <- summary(rr_demo_mod)
 rr_demo <- data.frame(rr_d$fixed)
 ```
 
-```{r demo_tab, results = "asis"}
-factors <- c("Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male", "Intercept 1", "Intercept 2", "Intercept 3", "Intercept 4", "Intercept 5", "Intercept 6", "Parent Age", "Hispanic or Latino", "Multiple Ethnicities", "White", "Parent Education", "Number of children", "Male")
-
-subscales <- c("AA", "", "", "", "", "", "", 
-               "EL", "", "", "", "", "", "", 
-               "RR", "", "", "", "", "", "")
-
-tab_demo_lm <- aa_demo%>%
-        bind_rows(el_demo)%>%
-        bind_rows(rr_demo)%>%
-        mutate(Factor = factors)%>%
-        filter(!str_detect(Factor,"Intercept"))%>% 
-        mutate(Subscale = subscales)
-
-tab_demo_lm <- tab_demo_lm [,c(8,7,1:4)]
-
-colnames(tab_demo_lm) <- c("Subscale","Factor","Estimate", "Est. Error", "Lower 95% CI", "Upper 95% CI")
-
-demo_tab <- xtable(tab_demo_lm, label = "tab:demo", caption = "Results of separate Bayesian ordinal logistic regressions of demographic factors on agreement with AA, EL, and RR attitudes.")
-
-print(demo_tab, type="latex", comment = F, table.placement = "H", hline.after = c(-1, 0, 7, 14, 21), include.rownames=FALSE, align = c("r","l","r","r","r","r"), caption.placement = "top")
-```
 
 ```{r}
 #get demographic means
-parent_ed_summ <- d_demo%>%
-        distinct(sid, parent_ed)%>%
+parent_ed_summ <- d_demo %>%
+        filter(!is.na(parent_ed)) %>%
+        distinct(sid, parent_ed) %>%
         group_by(parent_ed) %>%
         summarise (n = n()) %>%
         mutate(freq = n / sum(n)*100)
